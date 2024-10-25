@@ -1,57 +1,49 @@
 # daryl.one
 
-![Astro Badge](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)
+![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/pages-deployment.yaml?branch=main&logo=githubactions)
+
+![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)
+![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-000000?logo=cloudflarepages)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-0F172A?&logo=tailwindcss)
 
 ## 🛠️ Stack
 
-- [**Astro**](https://astro.build/) - The next-gen web framework.
-- [**Typescript**](https://www.typescriptlang.org/) - JavaScript with type syntax.
-- [**Ninja Keys**](https://github.com/ssleptsov/ninja-keys) - Dropdown menu with keyboard shortcuts made in pure JavaScript.
+- [**Astro**](https://astro.build/)
+- [**Cloudflare Pages**](https://pages.cloudflare.com/)
+- [**JSON Resume Schema**](https://jsonresume.org/schema/)
+  - Edit `cv.json` to update content
 
-## 🚀 Getting Started
+## 📜 Getting Started
 
-### 1. Use this Repo as an Astro Project Template
-
-- I use [pnpm](https://pnpm.io/installation) as my package manager.
+Get pnpm
 
 ```bash
-# Enable pnpm on MacOS, WSL & Linux:
 corepack enable
-corepack prepare pnpm@latest --activate
+corepack prepare pnpm@^9 --activate
 ```
 
-Initialize the project
+Start developing!
 
 ```bash
-pnpm create astro@latest -- --template Smilesharks/dev-portfolio
-```
-
-### 2. Add Your Content
-
-Edit the `cv.json` file to create your own printable Portfolio/CV.
-
-### 3. Launch the Development Server
-
-```bash
-# Enjoy the results
+pnpm install
 pnpm dev
 ```
 
-1. Open [**http://localhost:4321**](http://localhost:4321/) in your browser to view the result 🚀
+Open [**http://localhost:4321**](http://localhost:4321/) in your browser to view the result 🚀
 
-### 4. Customisable colours
+## 🚀 Deployment
 
-Change the data-theme of `cv.json` and choose one of the colour themes defined in theme.css, red, blue, green, cyber and default, with its variants in dark mode, or create your own.
+Commits to the main branch updates the **_production_** deployment.
+
+Commits on development branches creates a **_preview_** deployment.
+
+This is driven by a [**GitHub Action**](.github/workflows/pages-deployment.yaml) to invoke [**Cloudflare Wrangler**](https://github.com/cloudflare/wrangler-action)
 
 ## 🧞 Commands
 
-|     | Command         | Action                                                         |
-| :-- | :-------------- | :------------------------------------------------------------- |
-| ⚙️  | `dev` o `start` | Launches a local development server at `localhost:4321`.       |
-| ⚙️  | `build`         | Checks for errors and creates a production build in `./dist/`. |
-| ⚙️  | `preview`       | Local preview at `localhost:4321`                              |
-
-CV JSON schema from [**jsonresume.org**](https://jsonresume.org/schema/)
-
-Based on [**Bartosz Jarocki - Print-friendly, minimalist CV page**](https://github.com/BartoszJarocki/cv) and [**Miguel Ángel Durán - minimalist-portfolio-json**](https://github.com/midudev/minimalist-portfolio-json)
+| Command           | Action                                                         |
+| :---------------- | :------------------------------------------------------------- |
+| `pnpm dev`        | Launches a local development server at `localhost:4321`.       |
+| `pnpm build`      | Checks for errors and creates a production build in `./dist/`. |
+| `pnpm preview`    | Local preview at `localhost:4321`                              |
+| `pnpm preview:cf` | Cloudflare Pages local preview at `localhost:8788`             |

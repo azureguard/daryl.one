@@ -1,6 +1,6 @@
 ---
-import { Icon } from 'astro-icon/components';
-import Icons from '../icons';
+import { Icon } from "astro-icon/components";
+import Icons from "../icons";
 ---
 
 <div class="no-print inline-flex items-center">
@@ -9,12 +9,12 @@ import Icons from '../icons';
 			for="themeSwitch"
 			class="flex items-center gap-1 text-sm font-medium leading-6 text-skin-base transition-transform ease-in-out group-hover/theme:rotate-45"
 		>
-			<Icon name={Icons['ThemeSwitch']} size="24" /></label
+			<Icon name={Icons["ThemeSwitch"]} size="24" /></label
 		>
 		<select
 			id="themeSwitch"
 			name="themeSwitch"
-			class="focus:ring-skin-hue ring-skin-muted block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-skin-base ring-1 ring-inset focus:ring-2 sm:text-sm sm:leading-6 dark:bg-black"
+			class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-skin-base ring-1 ring-inset ring-skin-muted focus:ring-2 focus:ring-skin-hue sm:text-sm sm:leading-6 dark:bg-black"
 		>
 			<option value="system" selected>System</option>
 			<option value="dark">Dark</option>

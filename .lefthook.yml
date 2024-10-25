@@ -2,10 +2,8 @@ pre-commit:
   parallel: true
   commands:
     prettier:
-      glob: '*.{astro,md,yaml,yml}'
       run: pnpm dlx prettier --ignore-unknown --write {staged_files}
       stage_fixed: true
     check:
-      glob: '*.{css,d.ts,json,ts}'
       run: pnpm dlx @biomejs/biome check --write --no-errors-on-unmatched --files-ignore-unknown=true --colors=off {staged_files}
       stage_fixed: true

@@ -1,8 +1,8 @@
 ---
-import { work } from '@cv';
-import { Icon } from 'astro-icon/components';
-import Icons from '../../icons';
-import Section from '../Section.astro';
+import { work } from "@cv";
+import { Icon } from "astro-icon/components";
+import Icons from "../../icons";
+import Section from "../Section.astro";
 ---
 
 <Section className={Astro.props.className} title="Experience">
@@ -23,25 +23,25 @@ import Section from '../Section.astro';
 					location_type,
 				}) => {
 					const startYear = new Date(startDate).getFullYear();
-					const endYear = endDate != null ? new Date(endDate).getFullYear() : 'Present';
+					const endYear = endDate != null ? new Date(endDate).getFullYear() : "Present";
 
 					return (
 						<li class="relative print:py-2">
-							<div class="group relative grid pb-1 print:pb-0 transition-all print:grid-cols-1 print:gap-1 sm:grid-cols-12 sm:gap-8 md:gap-6 lg:hover:!opacity-100 ">
+							<div class="group relative grid pb-1 transition-all sm:grid-cols-12 sm:gap-8 md:gap-6 lg:hover:!opacity-100 print:grid-cols-1 print:gap-1 print:pb-0">
 								<header class="relative mt-1 text-xs font-semibold sm:col-span-2">
 									<time datetime={startDate} data-title={startDate}>
 										{startYear}
-									</time>{' '}
-									-{' '}
+									</time>{" "}
+									-{" "}
 									<time datetime={endDate} data-title={endDate}>
 										{endYear}
 									</time>
 								</header>
-								<div class="relative flex flex-col pb-6 print:pb-0 before:-ml-6 sm:col-span-10 before:w-px print:before:hidden before:absolute before:bg-skin-muted before:h-full before:mt-2">
-									<div class="absolute w-2 h-2 bg-skin-muted rounded-full mt-2 -translate-x-[1.71rem] ring print:hidden ring-skin-fill" />
+								<div class="relative flex flex-col pb-6 before:absolute before:-ml-6 before:mt-2 before:h-full before:w-px before:bg-skin-muted sm:col-span-10 print:pb-0 print:before:hidden">
+									<div class="absolute mt-2 h-2 w-2 -translate-x-[1.71rem] rounded-full bg-skin-muted ring ring-skin-fill print:hidden" />
 									<h3>
 										<div
-											class="inline-flex items-center text-lg print:text-base leading-tight group/link focus-visible:text-amber-500"
+											class="group/link inline-flex items-center text-lg leading-tight focus-visible:text-amber-500 print:text-base"
 											aria-label="{position} - {company}"
 										>
 											<span>
@@ -56,8 +56,8 @@ import Section from '../Section.astro';
 												{url && (
 													<span class="inline-block text-skin-hue print:[&>svg]:hidden">
 														<Icon
-															name={Icons['Link']}
-															class="inline-block w-4 h-4 ml-1 transition-transform translate-y-px shrink-0 group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none"
+															name={Icons["Link"]}
+															class="ml-1 inline-block h-4 w-4 shrink-0 translate-y-px transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none"
 														/>
 													</span>
 												)}
@@ -66,14 +66,14 @@ import Section from '../Section.astro';
 									</h3>
 									{(location || location_type) && (
 										<div class="text-xs text-skin-muted">
-											{location} {location && location_type && '-'} {location_type}
+											{location} {location && location_type && "-"} {location_type}
 										</div>
 									)}
-									<div class="mt-4 flex flex-col gap-4 print:text-xs text-sm" x-data="{ expanded: false }">
+									<div class="mt-4 flex flex-col gap-4 text-sm print:text-xs" x-data="{ expanded: false }">
 										{summary && (
 											<div class="flex flex-col gap-1">
 												<h4>Summary:</h4>
-												<ul class="text-skin-muted flex list-disc flex-col gap-2">
+												<ul class="flex list-disc flex-col gap-2 text-skin-muted">
 													{Array.isArray(summary) ? (
 														summary.map((item) => <li class="ml-4">{item}</li>)
 													) : (
@@ -85,14 +85,14 @@ import Section from '../Section.astro';
 
 										{(responsibilities || achievements) && (
 											<div
-												class="flex relative flex-col max-sm:!h-auto print:!h-auto gap-4 print:gap-2 md:after:bg-gradient-to-t md:after:absolute md:after:bottom-0 md:after:w-full print:after:hidden md:after:h-12"
+												class="relative flex flex-col gap-4 max-sm:!h-auto md:after:absolute md:after:bottom-0 md:after:h-12 md:after:w-full md:after:bg-gradient-to-t print:!h-auto print:gap-2 print:after:hidden"
 												x-show="expanded"
 												x-collapse.min.50px
 											>
 												{responsibilities && (
 													<div class="flex flex-col gap-1">
 														<h4>Responsibilities:</h4>
-														<ul class="text-skin-muted flex list-disc flex-col gap-2">
+														<ul class="flex list-disc flex-col gap-2 text-skin-muted">
 															{responsibilities.map((responsibility) => (
 																<li class="ml-4">{responsibility}</li>
 															))}
@@ -103,7 +103,7 @@ import Section from '../Section.astro';
 												{achievements && (
 													<div class="flex flex-col gap-1">
 														<h4>Achievements:</h4>
-														<ul class="text-skin-muted flex list-disc flex-col gap-2">
+														<ul class="flex list-disc flex-col gap-2 text-skin-muted">
 															{achievements.map((achievement) => (
 																<li class="ml-4">{achievement}</li>
 															))}
@@ -115,11 +115,11 @@ import Section from '../Section.astro';
 										{(responsibilities || achievements) && (
 											<button
 												@click="expanded = !expanded"
-												class="print:hidden group/more w-fit flex items-center gap-1.5 text-xs underline text-skin-muted hover:text-skin-base"
+												class="group/more flex w-fit items-center gap-1.5 text-xs text-skin-muted underline hover:text-skin-base print:hidden"
 											>
 												<span x-text="expanded ? 'Show less' : 'Show more'" />
 												<svg
-													class="w-4 h-4 transition-transform duration-200 ease-out group-hover:translate-y-0.5"
+													class="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-y-0.5"
 													x-bind:class="expanded ? 'rotate-180' : ''"
 													viewBox="0 0 24 24"
 													stroke="currentColor"
@@ -132,12 +132,12 @@ import Section from '../Section.astro';
 										)}
 
 										{skills && (
-											<ul class="flex print:hidden flex-wrap gap-2" aria-label="Technologies used">
+											<ul class="flex flex-wrap gap-2 print:hidden" aria-label="Technologies used">
 												{skills &&
 													skills.map((skill) => {
-														const iconName = skill === 'Next.js' ? 'Next' : skill;
+														const iconName = skill === "Next.js" ? "Next" : skill;
 														return (
-															<li class="bg-skin-button-accent/20 border-skin-hue/20 print:p-0 print:bg-transparent print:text-zinc-800 flex gap-1 items-center border-solid print:border-none border rounded-md px-2 py-0.5 text-xs">
+															<li class="flex items-center gap-1 rounded-md border border-solid border-skin-hue/20 bg-skin-button-accent/20 px-2 py-0.5 text-xs print:border-none print:bg-transparent print:p-0 print:text-zinc-800">
 																{Icons[iconName] && <Icon name={Icons[iconName]} />} <span>{skill}</span>
 															</li>
 														);
