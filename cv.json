@@ -168,13 +168,17 @@
 			"name": "This page!",
 			"description": "Gateway to more experimentation and tinkering",
 			"highlights": ["Hosted on Cloudflare Pages", "Astro with JSON Resume schema"],
-			"github": "https://github.com/azureguard/"
+			"github": "https://github.com/azureguard/",
+			"url": "",
+			"isActive": false
 		},
 		{
 			"name": "Homelabbing",
 			"description": "Personal playground where it all started",
 			"highlights": ["Cisco ISR, Ubiquiti PoE Switches & APs", "Home Assistant on Proxmox"],
-			"github": ""
+			"github": "",
+			"url": "",
+			"isActive": false
 		}
 	],
 	"skills": [
