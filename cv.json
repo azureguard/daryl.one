@@ -1,0 +1,265 @@
+{
+	"basics": {
+		"name": "Daryl Wong",
+		"label": "Full-stack Engineer",
+		"image": "/avatar.jpg",
+		"email": "hi@daryl.one",
+		"url": "https://daryl.one",
+		"summary": "Technical Lead specializing in MLOps and cloud architecture, with expertise in scaling AI/ML solutions and leading engineering teams. Experienced in AWS, DevSecOps, and full-stack development.",
+		"location": {
+			"address": "",
+			"postalCode": "",
+			"city": "Singapore",
+			"countryCode": "SG",
+			"region": "Singapore"
+		},
+		"profiles": [
+			{
+				"network": "LinkedIn",
+				"username": "daryl-wong-jl",
+				"url": "https://linkedin.com/in/daryl-wong-jl"
+			},
+			{
+				"network": "GitHub",
+				"username": "azureguard",
+				"url": "https://github.com/azureguard"
+			}
+		]
+	},
+	"work": [
+		{
+			"name": "Dyson",
+			"position": "Technical Lead",
+			"location_type": "Hybrid",
+			"location": "Singapore, Singapore",
+			"url": "https://dyson.com",
+			"startDate": "2023",
+			"endDate": null,
+			"summary": "Leading a high performing engineering team on the Scaled Agile Framework (SAFe Scrum)",
+			"responsibilities": [
+				"MLOps platform development for image segmentation models and anomaly detection",
+				"Implementation of event-driven architecture to support data ingestion, feature engineering, and model training",
+				"Design of RESTful APIs to support the MyDyson App used by millions worldwide"
+			],
+			"achievements": [
+				"On-boarded ML teams with workflow orchestration tools to train and deliver models",
+				"Established technical vision and roadmap for MLOps platform to support a growing number of teams",
+				"Redefined way of working with the team to better align with Scrum principles in collaboration with our Scrum Master",
+				"Encouraged more technical spikes to de-risk future development"
+			],
+			"skills": [
+				"MLflow",
+				"Apache Airflow (MWAA)",
+				"Cognito",
+				"Elastic Kubernetes Service",
+				"Python",
+				"Next.js",
+				"TypeScript",
+				".NET/C#",
+				"DynamoDB"
+			]
+		},
+		{
+			"name": "Dyson",
+			"position": "Senior Software Engineer",
+			"location_type": "Hybrid",
+			"location": "Singapore, Singapore",
+			"url": "https://dyson.com",
+			"startDate": "2022",
+			"endDate": "2023",
+			"summary": "Cross-functional work to accelerate delivery, improve internal processes to enhance the developer experience (DX)",
+			"responsibilities": [
+				"Implement and optimise data pipelines to support data science and business analytics use cases",
+				"Conduct security architecture reviews as a Security Champion, triage of SAST/SCA reports, championing DevSecOps",
+				"Recruitment and mentoring, conducted over 15 interviews"
+			],
+			"achievements": [
+				"Established artefact tracking for unstructured dataset of over 2 million image frames",
+				"Design and development of cloud solutions to support new products and a greenfield MLOps platform in consultation with our ML research teams",
+				"Refreshed onboarding documentation and technical training materials reducing ramp-up time to 2 weeks",
+				"Collaborated cross-team to drive the adoption of observability tooling such as AWS X-Ray to provide end-to-end visibility",
+				"Led the refactoring of an internal end-to-end testing framework built with TypeScript reducing test times by ~75%, with Azure Pipelines integration",
+				"Presented Cloud team work products to the CTO"
+			],
+			"skills": ["Azure Pipelines", ".NET/C#", "TypeScript", "Node", "Python", "Docker"]
+		},
+		{
+			"name": "Dyson",
+			"position": "Software Engineer",
+			"location_type": "Hybrid",
+			"location": "Singapore, Singapore",
+			"url": "https://dyson.com",
+			"startDate": "2022",
+			"endDate": "2022",
+			"summary": "Development and maintenance of microservices supporting millions of IoT devices, and ETL pipelines for sensor data",
+			"responsibilities": [
+				"Collaborate with senior engineers on the design and implementation of RESTful APIs and data pipelines",
+				"Participate in daily stand-ups and fortnightly sprint planning and reviews"
+			],
+			"achievements": ["Prototyped an MLOps pipeline on EKS using Kubeflow for proof-of-concept evaluations"],
+			"skills": [
+				"Kubeflow",
+				".NET/C#",
+				"JavaScript",
+				"Node",
+				"Python",
+				"Kinesis",
+				"SQS",
+				"Redshift",
+				"Elastic Kubernetes Service",
+				"Docker",
+				"Git"
+			]
+		},
+		{
+			"name": "Dyson",
+			"position": "Graduate Software Engineer",
+			"location_type": "Hybrid",
+			"location": "Singapore, Singapore",
+			"url": "https://dyson.com",
+			"startDate": "2020",
+			"endDate": "2022",
+			"summary": "Year-long rotation program with software teams from Cloud, Embedded Systems, and Robotics",
+			"responsibilities": [
+				"End-to-end development and testing of new products from embedded and vision systems to cloud integrations for the MyDyson app"
+			],
+			"achievements": [
+				"Co-organised inaugural 4-day global software technical conference involving over 600 attendees, 20 events, and 15 speakers across Singapore and UK",
+				"Early-stage architecture and database design and implementation for a high traffic (>300 RPS) service"
+			],
+			"skills": [
+				".NET/C#",
+				"Node",
+				"Python",
+				"Docker",
+				"PostgreSQL",
+				"DynamoDB",
+				"C++",
+				"MATLAB",
+				"Jenkins",
+				"Bamboo",
+				"Git"
+			]
+		},
+		{
+			"name": "Ensign Infosecurity",
+			"position": "Intern",
+			"location_type": "On-site",
+			"location": "Singapore, Singapore",
+			"url": "https://www.ensigninfosecurity.com/",
+			"startDate": "2018",
+			"endDate": "2019",
+			"summary": "Security Operation Centre (SOC) analyst",
+			"responsibilities": [
+				"Customer facing incident response handling potential denial-of-service attempts and analysis of SIEM alerts",
+				"Participated in daily stand-ups and bi-weekly sprint planning meetings to ensure alignment with project goals."
+			],
+			"achievements": [
+				"Migrated SOC automation scripts from Python 2.x scripts to Python 3.x",
+				"Penetration testing of in-house developed customer facing systems using Burp Suite and Metasploit"
+			],
+			"skills": ["Python", "Metasploit", "Burp Suite", "Splunk"]
+		}
+	],
+	"volunteer": [],
+	"certificates": [],
+	"projects": [
+		{
+			"name": "This page!",
+			"description": "Gateway to more experimentation and tinkering",
+			"highlights": ["Hosted on Cloudflare Pages", "Astro with JSON Resume schema"],
+			"github": "https://github.com/azureguard/"
+		},
+		{
+			"name": "Homelabbing",
+			"description": "Personal playground where it all started",
+			"highlights": ["Cisco ISR, Ubiquiti PoE Switches & APs", "Home Assistant on Proxmox"],
+			"github": ""
+		}
+	],
+	"skills": [
+		{
+			"name": "Python",
+			"level": "Intermediate",
+			"keywords": ["API Development", "Data Engineering", "MLOps"]
+		},
+		{
+			"name": "TypeScript",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Frontend", "Backend", "JavaScript Superset"]
+		},
+		{
+			"name": "JavaScript",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Frontend", "Backend", "Fullstack"]
+		},
+		{
+			"name": ".NET/C#",
+			"level": "Intermediate",
+			"keywords": ["API Development", "Backend", "Server"]
+		},
+		{
+			"name": "PostgreSQL",
+			"level": "Intermediate",
+			"keywords": ["Databases", "SQL", "Data Storage", "Backend"]
+		},
+		{
+			"name": "DynamoDB",
+			"level": "Intermediate",
+			"keywords": ["Databases", "NoSQL", "Data Storage", "Backend"]
+		},
+		{
+			"name": "Node",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Backend", "JavaScript", "Server"]
+		},
+		{
+			"name": "React",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Frontend", "JavaScript Library", "UI"]
+		},
+		{
+			"name": "Next.js",
+			"level": "Beginner",
+			"keywords": ["Web Development", "Frontend", "React Framework", "SSR", "Static Generation"]
+		},
+		{
+			"name": "HTML",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Frontend"]
+		},
+		{
+			"name": "CSS",
+			"level": "Intermediate",
+			"keywords": ["Web Development", "Frontend", "Responsive Design"]
+		},
+		{
+			"name": "Git",
+			"level": "Intermediate",
+			"keywords": ["Version Control", "Collaboration", "Source Code"]
+		}
+	],
+	"education": [
+		{
+			"institution": "University of Melbourne",
+			"url": "https://www.unimelb.edu.au/",
+			"area": "Computing and Software Systems",
+			"studyType": "Bachelor",
+			"startDate": "2017",
+			"endDate": "2019",
+			"courses": ["CS101 - Introduction to Computer Science", "CS102 - Data Structures"]
+		}
+	],
+	"languages": [
+		{
+			"language": "English",
+			"fluency": "Native speaker"
+		},
+		{
+			"language": "Mandarin",
+			"fluency": "Native speaker"
+		}
+	],
+	"interests": [],
+	"references": []
+}
