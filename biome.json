@@ -1,0 +1,30 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"files": {
+		"ignore": ["pnpm-lock.yaml"]
+	},
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true,
+		"defaultBranch": "main"
+	},
+	"formatter": {
+		"lineWidth": 120,
+		"useEditorconfig": true,
+		"ignore": ["*.astro"]
+	},
+	"javascript": {
+		"formatter": {
+			"bracketSameLine": true
+		}
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		},
+		"linter": {
+			"enabled": true
+		}
+	}
+}

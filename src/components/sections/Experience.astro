@@ -1,0 +1,164 @@
+---
+import { work } from "@cv";
+import { Icon } from "astro-icon/components";
+import Icons from "../../icons";
+import Section from "../Section.astro";
+---
+
+<Section className={Astro.props.className} title="Experience">
+	<ul class="flex flex-col">
+		{
+			work.map(
+				({
+					name,
+					startDate,
+					endDate,
+					position,
+					summary,
+					responsibilities,
+					achievements,
+					url,
+					skills,
+					location,
+					location_type,
+				}) => {
+					const startYear = new Date(startDate).getFullYear();
+					const endYear = endDate != null ? new Date(endDate).getFullYear() : "Present";
+
+					return (
+						<li class="relative print:py-2">
+							<div class="group relative grid pb-1 transition-all sm:grid-cols-12 sm:gap-8 md:gap-6 lg:hover:!opacity-100 print:grid-cols-1 print:gap-1 print:pb-0">
+								<header class="relative mt-1 text-xs font-semibold sm:col-span-2">
+									<time datetime={startDate} data-title={startDate}>
+										{startYear}
+									</time>{" "}
+									-{" "}
+									<time datetime={endDate} data-title={endDate}>
+										{endYear}
+									</time>
+								</header>
+								<div class="relative flex flex-col pb-6 before:absolute before:-ml-6 before:mt-2 before:h-full before:w-px before:bg-skin-muted sm:col-span-10 print:pb-0 print:before:hidden">
+									<div class="absolute mt-2 h-2 w-2 -translate-x-[1.71rem] rounded-full bg-skin-muted ring ring-skin-fill print:hidden" />
+									<h3>
+										<div
+											class="group/link inline-flex items-center text-lg leading-tight focus-visible:text-amber-500 print:text-base"
+											aria-label="{position} - {company}"
+										>
+											<span>
+												{position} <span>@</span>
+												{url ? (
+													<a class="text-skin-hue" href={url} title={`Ver ${name}`} target="_blank">
+														{name}
+													</a>
+												) : (
+													<span>{name}</span>
+												)}
+												{url && (
+													<span class="inline-block text-skin-hue print:[&>svg]:hidden">
+														<Icon
+															name={Icons["Link"]}
+															class="ml-1 inline-block h-4 w-4 shrink-0 translate-y-px transition-transform group-hover/link:-translate-y-1 group-hover/link:translate-x-1 group-focus-visible/link:-translate-y-1 group-focus-visible/link:translate-x-1 motion-reduce:transition-none"
+														/>
+													</span>
+												)}
+											</span>
+										</div>
+									</h3>
+									{(location || location_type) && (
+										<div class="text-xs text-skin-muted">
+											{location} {location && location_type && "-"} {location_type}
+										</div>
+									)}
+									<div class="mt-4 flex flex-col gap-4 text-sm print:text-xs" x-data="{ expanded: false }">
+										{summary && (
+											<div class="flex flex-col gap-1">
+												<h4>Summary:</h4>
+												<ul class="flex list-disc flex-col gap-2 text-skin-muted">
+													{Array.isArray(summary) ? (
+														summary.map((item) => <li class="ml-4">{item}</li>)
+													) : (
+														<li class="ml-4">{summary}</li>
+													)}
+												</ul>
+											</div>
+										)}
+
+										{(responsibilities || achievements) && (
+											<div
+												class="relative flex flex-col gap-4 max-sm:!h-auto md:after:absolute md:after:bottom-0 md:after:h-12 md:after:w-full md:after:bg-gradient-to-t print:!h-auto print:gap-2 print:after:hidden"
+												x-show="expanded"
+												x-collapse.min.50px
+											>
+												{responsibilities && (
+													<div class="flex flex-col gap-1">
+														<h4>Responsibilities:</h4>
+														<ul class="flex list-disc flex-col gap-2 text-skin-muted">
+															{responsibilities.map((responsibility) => (
+																<li class="ml-4">{responsibility}</li>
+															))}
+														</ul>
+													</div>
+												)}
+
+												{achievements && (
+													<div class="flex flex-col gap-1">
+														<h4>Achievements:</h4>
+														<ul class="flex list-disc flex-col gap-2 text-skin-muted">
+															{achievements.map((achievement) => (
+																<li class="ml-4">{achievement}</li>
+															))}
+														</ul>
+													</div>
+												)}
+											</div>
+										)}
+										{(responsibilities || achievements) && (
+											<button
+												@click="expanded = !expanded"
+												class="group/more flex w-fit items-center gap-1.5 text-xs text-skin-muted underline hover:text-skin-base print:hidden"
+											>
+												<span x-text="expanded ? 'Show less' : 'Show more'" />
+												<svg
+													class="h-4 w-4 transition-transform duration-200 ease-out group-hover:translate-y-0.5"
+													x-bind:class="expanded ? 'rotate-180' : ''"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+													stroke-width="2"
+													fill="none"
+												>
+													<polyline points="6 9 12 15 18 9" />
+												</svg>
+											</button>
+										)}
+
+										{skills && (
+											<ul class="flex flex-wrap gap-2 print:hidden" aria-label="Technologies used">
+												{skills &&
+													skills.map((skill) => {
+														const iconName = skill === "Next.js" ? "Next" : skill;
+														return (
+															<li class="flex items-center gap-1 rounded-md border border-solid border-skin-hue/20 bg-skin-button-accent/20 px-2 py-0.5 text-xs print:border-none print:bg-transparent print:p-0 print:text-zinc-800">
+																{Icons[iconName] && <Icon name={Icons[iconName]} />} <span>{skill}</span>
+															</li>
+														);
+													})}
+											</ul>
+										)}
+									</div>
+								</div>
+							</div>
+						</li>
+					);
+				},
+			)
+		}
+	</ul>
+</Section>
+<script is:inline src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.x.x/dist/cdn.min.js"></script>
+<script is:inline defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+
+<style>
+	li::marker {
+		@apply text-skin-hue;
+	}
+</style>
