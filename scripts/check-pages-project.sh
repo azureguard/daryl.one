@@ -10,7 +10,7 @@ check_project() {
     echo "Checking if project '$project_name' exists..."
 
     # Try to get project info
-    if wrangler pages project list | grep -qE "\s+$project_name\s+"; then
+    if pnpm wrangler pages project list | grep -qE "\s+$project_name\s+"; then
         echo "Project '$project_name' already exists."
         return 0
     else
@@ -26,7 +26,7 @@ create_project() {
 
     echo "Creating new Pages project '$project_name'..."
 
-    wrangler pages project create "$project_name" \
+    pnpm wrangler pages project create "$project_name" \
         --production-branch="$production_branch"
 
     echo "Project '$project_name' created successfully!"
