@@ -151,8 +151,7 @@
 			"endDate": "2019",
 			"summary": "Security Operation Centre (SOC) analyst",
 			"responsibilities": [
-				"Customer facing incident response handling potential denial-of-service attempts and analysis of SIEM alerts",
-				"Participated in daily stand-ups and bi-weekly sprint planning meetings to ensure alignment with project goals."
+				"Customer facing incident response handling potential denial-of-service attempts and analysis of SIEM alerts"
 			],
 			"achievements": [
 				"Migrated SOC automation scripts from Python 2.x scripts to Python 3.x",
@@ -251,7 +250,7 @@
 			"studyType": "Bachelor",
 			"startDate": "2017",
 			"endDate": "2019",
-			"courses": ["CS101 - Introduction to Computer Science", "CS102 - Data Structures"]
+			"courses": []
 		}
 	],
 	"languages": [
