@@ -7,5 +7,5 @@ insert_final_newline = true
 root = true
 trim_trailing_whitespace = true
 
-[*.{yml,yaml}]
+[*.{toml,yml,yaml}]
 indent_style = space
