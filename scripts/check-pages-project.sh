@@ -3,22 +3,6 @@
 # Exit on any error
 set -e
 
-# Function to check if wrangler is installed
-check_wrangler() {
-    if ! command -v wrangler &> /dev/null; then
-        echo "Error: Wrangler is not installed. Please install it using: npm install -g wrangler"
-        exit 1
-    fi
-}
-
-# Function to check if user is logged in to Cloudflare
-check_auth() {
-    if ! wrangler whoami &> /dev/null; then
-        echo "Error: Not logged in to Cloudflare. Please run: wrangler login"
-        exit 1
-    fi
-}
-
 # Function to check if a project exists
 check_project() {
     local project_name=$1
@@ -59,10 +43,6 @@ main() {
 
     PROJECT_NAME=$1
     PRODUCTION_BRANCH=${2:-main}
-
-    # Perform initial checks
-    check_wrangler
-    check_auth
 
     # Check if project exists and create if it doesn't
     if ! check_project "$PROJECT_NAME"; then
