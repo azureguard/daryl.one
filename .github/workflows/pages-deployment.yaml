@@ -1,3 +1,5 @@
+name: Cloudflare Pages Deployment
+
 on: [push]
 
 env:
@@ -40,4 +42,4 @@ jobs:
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           preCommands: |
             ./scripts/check-pages-project.sh ${{ env.PROJECT_NAME }} ${{ env.PRODUCTION_BRANCH }}
-          command: pages deploy
+          command: pages deploy --project-name=${{ env.PROJECT_NAME }}
