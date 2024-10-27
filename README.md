@@ -1,6 +1,6 @@
-# daryl.one
+# [daryl.one](https://daryl.one)
 
-![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/pages-deployment.yaml?branch=main&logo=githubactions)
+![Cloudflare Pages Deployment](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/pages-deployment.yaml?branch=main&logo=githubactions)
 
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)
 ![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-000000?logo=cloudflarepages)
@@ -47,3 +47,7 @@ This is driven by a [**GitHub Action**](.github/workflows/pages-deployment.yaml)
 | `pnpm build`      | Checks for errors and creates a production build in `./dist/`. |
 | `pnpm preview`    | Local preview at `localhost:4321`                              |
 | `pnpm preview:cf` | Cloudflare Pages local preview at `localhost:8788`             |
+
+## 📣 Thanks
+
+Bootstrapped using Astro CLI from [Smilesharks/dev-portfolio](https://github.com/Smilesharks/dev-portfolio/tree/d8e66f5c994c24682bb88a541cfa7e74c0ee8ff6)

@@ -6,8 +6,10 @@ interface Props {
 }
 
 const { title } = Astro.props;
+const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
+const url = canonicalUrl.href;
 
-const { image, summary, url } = basics;
+const { image, summary } = basics;
 ---
 
 <!doctype html>
@@ -33,11 +35,11 @@ const { image, summary, url } = basics;
 		<meta name="twitter:description" content={summary} />
 		<meta name="twitter:image" content="" />
 
+		<link rel="canonical" href={url} />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Itim" />
-
 		<link rel="stylesheet" href="/themes/themes.css" />
 	</head>
-	<body class="relative">
+	<body class="relative dark:bg-skin-fill">
 		<div class="absolute top-0 -z-10 h-full w-full print:hidden">
 			<div
 				class="absolute bottom-auto left-[20%] right-auto top-0 h-[200px] w-[200px] -translate-x-[30%] translate-y-[20%] rounded-full bg-skin-hue/10 blur-[80px] invert-0 dark:bg-white/5"

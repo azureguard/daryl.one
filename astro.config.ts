@@ -3,11 +3,14 @@ import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
+import sitemap from "@astrojs/sitemap";
 
 import icon from "astro-icon";
+import robotsTxt from "astro-robots-txt";
 
 // https://astro.build/config
 export default defineConfig({
+	site: "https://daryl.one",
 	integrations: [
 		tailwind(),
 		icon({
@@ -47,6 +50,8 @@ export default defineConfig({
 				],
 			},
 		}),
+		sitemap(),
+		robotsTxt(),
 	],
 	output: "server",
 	adapter: cloudflare(),

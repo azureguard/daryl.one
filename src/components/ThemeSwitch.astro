@@ -14,17 +14,85 @@ import Icons from "../icons";
 		<select
 			id="themeSwitch"
 			name="themeSwitch"
-			class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-skin-base ring-1 ring-inset ring-skin-muted focus:ring-2 focus:ring-skin-hue sm:text-sm sm:leading-6 dark:bg-black"
+			class="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-skin-base ring-1 ring-inset ring-skin-muted focus:ring-2 focus:ring-skin-hue sm:text-sm sm:leading-6"
 		>
 			<option value="system" selected>System</option>
 			<option value="dark">Dark</option>
 			<option value="light">Light</option>
 		</select>
 	</div>
-
-	<style>
-		:global(.dark) {
-			color-scheme: dark;
-		}
-	</style>
 </div>
+
+<style>
+	:global(.dark) {
+		color-scheme: dark;
+	}
+</style>
+
+<script>
+	type Theme = "light" | "dark" | "system";
+
+	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+	const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
+
+	const updateDocumentClass = (theme: "light" | "dark") => {
+		document.documentElement.classList.remove("light", "dark");
+		document.documentElement.classList.add(theme);
+	};
+
+	const resolveTheme = (value: Theme): "light" | "dark" => {
+		return value === "system" ? getSystemTheme() : value;
+	};
+
+	const updateTheme = (value: Theme) => {
+		const theme = resolveTheme(value);
+		updateDocumentClass(theme);
+
+		if (value === "system") {
+			localStorage.removeItem("theme");
+		} else {
+			localStorage.setItem("theme", value);
+		}
+	};
+
+	const initTheme = () => {
+		const savedTheme = localStorage.getItem("theme");
+		const select = document.querySelector<HTMLSelectElement>("#themeSwitch");
+		if (!select) return;
+
+		if (savedTheme) {
+			select.value = savedTheme;
+		}
+	};
+
+	const initThemeSwitcher = () => {
+		const select = document.querySelector<HTMLSelectElement>("#themeSwitch");
+		if (!select) return;
+
+		// Initialize theme from localStorage or system preference
+		const savedTheme = localStorage.getItem("theme") as Theme | null;
+		if (savedTheme) {
+			select.value = savedTheme;
+		}
+		updateTheme(select.value as Theme);
+
+		select.addEventListener("change", (event) => {
+			const target = event.target as HTMLSelectElement;
+			updateTheme(target.value as Theme);
+		});
+
+		mediaQuery.addEventListener("change", () => {
+			if (select.value === "system") {
+				updateTheme("system");
+			}
+		});
+	};
+
+	if (document.readyState === "complete") {
+		initTheme();
+		initThemeSwitcher();
+	} else {
+		document.addEventListener("DOMContentLoaded", initTheme);
+		window.addEventListener("load", initThemeSwitcher);
+	}
+</script>
