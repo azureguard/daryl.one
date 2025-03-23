@@ -3,8 +3,7 @@ import { Icon } from "astro-icon/components";
 import Icons from "../../icons";
 import Section from "../Section.astro";
 
-import { education } from "@cv";
-import { certificates } from "@cv";
+import { certificates, education } from "@cv";
 ---
 
 <Section className={Astro.props.className} title="Education">
@@ -16,7 +15,7 @@ import { certificates } from "@cv";
 				const years = `${startYear} - ${endYear}`;
 
 				return (
-					<div class="flex items-baseline gap-2">
+					<li class="flex items-baseline gap-2">
 						<Icon name={Icons["Graduate"]} size="18" />
 						<div class="relative w-full items-baseline justify-between gap-2">
 							<h3 class="mr-6 items-baseline gap-x-2 gap-y-0.5 font-medium">
@@ -31,21 +30,21 @@ import { certificates } from "@cv";
 							<div class="text-sm text-skin-muted">{area}</div>
 							<time class="right-0 top-0 text-xs text-skin-muted md:absolute md:block">{years}</time>
 						</div>
-					</div>
+					</li>
 				);
 			})
 		}
 	</ul>
 
 	{
-		certificates.length > 0 && (
+		certificates && certificates.length > 0 && (
 			<>
 				<h4>Certificates</h4>
 				<ul class="space-y-4 py-3 print:space-y-0">
 					{certificates.map(({ name, date, issuer, url }) => {
 						const certificateYear = new Date(date).getFullYear();
 						return (
-							<div class="flex items-baseline gap-1">
+							<li class="flex items-baseline gap-1">
 								<Icon name={Icons["Certificate"]} size="18" />
 								<div class="relative w-full items-baseline justify-between gap-2">
 									<h3 class="mr-6 items-baseline gap-x-2 gap-y-0.5 font-medium">
@@ -60,7 +59,7 @@ import { certificates } from "@cv";
 									<div class="text-sm text-skin-muted">{issuer}</div>
 									<time class="right-0 top-0 text-xs text-skin-muted md:absolute md:block">{certificateYear}</time>
 								</div>
-							</div>
+							</li>
 						);
 					})}
 				</ul>

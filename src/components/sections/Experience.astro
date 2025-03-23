@@ -1,14 +1,26 @@
 ---
 import { work } from "@cv";
 import { Icon } from "astro-icon/components";
+import type { Work } from "../../cv";
 import Icons from "../../icons";
 import Section from "../Section.astro";
+
+type Experience = {
+	responsibilities: Array<string>;
+	summary: string | Array<string>;
+	achievements: Array<string>;
+	skills: Array<string>;
+	location: string;
+	location_type: string;
+} & Work;
+
+const experience = work as Array<Experience>;
 ---
 
 <Section className={Astro.props.className} title="Experience">
 	<ul class="flex flex-col">
 		{
-			work.map(
+			experience.map(
 				({
 					name,
 					startDate,
@@ -27,7 +39,7 @@ import Section from "../Section.astro";
 
 					return (
 						<li class="relative print:py-2">
-							<div class="group relative grid pb-1 transition-all sm:grid-cols-12 sm:gap-8 md:gap-6 lg:hover:!opacity-100 print:grid-cols-1 print:gap-1 print:pb-0">
+							<div class="lg:hover:opacity-100! group relative grid pb-1 transition-all sm:grid-cols-12 sm:gap-8 md:gap-6 print:grid-cols-1 print:gap-1 print:pb-0">
 								<header class="relative mt-1 text-xs font-semibold sm:col-span-2">
 									<time datetime={startDate} data-title={startDate}>
 										{startYear}
@@ -38,7 +50,7 @@ import Section from "../Section.astro";
 									</time>
 								</header>
 								<div class="relative flex flex-col pb-6 before:absolute before:-ml-6 before:mt-2 before:h-full before:w-px before:bg-skin-muted sm:col-span-10 print:pb-0 print:before:hidden">
-									<div class="absolute mt-2 h-2 w-2 -translate-x-[1.71rem] rounded-full bg-skin-muted ring ring-skin-fill print:hidden" />
+									<div class="ring-3 absolute mt-2 h-2 w-2 -translate-x-[1.71rem] rounded-full bg-skin-muted ring-skin-fill print:hidden" />
 									<h3>
 										<div
 											class="group/link inline-flex items-center text-lg leading-tight focus-visible:text-amber-500 print:text-base"
@@ -86,7 +98,7 @@ import Section from "../Section.astro";
 										{(responsibilities || achievements) && (
 											<>
 												<div
-													class="relative flex flex-col gap-4 max-sm:!h-auto md:after:absolute md:after:bottom-0 md:after:h-12 md:after:w-full md:after:bg-gradient-to-t md:after:from-white md:after:content-[''] dark:md:after:from-skin-hue dark:md:after:to-skin-hue/0 print:!h-auto print:gap-2 print:after:hidden"
+													class="max-sm:h-auto! md:after:bg-linear-to-t print:h-auto! relative flex flex-col gap-4 md:after:absolute md:after:bottom-0 md:after:h-12 md:after:w-full md:after:from-white md:after:content-[''] dark:md:after:from-skin-hue dark:md:after:to-skin-hue/0 print:gap-2 print:after:hidden"
 													x-bind:class="expanded ? 'after:hidden' : ''"
 													x-show="expanded"
 													x-collapse.min.90px
