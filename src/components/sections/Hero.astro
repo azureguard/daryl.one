@@ -45,8 +45,8 @@ const printInfo = [email, linkedUrl].filter(Boolean).join(" • ");
 								class="absolute left-0"
 								x-cloak
 							>
-								<div class="-mt-1.5 flex h-7 -translate-y-full items-center rounded border-r border-green-500 bg-green-500 px-3 text-xs text-white">
-									<span class="!text-white">Copied!</span>
+								<div class="-mt-1.5 flex h-7 -translate-y-full items-center rounded-sm border-r border-green-500 bg-green-500 px-3 text-xs text-white">
+									<span class="text-white!">Copied!</span>
 									<div class="absolute bottom-0 left-0 inline-block h-full translate-x-full translate-y-5 overflow-hidden">
 										<div class="h-3 w-3 origin-center rotate-45 transform border border-transparent bg-green-500" />
 									</div>
@@ -54,7 +54,7 @@ const printInfo = [email, linkedUrl].filter(Boolean).join(" • ");
 							</div>
 							<button
 								@click="copyToClipboard();"
-								class="group flex h-8 w-9 cursor-pointer items-center justify-center rounded-md text-skin-muted hover:bg-skin-button-accent hover:text-skin-inverted [&>span]:hover:text-skin-inverted"
+								class="group flex h-8 w-9 cursor-pointer items-center justify-center rounded-md text-skin-muted hover:bg-skin-button-accent hover:text-skin-inverted hover:[&>span]:text-skin-inverted"
 							>
 								<svg
 									x-show="copyNotification"

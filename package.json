@@ -12,8 +12,8 @@
 	"bugs": "https://github.com/azureguard/daryl.one/issues",
 	"homepage": "https://daryl.one",
 	"engines": {
-		"node": ">=20",
-		"pnpm": ">=9"
+		"node": ">=22",
+		"pnpm": ">=10"
 	},
 	"scripts": {
 		"dev": "astro dev",
@@ -32,33 +32,27 @@
 	},
 	"dependencies": {
 		"@astrojs/check": "^0.9.4",
-		"@astrojs/cloudflare": "^11.1.0",
-		"@astrojs/sitemap": "^3.2.1",
-		"@astrojs/tailwind": "^5.1.2",
-		"@iconify-json/charm": "^1.2.1",
-		"@iconify-json/codicon": "^1.2.3",
-		"@iconify-json/lucide": "^1.2.10",
-		"@iconify-json/simple-icons": "^1.2.9",
-		"@iconify/utils": "^2.1.33",
-		"astro": "^4.16.7",
-		"astro-font-picker": "^0.2.1",
-		"astro-icon": "^1.1.1",
+		"@astrojs/cloudflare": "^12.3.0",
+		"@astrojs/sitemap": "^3.3.0",
+		"@astrojs/tailwind": "^5.1.5",
+		"@iconify-json/charm": "^1.2.2",
+		"@iconify-json/codicon": "^1.2.13",
+		"@iconify-json/lucide": "^1.2.32",
+		"@iconify-json/simple-icons": "^1.2.29",
+		"@iconify/utils": "^2.3.0",
+		"astro": "^5.5.4",
+		"astro-font-picker": "^0.2.2",
+		"astro-icon": "^1.1.5",
 		"astro-robots-txt": "^1.0.0",
-		"tailwindcss": "^3.4.14",
-		"typescript": "^5.6.3"
+		"tailwindcss": "^3.4.17",
+		"typescript": "^5.8.2"
 	},
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
-		"lefthook": "^1.8.1",
-		"prettier": "^3.3.3",
+		"lefthook": "^1.11.3",
+		"prettier": "^3.5.3",
 		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-tailwindcss": "^0.6.8",
-		"wrangler": "^3.83.0"
-	},
-	"pnpm": {
-		"overrides": {
-			"braces@<3.0.3": ">=3.0.3",
-			"micromatch@<4.0.8": ">=4.0.8"
-		}
+		"prettier-plugin-tailwindcss": "^0.6.11",
+		"wrangler": "^3.114.2"
 	}
 }
