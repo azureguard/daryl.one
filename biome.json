@@ -1,7 +1,7 @@
 {
 	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
 	"files": {
-		"ignore": ["pnpm-lock.yaml"]
+		"includes": ["**/src", "!**/*.astro"]
 	},
 	"vcs": {
 		"enabled": true,
@@ -11,8 +11,7 @@
 	},
 	"formatter": {
 		"lineWidth": 120,
-		"useEditorconfig": true,
-		"ignore": ["*.astro"]
+		"useEditorconfig": true
 	},
 	"javascript": {
 		"formatter": {

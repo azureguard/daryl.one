@@ -1,0 +1,10 @@
+[env]
+_.path = ['{{config_root}}/node_modules/.bin']
+NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
+
+[tools]
+node = "lts"
+pnpm = "latest"
+
+[settings]
+experimental = true
