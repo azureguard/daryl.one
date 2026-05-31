@@ -27,7 +27,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"prepreview:cf": "astro build",
-		"preview:cf": "wrangler pages dev ./dist",
+		"preview:cf": "wrangler dev --config dist/server/wrangler.json",
 		"astro": "astro",
 		"format": "biome format & prettier --check .",
 		"format:fix": "biome format --write & prettier --write .",
