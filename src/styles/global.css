@@ -12,6 +12,7 @@
 @theme inline {
 	--color-skin-base: var(--color-text-base);
 	--color-skin-muted: var(--color-text-muted);
+	--color-skin-edge: var(--color-edge);
 	--color-skin-inverted: var(--color-text-inverted);
 	--color-skin-fill: var(--color-fill);
 	--color-skin-hue: var(--color-accent);
@@ -28,6 +29,7 @@
 	--color-text-muted: #646464;
 	--color-text-inverted: #e6e6e6;
 	--color-fill: #ecfccb;
+	--color-edge: #bddc93;
 	--color-accent: #507f0b;
 	--color-button-accent: #65a30d;
 	--color-button-accent-hover: #78dc78;
@@ -41,6 +43,7 @@
 	--color-text-muted: #81967c;
 	--color-text-inverted: #e6e6e6;
 	--color-fill: #0a140a;
+	--color-edge: #364036;
 	--color-accent: #84cc16;
 	--color-button-accent: #84cc16;
 	--color-button-accent-hover: #78dc78;
