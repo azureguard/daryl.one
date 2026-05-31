@@ -53,7 +53,12 @@ export default defineConfig({
 		robotsTxt(),
 	],
 	output: "server",
-	adapter: cloudflare(),
+	// `passthrough` image service avoids the Cloudflare Images (IMAGES) binding —
+	// the site uses plain <img>, not astro:assets.
+	adapter: cloudflare({ imageService: "passthrough" }),
+	// Setting any non-KV session driver stops the adapter from auto-provisioning
+	// the SESSION KV namespace. Sessions are unused, so an in-memory driver is fine.
+	session: { driver: { entrypoint: "unstorage/drivers/memory" } },
 	vite: {
 		plugins: [tailwindcss()],
 		// Pre-bundle astro-icon and the iconify helpers it pulls in. Without this,

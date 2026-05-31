@@ -49,10 +49,6 @@ jobs:
       # and expose its unique preview URL.
       - name: Upload preview version
         id: preview
-        # Best-effort: a preview upload can't fail the pipeline. It needs the
-        # worker to already exist (first `main` deploy) and a Workers-scoped
-        # token; until then it no-ops without blocking the build/PR check.
-        continue-on-error: true
         if: github.ref != 'refs/heads/main' && env.CF_CONFIGURED == 'true'
         uses: cloudflare/wrangler-action@v3
         with:
