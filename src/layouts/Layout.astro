@@ -1,5 +1,6 @@
 ---
 import { basics } from "@cv";
+import "../styles/global.css";
 
 interface Props {
 	title: string;
@@ -37,17 +38,18 @@ const { image, summary } = basics;
 
 		<link rel="canonical" href={url} />
 		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Itim" />
-		<link rel="stylesheet" href="/themes/themes.css" />
 	</head>
 	<body class="relative dark:bg-skin-fill">
 		<div class="absolute top-0 -z-10 h-full w-full print:hidden">
 			<div
-				class="absolute bottom-auto left-[20%] right-auto top-0 h-[200px] w-[200px] -translate-x-[30%] translate-y-[20%] rounded-full bg-skin-hue/10 blur-[80px] invert-0 dark:bg-white/5"
+				class="absolute top-0 right-auto bottom-auto left-[20%] h-[200px] w-[200px] -translate-x-[30%] translate-y-[20%] rounded-full bg-skin-hue/10 blur-[80px] invert-0 dark:bg-white/5"
 			>
 			</div>
 		</div>
 		<slot />
 		<style is:global>
+			@reference "../styles/global.css";
+
 			body,
 			figure {
 				margin: 0;

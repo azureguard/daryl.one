@@ -15,11 +15,10 @@
 
 ## 📜 Getting Started
 
-Get pnpm
+Setup environment
 
 ```bash
-corepack enable
-corepack prepare pnpm@^9 --activate
+mise install
 ```
 
 Start developing!

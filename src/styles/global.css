@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+/* Class-based dark mode (toggled via the `.dark` class on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/*
+ * Skin tokens — expose the semantic theme variables below as Tailwind color
+ * utilities (text-skin-*, bg-skin-*, ring-skin-*, …). `inline` keeps the
+ * `var()` reference in the generated CSS so switching the `.dark` class
+ * re-resolves the colors at runtime.
+ */
+@theme inline {
+	--color-skin-base: var(--color-text-base);
+	--color-skin-muted: var(--color-text-muted);
+	--color-skin-inverted: var(--color-text-inverted);
+	--color-skin-fill: var(--color-fill);
+	--color-skin-hue: var(--color-accent);
+	--color-skin-hues: var(--color-accent);
+	--color-skin-button-accent: var(--color-button-accent);
+	--color-skin-button-accent-hover: var(--color-button-accent-hover);
+	--color-skin-button-muted: var(--color-button-muted);
+}
+
+/* Light theme (default) */
+:root {
+	color-scheme: light;
+	--color-text-base: #282828;
+	--color-text-muted: #646464;
+	--color-text-inverted: #e6e6e6;
+	--color-fill: #ecfccb;
+	--color-accent: #507f0b;
+	--color-button-accent: #65a30d;
+	--color-button-accent-hover: #78dc78;
+	--color-button-muted: #d3ebad;
+}
+
+/* Dark theme */
+.dark {
+	color-scheme: dark;
+	--color-text-base: #e6e6e6;
+	--color-text-muted: #81967c;
+	--color-text-inverted: #e6e6e6;
+	--color-fill: #0a140a;
+	--color-accent: #84cc16;
+	--color-button-accent: #84cc16;
+	--color-button-accent-hover: #78dc78;
+	--color-button-muted: #222c22;
+}

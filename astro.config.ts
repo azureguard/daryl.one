@@ -1,9 +1,9 @@
 // @ts-check
-import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 
 import icon from "astro-icon";
 import robotsTxt from "astro-robots-txt";
@@ -12,7 +12,6 @@ import robotsTxt from "astro-robots-txt";
 export default defineConfig({
 	site: "https://daryl.one",
 	integrations: [
-		tailwind(),
 		icon({
 			include: {
 				charm: ["certificate", "mail", "globe", "graduate-cap", "link-external"],
@@ -55,4 +54,14 @@ export default defineConfig({
 	],
 	output: "server",
 	adapter: cloudflare(),
+	vite: {
+		plugins: [tailwindcss()],
+		// Pre-bundle astro-icon and the iconify helpers it pulls in. Without this,
+		// Vite discovers and re-optimizes them on the first request and triggers a
+		// reload, which desyncs the workerd dev module runner used by the
+		// Cloudflare adapter (Astro 6+) and throws "module is not defined".
+		optimizeDeps: {
+			include: ["astro-icon/components", "@iconify/utils"],
+		},
+	},
 });

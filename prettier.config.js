@@ -7,6 +7,7 @@ export default {
 	trailingComma: "all",
 	useTabs: true,
 	plugins: ["prettier-plugin-astro", "prettier-plugin-tailwindcss"],
+	tailwindStylesheet: "./src/styles/global.css",
 	overrides: [
 		{
 			files: [".*", "*.md", "*.toml", "*.yml"],
