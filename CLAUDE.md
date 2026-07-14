@@ -6,25 +6,25 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ### Core Development
 
-- `pnpm dev` - Start the dev server at localhost:4321. Note: with the Cloudflare
+- `aube dev` - Start the dev server at localhost:4321. Note: with the Cloudflare
   adapter (Astro 6+) the dev server runs in Cloudflare's **workerd** runtime via
   `@cloudflare/vite-plugin`, not Node.
-- `pnpm build` - Run `astro check` (type-check) then `astro build`. Output is a
+- `aube build` - Run `astro check` (type-check) then `astro build`. Output is a
   Cloudflare **Worker**: `dist/server/` (worker + generated `wrangler.json`) and
   `dist/client/` (static assets).
-- `pnpm preview` - Preview the built Worker locally in workerd (`astro preview`).
-- `pnpm preview:cf` - Run the built Worker under `wrangler dev` (builds first).
+- `aube preview` - Preview the built Worker locally in workerd (`astro preview`).
+- `aube preview:cf` - Run the built Worker under `wrangler dev` (builds first).
 
 ### Code Quality
 
-- `pnpm lint` / `pnpm lint:fix` - Biome linter
-- `pnpm format` / `pnpm format:fix` - Biome + Prettier
+- `aube lint` / `aube lint:fix` - Biome linter
+- `aube format` / `aube format:fix` - Biome + Prettier
 
 ### Prerequisites
 
-- **Node.js 24+** and **pnpm 11+**, both managed by **mise** (`mise.toml`:
-  `node = "lts"`, `pnpm = "latest"`). Run `mise install` to provision them.
-- `devEngines` in `package.json` pins `node ^24` / `pnpm ^11` to match.
+- **Node.js LTS+** and **aube+**, both managed by **mise** (`mise.toml`). Run
+  `mise install` to provision them.
+- `devEngines` in `package.json` pins `node` to match.
 
 ## Architecture
 
@@ -127,7 +127,7 @@ These are non-obvious and have bitten before:
 - **`@iconify/utils` is pinned to `^2`** because `astro-icon` requires v2; v3
   would be a dead duplicate.
 - **No dependency `overrides`.** Bump transitive deps with
-  `pnpm update <pkg> --depth Infinity` / `pnpm dedupe` instead.
+  `aube update <pkg> --depth Infinity` / `aube dedupe` instead.
 - **Sessions/Images bindings are intentionally off** (`session.driver` = an
   in-memory unstorage driver; `imageService: "passthrough"`) so the Worker only
   has the `ASSETS` binding.

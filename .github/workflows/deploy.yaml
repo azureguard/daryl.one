@@ -23,23 +23,13 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v6
 
-      - name: Install pnpm
-        uses: pnpm/action-setup@v6
+      - uses: endevco/aube-action@v1
         with:
-          version: 11
-          run_install: false
-
-      - name: Install Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 24
-          cache: "pnpm"
-
-      - name: Install dependencies
-        run: pnpm install
+          node-version: "auto"
+          run-install: true
 
       - name: Build
-        run: pnpm build
+        run: aube build
 
       # main -> production deployment. @astrojs/cloudflare emits the worker
       # config at dist/server/wrangler.json (main + ASSETS -> dist/client).
