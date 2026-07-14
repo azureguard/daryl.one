@@ -1,6 +1,13 @@
+"$schema" = "./node_modules/wrangler/config-schema.json"
 name = "cv"
-compatibility_date = "2026-05-31"
+compatibility_date = "2026-07-14"
 compatibility_flags = ["nodejs_compat"]
+workers_dev = false
+preview_urls = true
 
 [assets]
 directory = "./dist/client"
+
+[[routes]]
+pattern = "daryl.one"
+custom_domain = true
