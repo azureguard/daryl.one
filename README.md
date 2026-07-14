@@ -24,8 +24,8 @@ mise install
 Start developing!
 
 ```bash
-pnpm install
-pnpm dev
+aube install
+aube dev
 ```
 
 Open [**http://localhost:4321**](http://localhost:4321/) in your browser to view the result 🚀
@@ -42,10 +42,10 @@ This is driven by a [**GitHub Action**](.github/workflows/pages-deployment.yaml)
 
 | Command           | Action                                                         |
 | :---------------- | :------------------------------------------------------------- |
-| `pnpm dev`        | Launches a local development server at `localhost:4321`.       |
-| `pnpm build`      | Checks for errors and creates a production build in `./dist/`. |
-| `pnpm preview`    | Local preview at `localhost:4321`                              |
-| `pnpm preview:cf` | Cloudflare Pages local preview at `localhost:8788`             |
+| `aube dev`        | Launches a local development server at `localhost:4321`.       |
+| `aube build`      | Checks for errors and creates a production build in `./dist/`. |
+| `aube preview`    | Local preview at `localhost:4321`                              |
+| `aube preview:cf` | Cloudflare Pages local preview at `localhost:8788`             |
 
 ## 📣 Thanks
 
