@@ -1,9 +1,9 @@
 // @ts-check
-import tailwind from "@astrojs/tailwind";
 import { defineConfig } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
 import sitemap from "@astrojs/sitemap";
+import tailwindcss from "@tailwindcss/vite";
 
 import icon from "astro-icon";
 import robotsTxt from "astro-robots-txt";
@@ -12,7 +12,6 @@ import robotsTxt from "astro-robots-txt";
 export default defineConfig({
 	site: "https://daryl.one",
 	integrations: [
-		tailwind(),
 		icon({
 			include: {
 				charm: ["certificate", "mail", "globe", "graduate-cap", "link-external"],
@@ -54,5 +53,20 @@ export default defineConfig({
 		robotsTxt(),
 	],
 	output: "server",
-	adapter: cloudflare(),
+	// `passthrough` image service avoids the Cloudflare Images (IMAGES) binding —
+	// the site uses plain <img>, not astro:assets.
+	adapter: cloudflare({ imageService: "passthrough" }),
+	// Setting any non-KV session driver stops the adapter from auto-provisioning
+	// the SESSION KV namespace. Sessions are unused, so an in-memory driver is fine.
+	session: { driver: { entrypoint: "unstorage/drivers/memory" } },
+	vite: {
+		plugins: [tailwindcss()],
+		// Pre-bundle astro-icon and the iconify helpers it pulls in. Without this,
+		// Vite discovers and re-optimizes them on the first request and triggers a
+		// reload, which desyncs the workerd dev module runner used by the
+		// Cloudflare adapter (Astro 6+) and throws "module is not defined".
+		optimizeDeps: {
+			include: ["astro-icon/components", "@iconify/utils"],
+		},
+	},
 });

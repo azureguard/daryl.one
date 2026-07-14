@@ -1,6 +1,5 @@
-onlyBuiltDependencies:
-  - "@biomejs/biome"
-  - esbuild
-  - lefthook
-  - sharp
-  - workerd
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  sharp: true
+  workerd: true

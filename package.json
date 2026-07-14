@@ -17,7 +17,7 @@
 		},
 		"packageManager": {
 			"name": "pnpm",
-			"version": "^10"
+			"version": "^11"
 		}
 	},
 	"scripts": {
@@ -27,7 +27,7 @@
 		"build": "astro build",
 		"preview": "astro preview",
 		"prepreview:cf": "astro build",
-		"preview:cf": "wrangler pages dev ./dist",
+		"preview:cf": "wrangler dev --config dist/server/wrangler.json",
 		"astro": "astro",
 		"format": "biome format & prettier --check .",
 		"format:fix": "biome format --write & prettier --write .",
@@ -36,28 +36,27 @@
 		"postinstall": "lefthook install"
 	},
 	"dependencies": {
-		"@astrojs/check": "^0.9.6",
-		"@astrojs/cloudflare": "^12.6.12",
-		"@astrojs/sitemap": "^3.6.0",
-		"@astrojs/tailwind": "^6.0.2",
+		"@astrojs/check": "^0.9.9",
+		"@astrojs/cloudflare": "^13.6.0",
+		"@astrojs/sitemap": "^3.7.3",
 		"@iconify-json/charm": "^1.2.3",
-		"@iconify-json/codicon": "^1.2.39",
-		"@iconify-json/lucide": "^1.2.82",
-		"@iconify-json/simple-icons": "^1.2.63",
+		"@iconify-json/codicon": "^1.2.58",
+		"@iconify-json/lucide": "^1.2.111",
+		"@iconify-json/simple-icons": "^1.2.84",
 		"@iconify/utils": "^2.3.0",
-		"astro": "^5.16.6",
-		"astro-font-picker": "^0.2.2",
+		"@tailwindcss/vite": "^4.3.0",
+		"astro": "^6.4.2",
 		"astro-icon": "^1.1.5",
 		"astro-robots-txt": "^1.0.0",
-		"tailwindcss": "^3.4.19",
-		"typescript": "^5.9.3"
+		"tailwindcss": "^4.3.0",
+		"typescript": "^6.0.3"
 	},
 	"devDependencies": {
-		"@biomejs/biome": "^2.3.10",
-		"lefthook": "^2.0.13",
-		"prettier": "^3.7.4",
+		"@biomejs/biome": "^2.4.16",
+		"lefthook": "^2.1.9",
+		"prettier": "^3.8.3",
 		"prettier-plugin-astro": "^0.14.1",
-		"prettier-plugin-tailwindcss": "^0.6.14",
-		"wrangler": "^4.54.0"
+		"prettier-plugin-tailwindcss": "^0.8.0",
+		"wrangler": "^4.95.0"
 	}
 }

@@ -87,7 +87,7 @@ const printInfo = [email, linkedUrl].filter(Boolean).join(" • ");
 			</footer>
 		</div>
 		<figure class="relative w-fit print:hidden">
-			<img class="shadow-skin-hues shadow-lg" src={image} alt={name} />
+			<img class="shadow-lg shadow-skin-hues" src={image} alt={name} />
 			<div class="pointer-events-none absolute -inset-2">
 				<div
 					class="absolute -inset-y-8 right-0 w-px bg-skin-hue/50 [mask-image:linear-gradient(to_top,transparent,white_4rem,white_calc(100%-4rem),transparent)]"
@@ -111,6 +111,8 @@ const printInfo = [email, linkedUrl].filter(Boolean).join(" • ");
 </Section>
 
 <style>
+	@reference "../../styles/global.css";
+
 	.info {
 		@apply flex flex-col gap-1 pr-8 print:gap-0 print:pr-0;
 	}
@@ -120,7 +122,7 @@ const printInfo = [email, linkedUrl].filter(Boolean).join(" • ");
 	}
 
 	h2 {
-		@apply text-balance text-base text-skin-muted print:text-lg;
+		@apply text-base text-balance text-skin-muted print:text-lg;
 	}
 
 	img {
