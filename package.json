@@ -25,10 +25,8 @@
 		"prepreview": "astro build",
 		"preview:cf": "wrangler dev --config dist/server/wrangler.json",
 		"astro": "astro",
-		"format": "biome format & prettier --check .",
-		"format:fix": "biome format --write & prettier --write .",
-		"lint": "biome lint",
-		"lint:fix": "biome lint --write",
+		"format": "biome check --staged",
+		"format:fix": "biome check --staged --write",
 		"postinstall": "lefthook install"
 	},
 	"dependencies": {
