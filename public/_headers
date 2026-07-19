@@ -1,5 +1,5 @@
 /*
-	Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; script-src 'self' cdn.jsdelivr.net; style-src 'self' fonts.googleapis.com;
+	Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; script-src 'self'; style-src 'self';
 	Cross-Origin-Embedder-Policy: credentialless
 	Cross-Origin-Opener-Policy: same-origin
 	Permissions-Policy: bluetooth=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()

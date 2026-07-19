@@ -3,19 +3,41 @@ import { skills } from "@cv";
 import { Icon } from "astro-icon/components";
 import Icons from "../../icons";
 import Section from "../Section.astro";
+
+const { className, variant } = Astro.props;
+
+const meta = `${skills.length} record${skills.length === 1 ? "" : "s"}`;
+
+// Compact machine-readable run for the print résumé — the artifact an ATS
+// actually parses. Visible plain text, deliberately not hidden keyword-stuffing.
+const printSkills = skills
+	.map(({ name, keywords = [] }) => (keywords.length > 0 ? `${name} (${keywords.join(", ")})` : name))
+	.join(" · ");
 ---
 
-<Section className={Astro.props.className} title="Skills">
-	<ul class="inline-flex flex-wrap gap-6 [&>li]:text-sm [&>li>svg]:size-5 [&>li>svg]:text-skin-hue">
-		{
-			skills.map(({ name }) => {
-				const iconName = name === "Next.js" ? "Next" : name;
-				return (
-					<li class="flex items-center gap-1 rounded-md border border-solid border-skin-hue/20 bg-skin-button-accent/20 px-2 py-0.5 text-xs text-skin-muted print:border-none print:bg-transparent print:p-0 print:text-zinc-800">
-						{Icons[iconName] && <Icon name={Icons[iconName]} />} <span>{name}</span>
-					</li>
-				);
-			})
-		}
-	</ul>
-</Section>
+{
+	variant === "print" ? (
+		<div class:list={["hidden print:block", className]}>
+			<Section title="Skills" meta={meta}>
+				<p class="font-mono text-[10px] leading-relaxed">{printSkills}</p>
+			</Section>
+		</div>
+	) : (
+		<Section className={className} title="Skills" meta={meta}>
+			<ul class="flex flex-col gap-2.5 font-mono text-xs">
+				{
+					skills.map(({ name, keywords = [] }) => {
+						return (
+							<li class="flex flex-wrap items-center gap-x-2 gap-y-1">
+								<span class="flex items-center gap-1.5 rounded-sm border border-skin-edge px-2 py-1 text-skin-base [&>svg]:size-3.5 [&>svg]:text-skin-hue">
+									{name && Icons[name] && <Icon aria-hidden="true" name={Icons[name]} />} <span>{name}</span>
+								</span>
+								{keywords.length > 0 && <span class="leading-relaxed text-skin-muted">{keywords.join(" · ")}</span>}
+							</li>
+						);
+					})
+				}
+			</ul>
+		</Section>
+	)
+}
