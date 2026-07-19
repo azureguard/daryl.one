@@ -29,22 +29,24 @@ aube dev
 
 Open [**http://localhost:4321**](http://localhost:4321/) in your browser to view the result 🚀
 
+`aube dev` also serves on your local network (Astro's `--host` flag), so you can preview from a phone or tablet using the network URL it prints. Prefer `aube start` to stay localhost-only.
+
 ## 🚀 Deployment
 
 Commits to the main branch updates the **_production_** deployment.
 
 Commits on development branches creates a **_preview_** deployment.
 
-This is driven by a [**GitHub Action**](.github/workflows/pages-deployment.yaml) to invoke [**Cloudflare Wrangler**](https://github.com/cloudflare/wrangler-action)
+This is driven by a [**GitHub Action**](.github/workflows/deploy.yaml) to invoke [**Cloudflare Wrangler**](https://github.com/cloudflare/wrangler-action)
 
 ## 🧞 Commands
 
-| Command           | Action                                                         |
-| :---------------- | :------------------------------------------------------------- |
-| `aube dev`        | Launches a local development server at `localhost:4321`.       |
-| `aube build`      | Checks for errors and creates a production build in `./dist/`. |
-| `aube preview`    | Local preview at `localhost:4321`                              |
-| `aube preview:cf` | Cloudflare Pages local preview at `localhost:8788`             |
+| Command        | Action                                                                                                           |
+| :------------- | :--------------------------------------------------------------------------------------------------------------- |
+| `aube dev`     | Launches the dev server at `localhost:4321` and on the local network (`--host`), for testing from other devices. |
+| `aube start`   | Launches the dev server at `localhost:4321` only.                                                                |
+| `aube build`   | Checks for errors and creates a production build in `./dist/`.                                                   |
+| `aube preview` | Local preview at `localhost:4321`                                                                                |
 
 ## 📣 Thanks
 
