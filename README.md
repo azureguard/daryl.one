@@ -1,6 +1,6 @@
 # [daryl.one](https://daryl.one)
 
-![Cloudflare Pages Deployment](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/deploy.yaml?branch=main&logo=githubactions)
+![Cloudflare Workers Deployment](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/deploy.yaml?branch=main&logo=githubactions)
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)
 ![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-FF4A03?logo=Cloudflare-Workers&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-0F172A?&logo=tailwindcss)
