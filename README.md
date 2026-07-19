@@ -1,15 +1,14 @@
 # [daryl.one](https://daryl.one)
 
-![Cloudflare Pages Deployment](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/pages-deployment.yaml?branch=main&logo=githubactions)
-
+![Cloudflare Pages Deployment](https://img.shields.io/github/actions/workflow/status/azureguard/daryl.one/deploy.yaml?branch=main&logo=githubactions)
 ![Astro](https://img.shields.io/badge/Astro-BC52EE?logo=astro&logoColor=fff&style=flat)
-![Cloudflare Pages](https://img.shields.io/badge/Cloudflare%20Pages-000000?logo=cloudflarepages)
+![Cloudflare Workers](https://img.shields.io/badge/Cloudflare%20Workers-FF4A03?logo=Cloudflare-Workers&logoColor=white)
 ![TailwindCSS](https://img.shields.io/badge/tailwindcss-0F172A?&logo=tailwindcss)
 
 ## 🛠️ Stack
 
 - [**Astro**](https://astro.build/)
-- [**Cloudflare Pages**](https://pages.cloudflare.com/)
+- [**Cloudflare Workers**](https://www.cloudflare.com/products/workers/)
 - [**JSON Resume Schema**](https://jsonresume.org/schema/)
   - Edit `cv.json` to update content
 
