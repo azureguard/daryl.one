@@ -1,40 +1,50 @@
 ---
-import Layout from "@/layouts/Layout.astro";
-
-import ThemeSwitch from "@/components/ThemeSwitch.astro";
+import { basics } from "@cv";
 import About from "@/components/sections/About.astro";
 import Education from "@/components/sections/Education.astro";
 import Experience from "@/components/sections/Experience.astro";
 import Hero from "@/components/sections/Hero.astro";
+import Interests from "@/components/sections/Interests.astro";
+import Languages from "@/components/sections/Languages.astro";
 import Projects from "@/components/sections/Projects.astro";
+import References from "@/components/sections/References.astro";
 import Skills from "@/components/sections/Skills.astro";
+import Volunteer from "@/components/sections/Volunteer.astro";
+import ThemeSwitch from "@/components/ThemeSwitch.astro";
+import Layout from "@/layouts/Layout.astro";
 
-import { basics } from "@cv";
 const { name, label } = basics;
 ---
 
 <Layout title={`${name} - ${label}`}>
 	<main
-		class="relative grid max-w-7xl gap-12 p-8 max-sm:py-16 md:grid-cols-6 md:p-16 xl:gap-24 print:max-w-none print:grid-cols-1 print:gap-6"
+		class="relative grid max-w-7xl gap-12 p-8 max-sm:py-16 md:grid-cols-6 md:p-16 md:max-xl:pt-28 xl:gap-24 print:block print:max-w-none print:p-0"
 	>
-		<div class="space-y-6 md:col-span-2 print:col-span-1 print:grid print:grid-cols-2 print:gap-5 print:space-y-0">
-			<Hero />
-			<About />
+		<div class="absolute top-8 right-8 max-sm:top-16 md:top-16 md:right-16 print:hidden">
 			<ThemeSwitch />
 		</div>
-		<div class="space-y-12 md:col-span-4 print:col-span-1 print:grid print:grid-cols-4 print:gap-2 print:space-y-0">
-			<Experience className="print:col-span-3" />
-			<Projects className="print:hidden" />
+		<div class="space-y-6 md:col-span-2 print:space-y-3">
+			<Hero />
+			<About />
 			<Skills className="print:hidden" />
-			<Education className="order-first" />
+			<Languages />
+			<Interests className="print:hidden" />
+		</div>
+		<div class="space-y-12 md:col-span-4 print:mt-3 print:flex print:flex-col print:gap-3 print:space-y-0">
+			<Experience className="print:order-1" />
+			<Volunteer className="print:order-2" />
+			<Projects className="print:hidden" />
+			<Education className="print:order-3" />
+			<Skills variant="print" className="print:order-4" />
+			<References className="print:order-5" />
 		</div>
 	</main>
 </Layout>
 
 <style>
 	@page {
-		size: auto;
-		margin: 0mm;
+		size: A4;
+		margin: 12mm;
 	}
 	main {
 		margin: auto;

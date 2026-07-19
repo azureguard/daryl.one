@@ -1,0 +1,18 @@
+---
+import { volunteer } from "@cv";
+import type { Volunteer } from "../../cv";
+import { rangeMeta } from "../../meta";
+import Section from "../Section.astro";
+import Timeline from "../Timeline.astro";
+
+// The volunteer schema mirrors work with `organization` in place of `name`.
+const entries = (volunteer as Array<Volunteer>).map(({ organization, ...rest }) => ({ ...rest, name: organization }));
+---
+
+{
+	entries.length > 0 && (
+		<Section className={Astro.props.className} title="Volunteer" meta={rangeMeta(entries)}>
+			<Timeline entries={entries} />
+		</Section>
+	)
+}

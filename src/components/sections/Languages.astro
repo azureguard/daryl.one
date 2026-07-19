@@ -1,0 +1,23 @@
+---
+import { languages } from "@cv";
+import type { Language } from "../../cv";
+import Section from "../Section.astro";
+
+const items: Array<Language> = languages;
+const meta = `${items.length} record${items.length === 1 ? "" : "s"}`;
+---
+
+{
+	items.length > 0 && (
+		<Section className={Astro.props.className} title="Languages" meta={meta}>
+			<ul class="flex flex-col gap-1.5 font-mono text-xs print:flex-row print:flex-wrap print:gap-x-4 print:text-[10px]">
+				{items.map(({ language, fluency }) => (
+					<li class="flex items-baseline gap-x-3">
+						<span class="text-skin-base">{language}</span>
+						<span class="text-skin-muted">{fluency}</span>
+					</li>
+				))}
+			</ul>
+		</Section>
+	)
+}

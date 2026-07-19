@@ -1,0 +1,191 @@
+---
+import { Icon } from "astro-icon/components";
+import type { ISODate } from "../cv";
+import Icons from "../icons";
+
+// `| undefined` alongside `?` keeps these assignable under exactOptionalPropertyTypes
+// when callers build entries by spreading schema objects.
+export interface TimelineEntry {
+	name?: string | undefined;
+	position?: string | undefined;
+	url?: string | undefined;
+	startDate?: ISODate | undefined;
+	endDate?: ISODate | undefined;
+	summary?: string | undefined;
+	highlights?: Array<string> | undefined;
+	location?: string | undefined;
+}
+
+interface Props {
+	entries: Array<TimelineEntry>;
+}
+
+const { entries } = Astro.props;
+---
+
+<ul class="@container flex flex-col">
+	{
+		entries.map(
+			(
+				{
+					name,
+					startDate,
+					endDate,
+					position,
+					summary,
+					highlights,
+					url,
+					location,
+				},
+				index,
+			) => {
+				const isCurrent = !endDate;
+				const isLast = index === entries.length - 1;
+
+				return (
+					<li class="relative print:py-0.5">
+						<div class="relative grid pb-1 @lg:grid-cols-12 @lg:gap-6 print:grid-cols-1 print:gap-1 print:pb-0">
+							<header class="relative mt-1 mb-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 font-mono text-xs text-skin-muted @lg:col-span-2 @lg:mt-1.5 @lg:mb-0 @lg:flex-col @lg:items-start print:hidden">
+								<time datetime={startDate}>{startDate}</time>
+								{isCurrent ? (
+									<span class="inline-flex w-fit items-center gap-1.5 rounded-sm border border-skin-hue/40 px-1.5 py-px text-[10px] font-medium tracking-widest text-skin-hue">
+										<span
+											class="size-1 rounded-full bg-skin-hue"
+											aria-hidden="true"
+										/>
+										ACTIVE
+									</span>
+								) : (
+									<time datetime={endDate}>&ndash;&nbsp;{endDate}</time>
+								)}
+							</header>
+							<div
+								class:list={[
+									"relative flex flex-col @lg:col-span-10 print:pb-0 print:before:hidden",
+									isLast ? "pb-2" : "pb-10",
+									"before:absolute before:mt-2 before:-ml-6 before:h-full before:w-px before:bg-skin-edge @max-lg:before:hidden",
+								]}
+							>
+								<div
+									class:list={[
+										"absolute mt-2 size-1.5 -translate-x-[26.5px] rounded-full ring-3 ring-skin-fill @max-lg:hidden print:hidden",
+										isCurrent ? "bg-skin-hue" : "bg-skin-edge",
+									]}
+									aria-hidden="true"
+								/>
+								{/*
+								 * Print keeps the date in the same block as the title: Firefox does not
+								 * implement `break-after: avoid`, so a separate date row can be orphaned
+								 * at a page break. `break-inside: avoid` on this group is what both
+								 * engines honour.
+								 */}
+								<div class="print:break-inside-avoid">
+									<p class="hidden items-baseline gap-x-2 font-mono text-xs text-skin-muted print:flex">
+										<time datetime={startDate}>{startDate}</time>
+										{isCurrent ? (
+											<span class="tracking-widest">· ACTIVE</span>
+										) : (
+											<time datetime={endDate}>&ndash;&nbsp;{endDate}</time>
+										)}
+									</p>
+									<h3 class="text-lg leading-tight print:text-base">
+										<span class="font-normal">{position}</span>
+										<span class="mx-1 text-skin-muted" aria-hidden="true">
+											@
+										</span>
+										{url ? (
+											<a
+												class="group/link font-semibold text-skin-hue underline decoration-dotted decoration-skin-hue/60 underline-offset-4 print:no-underline"
+												href={url}
+												title={`View ${name}`}
+												target="_blank"
+												rel="noopener noreferrer"
+											>
+												{name}
+												<Icon
+													aria-hidden="true"
+													name={Icons.Link}
+													class="ml-0.5 inline-block h-3.5 w-3.5 shrink-0 -translate-y-px transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-focus-visible/link:translate-x-0.5 group-focus-visible/link:-translate-y-0.5 motion-reduce:transition-none print:hidden"
+												/>
+											</a>
+										) : (
+											<span class="font-semibold">{name}</span>
+										)}
+									</h3>
+									{location && (
+										<div class="mt-1 font-mono text-xs text-skin-muted">
+											{location}
+										</div>
+									)}
+									{summary && (
+										<p class="mt-3 text-sm text-skin-muted print:mt-1 print:text-xs">
+											{summary}
+										</p>
+									)}
+								</div>
+								{highlights && highlights.length > 0 && (
+									<div class="mt-3 text-sm print:mt-1 print:text-xs">
+										<details class="group/hl" open={isCurrent}>
+											<summary class="flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-xs font-mono text-xs text-skin-muted transition-colors hover:text-skin-base motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
+												<span class="group-open/hl:hidden">show more</span>
+												<span class="hidden group-open/hl:inline">
+													show less
+												</span>
+												<svg
+													class="h-3.5 w-3.5 transition-transform group-open/hl:rotate-180 motion-reduce:transition-none"
+													viewBox="0 0 24 24"
+													stroke="currentColor"
+													stroke-width="2"
+													fill="none"
+													aria-hidden="true"
+												>
+													<polyline points="6 9 12 15 18 9" />
+												</svg>
+											</summary>
+											<ul class="mt-3 flex list-disc flex-col gap-2 text-skin-muted print:mt-0 print:gap-1">
+												{highlights.map((highlight) => (
+													<li class="ml-4">{highlight}</li>
+												))}
+											</ul>
+										</details>
+									</div>
+								)}
+							</div>
+						</div>
+					</li>
+				);
+			},
+		)
+	}
+</ul>
+
+<style>
+	@reference "../styles/global.css";
+
+	li::marker {
+		@apply text-skin-hue;
+	}
+</style>
+
+<script>
+	// Print fallback for the ::details-content rule in Layout.astro: browsers
+	// without that pseudo-element still get highlights expanded when printing.
+	// Astro dedupes this script even when multiple timelines render.
+	const collapsed = new Set<HTMLDetailsElement>();
+
+	window.addEventListener("beforeprint", () => {
+		for (const details of document.querySelectorAll<HTMLDetailsElement>(
+			"details:not([open])",
+		)) {
+			collapsed.add(details);
+			details.open = true;
+		}
+	});
+
+	window.addEventListener("afterprint", () => {
+		for (const details of collapsed) {
+			details.open = false;
+		}
+		collapsed.clear();
+	});
+</script>

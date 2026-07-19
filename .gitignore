@@ -3,6 +3,7 @@ dist/
 
 # generated types
 .astro/
+src/cv.d.ts
 
 # wrangler / cloudflare local state
 .wrangler/
