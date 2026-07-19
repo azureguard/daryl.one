@@ -27,7 +27,7 @@ const { name, label } = basics;
 			<Hero />
 			<About />
 			<Skills className="print:hidden" />
-			<Languages />
+			<Languages className="print:hidden" />
 			<Interests className="print:hidden" />
 		</div>
 		<div class="space-y-12 md:col-span-4 print:mt-3 print:flex print:flex-col print:gap-3 print:space-y-0">
@@ -35,8 +35,9 @@ const { name, label } = basics;
 			<Volunteer className="print:order-2" />
 			<Projects className="print:hidden" />
 			<Education className="print:order-3" />
-			<Skills variant="print" className="print:order-4" />
-			<References className="print:order-5" />
+			<Languages className="hidden print:flex print:order-4" />
+			<Skills variant="print" className="print:order-5" />
+			<References className="print:order-6" />
 		</div>
 	</main>
 </Layout>
