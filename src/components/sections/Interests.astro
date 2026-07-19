@@ -1,0 +1,25 @@
+---
+import { interests } from "@cv";
+import type { Interest } from "../../cv";
+import Section from "../Section.astro";
+
+const items: Array<Interest> = interests;
+const meta = `${items.length} record${items.length === 1 ? "" : "s"}`;
+---
+
+{
+	items.length > 0 && (
+		<Section className={Astro.props.className} title="Interests" meta={meta}>
+			<ul class="flex flex-col gap-2.5 font-mono text-xs">
+				{items.map(({ name, keywords }) => (
+					<li class="flex flex-wrap items-center gap-x-2 gap-y-1">
+						<span class="rounded-sm border border-skin-edge px-2 py-1 text-skin-base">{name}</span>
+						{keywords && keywords.length > 0 && (
+							<span class="leading-relaxed text-skin-muted">{keywords.join(" · ")}</span>
+						)}
+					</li>
+				))}
+			</ul>
+		</Section>
+	)
+}

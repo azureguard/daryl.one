@@ -1,0 +1,25 @@
+---
+import { references } from "@cv";
+import type { Reference } from "../../cv";
+import Section from "../Section.astro";
+
+const items: Array<Reference> = references;
+const meta = `${items.length} record${items.length === 1 ? "" : "s"}`;
+---
+
+{
+	items.length > 0 && (
+		<Section className={Astro.props.className} title="References" meta={meta}>
+			<ul class="flex flex-col gap-6 print:gap-2">
+				{items.map(({ name, reference }) => (
+					<li class="print:break-inside-avoid">
+						<figure>
+							<blockquote class="border-l-2 border-skin-edge pl-4 text-sm text-skin-muted">{reference}</blockquote>
+							<figcaption class="mt-2 pl-4 font-mono text-xs text-skin-muted">&mdash; {name}</figcaption>
+						</figure>
+					</li>
+				))}
+			</ul>
+		</Section>
+	)
+}

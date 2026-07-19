@@ -13,12 +13,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
   Cloudflare **Worker**: `dist/server/` (worker + generated `wrangler.json`) and
   `dist/client/` (static assets).
 - `aube preview` - Preview the built Worker locally in workerd (`astro preview`).
-- `aube preview:cf` - Run the built Worker under `wrangler dev` (builds first).
 
 ### Code Quality
 
-- `aube lint` / `aube lint:fix` - Biome linter
-- `aube format` / `aube format:fix` - Biome + Prettier
+- `aube format` / `aube format:fix` - Biome lint and format
 
 ### Prerequisites
 
@@ -34,9 +32,9 @@ static content, but uses the SSR adapter rather than a static export.
 
 ### Key Technologies
 
-- **Astro 6** - SSR via the `@astrojs/cloudflare` adapter (Cloudflare Workers
+- **Astro** - SSR via the `@astrojs/cloudflare` adapter (Cloudflare Workers
   target; the adapter dropped Pages support in v13).
-- **Tailwind CSS v4** - Utility-first CSS via the `@tailwindcss/vite` plugin.
+- **Tailwind CSS** - Utility-first CSS via the `@tailwindcss/vite` plugin.
   CSS-first config — there is **no `tailwind.config`**; theme tokens live in
   `src/styles/global.css`.
 - **TypeScript 6** - `tsconfig.json` extends `astro/tsconfigs/strictest`. It uses
@@ -62,7 +60,7 @@ src/
 ├── icons.ts               # Name → Iconify icon id map
 ├── cv.d.ts / types.d.ts   # CV + global type definitions
 astro.config.ts            # Integrations, adapter, vite/optimizeDeps
-wrangler.toml              # Worker config (adapter reads it to emit dist/server/wrangler.json)
+wrangler.jsonc             # Worker config (adapter reads it to emit dist/server/wrangler.json)
 public/_headers            # Security/cache headers applied at the edge
 .github/workflows/deploy.yaml  # CI/CD (build + deploy/preview)
 ```
@@ -99,11 +97,9 @@ CI/CD lives in `.github/workflows/deploy.yaml` (runs on every push):
 
 ## Code Style
 
-- **Biome**: primary linter/formatter (120-char line width).
-- **Prettier**: Astro files + YAML/Markdown overrides; sorts Tailwind classes
-  (configured via `tailwindStylesheet` → `src/styles/global.css`).
+- **Biome**: linter/formatter (120-char line width).
 - **Tabs** for indentation (spaces for YAML/TOML/Markdown).
-- **lefthook** runs Biome + Prettier on staged files pre-commit.
+- **lefthook** runs Biome on staged files pre-commit.
 
 ## Important notes / gotchas
 

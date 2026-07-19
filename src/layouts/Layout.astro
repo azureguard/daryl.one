@@ -10,7 +10,12 @@ const { title } = Astro.props;
 const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
 const url = canonicalUrl.href;
 
-const { image, summary } = basics;
+const { summary = "" } = basics;
+
+// Search engines truncate descriptions around 155-160 characters, so use the
+// summary's first sentence, clamped at a word boundary as a safety net.
+const firstSentence = summary.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? summary;
+const description = firstSentence.length <= 160 ? firstSentence : `${firstSentence.slice(0, 157).replace(/\s+\S*$/, "")}…`;
 ---
 
 <!doctype html>
@@ -18,34 +23,26 @@ const { image, summary } = basics;
 	<head>
 		<meta charset="UTF-8" />
 		<title>{title}</title>
-		<meta name="description" content={summary} />
+		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="preload" as="image" href={image} />
 
 		<meta property="og:url" content={url} />
 		<meta property="og:type" content="website" />
 		<meta property="og:title" content={title} />
-		<meta property="og:description" content={summary} />
+		<meta property="og:description" content={description} />
 		<meta property="og:image" content="" />
 
 		<meta name="twitter:card" content="summary_large_image" />
 		<meta property="twitter:domain" content={url.split("//")[1] ?? ""} />
 		<meta property="twitter:url" content={url} />
 		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={summary} />
+		<meta name="twitter:description" content={description} />
 		<meta name="twitter:image" content="" />
 
 		<link rel="canonical" href={url} />
-		<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Itim" />
 	</head>
-	<body class="relative dark:bg-skin-fill">
-		<div class="absolute top-0 -z-10 h-full w-full print:hidden">
-			<div
-				class="absolute top-0 right-auto bottom-auto left-[20%] h-[200px] w-[200px] -translate-x-[30%] translate-y-[20%] rounded-full bg-skin-hue/10 blur-[80px] invert-0 dark:bg-white/5"
-			>
-			</div>
-		</div>
+	<body class="relative bg-skin-fill text-skin-base antialiased">
 		<slot />
 		<style is:global>
 			@reference "../styles/global.css";
@@ -62,6 +59,10 @@ const { image, summary } = basics;
 				figure {
 					margin: 0;
 					padding: 0;
+				}
+
+				body {
+					font-family: var(--font-sans);
 				}
 
 				a {
@@ -84,20 +85,8 @@ const { image, summary } = basics;
 				h2,
 				h3,
 				h4 {
-					@apply text-skin-base;
+					@apply font-semibold tracking-tight text-skin-base;
 					margin: 0;
-					font-family:
-						system-ui,
-						-apple-system,
-						BlinkMacSystemFont,
-						"Segoe UI",
-						Roboto,
-						Oxygen,
-						Ubuntu,
-						Cantarell,
-						"Open Sans",
-						"Helvetica Neue",
-						sans-serif;
 				}
 
 				p {
@@ -106,30 +95,84 @@ const { image, summary } = basics;
 					text-wrap: pretty;
 				}
 
-				.print {
-					display: none !important;
+			}
+
+			/*
+			 * Print overrides. These live OUTSIDE `@layer base` on purpose:
+			 * unlayered CSS beats every layer, and these rules must win over
+			 * both the unlayered theme tokens in global.css and Tailwind's
+			 * utilities (e.g. `display: flex` on a <summary>). They are scoped
+			 * to `@media print`, so screen rendering is untouched.
+			 */
+			@media print {
+				/*
+				 * Black-on-white: collapse the light AND dark palettes to plain
+				 * ink. `html:root` / `:root.dark` out-specifies the `:root` /
+				 * `.dark` token blocks in global.css.
+				 */
+				html:root,
+				:root.dark {
+					color-scheme: light;
+					--color-fill: #fff;
+					--color-text-base: #000;
+					--color-text-muted: #3f463f;
+					--color-text-inverted: #fff;
+					--color-edge: #d0d0d0;
+					--color-accent: #000;
+					--color-button-accent: #000;
+					--color-button-accent-hover: #000;
+					--color-button-muted: #fff;
 				}
 
-				.dev * {
-					@apply border border-red-500/50 bg-red-500/5;
+				/*
+				 * <details> must print expanded: closed ones hide their content
+				 * via `content-visibility: hidden` on ::details-content, so
+				 * force it visible and hide the show-more/show-less toggle.
+				 * (A beforeprint fallback in Experience.astro covers browsers
+				 * without ::details-content support.)
+				 */
+				details > summary {
+					display: none;
 				}
 
-				@media print {
-					.no-print {
-						display: none !important;
-					}
+				details::details-content {
+					content-visibility: visible;
+					display: block;
+				}
 
-					.print {
-						display: block !important;
-					}
+				/* Compact body copy on paper (the base `p` rule sets text-sm). */
+				p {
+					font-size: 0.75rem;
+					line-height: 1.45;
+				}
 
-					astro-dev-toolbar {
-						display: none !important;
-					}
+				/*
+				 * Pagination: keep entries (bullets, education/skill items,
+				 * cards) intact across page breaks. Long Experience roles
+				 * (the <li>s containing a <details>) may flow across pages —
+				 * gluing a 400px role block would leave big gaps — but
+				 * headings never separate from their content.
+				 */
+				article,
+				li {
+					break-inside: avoid;
+				}
 
-					article {
-						break-inside: avoid;
-					}
+				li:has(details) {
+					break-inside: auto;
+				}
+
+				h1,
+				h2,
+				h3,
+				h4,
+				header {
+					break-inside: avoid;
+					break-after: avoid;
+				}
+
+				astro-dev-toolbar {
+					display: none;
 				}
 			}
 		</style>

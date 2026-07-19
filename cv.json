@@ -1,11 +1,12 @@
 {
+	"$schema": "./node_modules/@jsonresume/schema/schema.json",
 	"basics": {
 		"name": "Daryl Wong",
-		"label": "Full-stack Engineer",
+		"label": "Security Architecture | GRC | DevSecOps | AppSec | AWS",
 		"image": "/avatar.jpg",
 		"email": "hi@daryl.one",
 		"url": "https://daryl.one",
-		"summary": "Technical Lead specializing in MLOps and cloud architecture, with expertise in scaling AI/ML solutions and leading engineering teams. Experienced in AWS, DevSecOps, and full-stack development.",
+		"summary": "Focused on translating regulatory obligations into practical cloud controls, working across engineering teams and senior leadership. Grounded in cloud software engineering and technical leadership, bringing a pragmatic approach to compliance decisions and security architecture. Pursuing CISSP certification.",
 		"location": {
 			"address": "",
 			"postalCode": "",
@@ -29,135 +30,89 @@
 	"work": [
 		{
 			"name": "Dyson",
-			"position": "Technical Lead",
-			"location_type": "Hybrid",
-			"location": "Singapore, Singapore",
+			"position": "Lead Cloud Cybersecurity Engineer",
+			"location": "Singapore",
 			"url": "https://dyson.com",
-			"startDate": "2023",
-			"endDate": null,
-			"summary": "Leading a high performing engineering team on the Scaled Agile Framework (SAFe Scrum)",
-			"responsibilities": [
-				"MLOps platform development for image segmentation models and anomaly detection",
-				"Implementation of event-driven architecture to support data ingestion, feature engineering, and model training",
-				"Design of RESTful APIs to support the MyDyson App used by millions worldwide"
-			],
-			"achievements": [
-				"On-boarded ML teams with workflow orchestration tools to train and deliver models",
-				"Established technical vision and roadmap for MLOps platform to support a growing number of teams",
-				"Redefined way of working with the team to better align with Scrum principles in collaboration with our Scrum Master",
-				"Encouraged more technical spikes to de-risk future development"
-			],
-			"skills": [
-				"MLflow",
-				"Apache Airflow (MWAA)",
-				"Cognito",
-				"Elastic Kubernetes Service",
-				"Python",
-				"Next.js",
-				"TypeScript",
-				".NET/C#",
-				"DynamoDB"
+			"startDate": "2026",
+			"summary": "Transferred internally to head the security function for Dyson's Connected Cloud department; covering security architecture, GRC, and incident response for the consumer IoT platform behind the MyDyson App.",
+			"highlights": [
+				"Responsible for security architecture, governance, risk management, and incident response across a cloud-native IoT platform serving millions of connected devices on AWS",
+				"Own the automated vulnerability gate that blocks deployments on high/critical findings across all engineering teams, with final authority on disputed results",
+				"Building MCP-integrated agentic tooling to bring business context, design intent, and implementation together at the point of security review"
 			]
 		},
 		{
 			"name": "Dyson",
-			"position": "Senior Software Engineer",
-			"location_type": "Hybrid",
-			"location": "Singapore, Singapore",
+			"position": "Technical Lead",
+			"location": "Singapore",
 			"url": "https://dyson.com",
-			"startDate": "2022",
-			"endDate": "2023",
-			"summary": "Cross-functional work to accelerate delivery, improve internal processes to enhance the developer experience (DX)",
-			"responsibilities": [
-				"Implement and optimise data pipelines to support data science and business analytics use cases",
-				"Conduct security architecture reviews as a Security Champion, triage of SAST/SCA reports, championing DevSecOps",
-				"Recruitment and mentoring, conducted over 15 interviews"
-			],
-			"achievements": [
-				"Established artefact tracking for unstructured dataset of over 2 million image frames",
-				"Design and development of cloud solutions to support new products and a greenfield MLOps platform in consultation with our ML research teams",
-				"Refreshed onboarding documentation and technical training materials reducing ramp-up time to 2 weeks",
-				"Collaborated cross-team to drive the adoption of observability tooling such as AWS X-Ray to provide end-to-end visibility",
-				"Led the refactoring of an internal end-to-end testing framework built with TypeScript reducing test times by ~75%, with Azure Pipelines integration",
-				"Presented Cloud team work products to the CTO"
-			],
-			"skills": ["Azure Pipelines", ".NET/C#", "TypeScript", "Node", "Python", "Docker"]
+			"startDate": "2023",
+			"endDate": "2026",
+			"summary": "Led engineering delivery for the MLOps platform, working across ML research, product, and business functions to define and execute the platform roadmap.",
+			"highlights": [
+				"Worked directly with B2B sales, product, and UX writers, including direct exposure to UX research sessions and conversations with pilot users to translate business intent into a platform roadmap",
+				"Owned technical vision and roadmap for an MLOps platform on AWS Batch orchestrated through Apache Airflow (MWAA), serving ML engineering teams across image segmentation and anomaly detection",
+				"Received five early-career engineers on rotation from across Dyson's global offices, bringing them into the team's regular delivery cadence"
+			]
 		},
 		{
 			"name": "Dyson",
-			"position": "Software Engineer",
-			"location_type": "Hybrid",
-			"location": "Singapore, Singapore",
+			"position": "Senior Cloud Software Engineer",
+			"location": "Singapore",
+			"url": "https://dyson.com",
+			"startDate": "2022",
+			"endDate": "2023",
+			"summary": "Cross-functional engineer focused on accelerating delivery, improving developer experience, and embedding security practices across the team.",
+			"highlights": [
+				"Served as Security Champion; conducted architecture reviews and triaged SAST/SCA findings to shift security left in the development cycle",
+				"Selected by department leadership to brief the CTO on the Cloud team's operational posture, covering distributed log ingestion, BDD-driven test automation (Cucumber.js), and CI/CD pipeline health",
+				"Led the refactor of an internal integration testing framework in TypeScript, cutting execution time by ~75% with Azure Pipelines integration",
+				"Established artefact tracking for an unstructured dataset of over 2 million image frames",
+				"Conducted over 15 interviews and refreshed onboarding materials, reducing new-hire ramp-up time to 2 weeks",
+				"Drove cross-team adoption of observability tooling (AWS X-Ray) for end-to-end visibility"
+			]
+		},
+		{
+			"name": "Dyson",
+			"position": "Cloud Software Engineer",
+			"location": "Singapore",
 			"url": "https://dyson.com",
 			"startDate": "2022",
 			"endDate": "2022",
-			"summary": "Development and maintenance of microservices supporting millions of IoT devices, and ETL pipelines for sensor data",
-			"responsibilities": [
-				"Collaborate with senior engineers on the design and implementation of RESTful APIs and data pipelines",
-				"Participate in daily stand-ups and fortnightly sprint planning and reviews"
-			],
-			"achievements": ["Prototyped an MLOps pipeline on EKS using Kubeflow for proof-of-concept evaluations"],
-			"skills": [
-				"Kubeflow",
-				".NET/C#",
-				"JavaScript",
-				"Node",
-				"Python",
-				"Kinesis",
-				"SQS",
-				"Redshift",
-				"Elastic Kubernetes Service",
-				"Docker",
-				"Git"
+			"summary": "Developed and maintained microservices and RESTful APIs supporting millions of IoT devices, alongside ETL pipelines for sensor data",
+			"highlights": [
+				"Collaborated with senior engineers on the design and implementation of RESTful APIs and data pipelines",
+				"Prototyped an MLOps pipeline on EKS using Kubeflow for proof-of-concept evaluation"
 			]
 		},
 		{
 			"name": "Dyson",
 			"position": "Graduate Software Engineer",
-			"location_type": "Hybrid",
-			"location": "Singapore, Singapore",
+			"location": "Singapore",
 			"url": "https://dyson.com",
 			"startDate": "2020",
 			"endDate": "2022",
-			"summary": "Year-long rotation program with software teams from Cloud, Embedded Systems, and Robotics",
-			"responsibilities": [
-				"End-to-end development and testing of new products from embedded and vision systems to cloud integrations for the MyDyson app"
-			],
-			"achievements": [
-				"Co-organised inaugural 4-day global software technical conference involving over 600 attendees, 20 events, and 15 speakers across Singapore and UK",
-				"Early-stage architecture and database design and implementation for a high traffic (>300 RPS) service"
-			],
-			"skills": [
-				".NET/C#",
-				"Node",
-				"Python",
-				"Docker",
-				"PostgreSQL",
-				"DynamoDB",
-				"C++",
-				"MATLAB",
-				"Jenkins",
-				"Bamboo",
-				"Git"
+			"summary": "Year-long rotation programme across Dyson's Cloud, Embedded Systems, and Robotics software teams.",
+			"highlights": [
+				"Co-organised Dyson's inaugural 4-day global software technical conference — 600+ attendees, 20 events, 15 speakers across Singapore and the UK",
+				"Delivered early-stage architecture and database design for a high-traffic (>300 RPS) service",
+				"End-to-end development across embedded and vision systems through to cloud integrations for the MyDyson App"
 			]
 		},
 		{
 			"name": "Ensign Infosecurity",
 			"position": "Intern",
-			"location_type": "On-site",
-			"location": "Singapore, Singapore",
+			"description": "Cybersecurity solutions and managed security services provider",
+			"location": "Singapore",
 			"url": "https://www.ensigninfosecurity.com/",
 			"startDate": "2018",
 			"endDate": "2019",
-			"summary": "Security Operation Centre (SOC) analyst",
-			"responsibilities": [
-				"Customer facing incident response handling potential denial-of-service attempts and analysis of SIEM alerts"
-			],
-			"achievements": [
-				"Migrated SOC automation scripts from Python 2.x scripts to Python 3.x",
-				"Penetration testing of in-house developed customer facing systems using Burp Suite and Metasploit"
-			],
-			"skills": ["Python", "Metasploit", "Burp Suite", "Splunk"]
+			"summary": "Security Operations Centre (SOC) analyst handling customer-facing incident response and security testing.",
+			"highlights": [
+				"Performed customer-facing incident response for potential denial-of-service attempts, including analysis of SIEM alerts in a Security Operations Centre",
+				"Conducted penetration testing of in-house customer-facing systems using Burp Suite and Metasploit",
+				"Migrated SOC automation scripts from Python 2.x to Python 3.x"
+			]
 		}
 	],
 	"volunteer": [],
@@ -166,80 +121,119 @@
 		{
 			"name": "This page!",
 			"description": "Gateway to more experimentation and tinkering",
-			"highlights": ["Hosted on Cloudflare Pages", "Astro with JSON Resume schema"],
-			"github": "https://github.com/azureguard/",
-			"url": "",
-			"isActive": false
+			"url": "https://github.com/azureguard/",
+			"highlights": [
+				"Hosted using Cloudflare Workers",
+				"Astro with JSON Resume schema"
+			],
+			"keywords": [
+				"Astro",
+				"Claude Code",
+				"Cloudflare Workers",
+				"Github Actions",
+				"JSON Resume"
+			]
 		},
 		{
 			"name": "Homelabbing",
 			"description": "Personal playground where it all started",
-			"highlights": ["Cisco ISR, Ubiquiti PoE Switches & APs", "Home Assistant on Proxmox"],
-			"github": "",
-			"url": "",
-			"isActive": false
+			"highlights": [
+				"Cisco ISR, Ubiquiti PoE Switches & APs",
+				"IoT VLAN Segregation"
+			],
+			"keywords": [
+				"Cisco",
+				"Home Assistant",
+				"Networking",
+				"Proxmox",
+				"Ubiquiti"
+			]
 		}
 	],
 	"skills": [
 		{
-			"name": "Python",
-			"level": "Intermediate",
-			"keywords": ["API Development", "Data Engineering", "MLOps"]
+			"name": "Cloud Security",
+			"keywords": [
+				"Vulnerability Management",
+				"DevSecOps",
+				"SBOM/SCA",
+				"CI/CD Pipeline Security",
+				"Incident Response",
+				"Cloudflare",
+				"Palo Alto Prisma Cloud",
+				"Veracode"
+			]
 		},
 		{
-			"name": "TypeScript",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Frontend", "Backend", "JavaScript Superset"]
+			"name": "Governance, Risk & Compliance",
+			"keywords": [
+				"EU Cyber Resilience Act (CRA)",
+				"K-ISMS",
+				"CIS",
+				"Vendor-neutral Risk Management"
+			]
 		},
 		{
-			"name": "JavaScript",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Frontend", "Backend", "Fullstack"]
+			"name": "Identity & Access Management",
+			"keywords": [
+				"Cognito",
+				"Entra ID",
+				"OAuth"
+			]
 		},
 		{
-			"name": ".NET/C#",
-			"level": "Intermediate",
-			"keywords": ["API Development", "Backend", "Server"]
+			"name": "Cloud Architecture",
+			"keywords": [
+				"AWS Batch",
+				"ECS",
+				"EKS",
+				"EventBridge",
+				"Lambda",
+				"SQS",
+				"Event-driven Architecture"
+			]
 		},
 		{
-			"name": "PostgreSQL",
-			"level": "Intermediate",
-			"keywords": ["Databases", "SQL", "Data Storage", "Backend"]
+			"name": "CI/CD & Delivery",
+			"keywords": [
+				"Azure DevOps",
+				"Docker",
+				"Git",
+				"GitHub Actions"
+			]
 		},
 		{
-			"name": "DynamoDB",
-			"level": "Intermediate",
-			"keywords": ["Databases", "NoSQL", "Data Storage", "Backend"]
+			"name": "Backend Development",
+			"keywords": [
+				"Python",
+				"TypeScript",
+				"JavaScript",
+				"Node",
+				".NET/C#",
+				"REST APIs"
+			]
 		},
 		{
-			"name": "Node",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Backend", "JavaScript", "Server"]
+			"name": "Frontend Development",
+			"keywords": [
+				"React",
+				"Next.js",
+				"HTML",
+				"CSS"
+			]
 		},
 		{
-			"name": "React",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Frontend", "JavaScript Library", "UI"]
-		},
-		{
-			"name": "Next.js",
-			"level": "Beginner",
-			"keywords": ["Web Development", "Frontend", "React Framework", "SSR", "Static Generation"]
-		},
-		{
-			"name": "HTML",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Frontend"]
-		},
-		{
-			"name": "CSS",
-			"level": "Intermediate",
-			"keywords": ["Web Development", "Frontend", "Responsive Design"]
-		},
-		{
-			"name": "Git",
-			"level": "Intermediate",
-			"keywords": ["Version Control", "Collaboration", "Source Code"]
+			"name": "Data Engineering & MLOps",
+			"keywords": [
+				"PostgreSQL",
+				"DynamoDB",
+				"Amazon Kinesis",
+				"Redshift",
+				"SQL",
+				"NoSQL",
+				"Apache Airflow (MWAA)",
+				"MLflow"
+			]
 		}
 	],
 	"education": [

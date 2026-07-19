@@ -3,18 +3,20 @@ import { Icon } from "astro-icon/components";
 import Icons from "../icons";
 ---
 
-<div class="no-print inline-flex items-center">
+<div class="inline-flex items-center print:hidden">
 	<div class="group/theme flex items-center gap-2">
 		<label
 			for="themeSwitch"
 			class="flex items-center gap-1 text-sm leading-6 font-medium text-skin-base transition-transform ease-in-out group-hover/theme:rotate-45"
 		>
-			<Icon name={Icons["ThemeSwitch"]} size="24" /></label
+			<Icon aria-hidden="true" name={Icons.ThemeSwitch} size="24" /><span
+				class="sr-only">Theme</span
+			></label
 		>
 		<select
 			id="themeSwitch"
 			name="themeSwitch"
-			class="block w-full rounded-md border-0 py-1.5 pr-10 pl-3 text-skin-base ring-1 ring-skin-edge ring-inset focus:ring-2 focus:ring-skin-hue sm:text-sm sm:leading-6"
+			class="block w-full rounded-sm border-0 bg-skin-fill py-1.5 pr-10 pl-3 font-mono text-xs text-skin-base ring-1 ring-skin-edge ring-inset focus:ring-2 focus:ring-skin-hue sm:leading-6"
 		>
 			<option value="system" selected>System</option>
 			<option value="dark">Dark</option>

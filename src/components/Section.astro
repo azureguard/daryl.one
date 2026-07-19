@@ -1,13 +1,21 @@
 ---
-const { className, title } = Astro.props;
+const { className, title, meta } = Astro.props;
 ---
 
 <section class:list={["flex flex-col gap-4 print:gap-0", className]}>
 	{
 		title && (
-			<h3 class="relative flex w-full items-center gap-3 pb-4 text-3xl print:gap-1 print:pb-0 print:text-xl">
-				{title}
-			</h3>
+			<header class="flex flex-col print:pb-0">
+				{/* Real heading: hidden on screen but kept for the a11y outline; visible again in print. */}
+				<h3 class="sr-only text-2xl font-semibold tracking-tight print:not-sr-only print:text-lg">{title}</h3>
+				<p
+					aria-hidden="true"
+					class="flex flex-wrap items-baseline gap-x-2 font-mono text-sm select-none print:hidden"
+				>
+					<span class="tracking-widest text-skin-base">{title.toLowerCase()}</span>
+					{meta && <span class="text-xs text-skin-muted">· {meta}</span>}
+				</p>
+			</header>
 		)
 	}
 	<slot />
