@@ -1,5 +1,5 @@
 {
-	"$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/refs/heads/master/packages/schema/schema.json",
+	"$schema": "./node_modules/@jsonresume/schema/schema.json",
 	"basics": {
 		"name": "Daryl Wong",
 		"label": "Security Architecture | GRC | DevSecOps | AppSec | AWS",
