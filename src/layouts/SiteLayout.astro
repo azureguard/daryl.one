@@ -27,9 +27,8 @@ interface Props {
 
 const { title, description, article, schema, gap = "lg", wide = false } = Astro.props;
 
-// Nav order follows the DS (CV, Projects, Blog, About, Uses). Gallery is parked
-// in the DS as future scope, and Blog appears only once a post is published: an empty "Audit
-// trail" is a dead end, so the route and every link to it wait for content.
+// Nav order follows the DS. Blog appears only once a post is published (see
+// Blog gating in CLAUDE.md).
 const hasPosts = (await getPublished("blog")).length > 0;
 const links = [
 	{ label: "CV", href: "/cv" },
@@ -39,22 +38,17 @@ const links = [
 	{ label: "Uses", href: "/uses" },
 ];
 
-// Skip link (WCAG 2.4.1): without it a keyboard user passes the wordmark,
-// every nav link and the theme switch before reaching content, on every page
-// and again after every client-side navigation. `tabindex="-1"` makes <main>
-// focusable so the reader continues into it.
+// Skip link (WCAG 2.4.1). <main> needs no tabindex: following a fragment link
+// moves the sequential-focus start point to the target, so the next Tab
+// continues inside it.
 //
-// The floating ThemeSwitch is the DS's dock: it fades in bottom-right once
-// the nav scrolls away, with a back-to-top tile beside it.
-//
-// <main> owns the site measure so every page shares one column. Its print
-// treatment is below, after the screen rule, in this same stylesheet.
+// <main> owns the site measure so every page shares one column.
 ---
 
 <Layout title={title} description={description} article={article} schema={schema}>
 	<a href="#main-content" class="skip label" data-print="hidden">Skip to main content</a>
 	<SiteNav links={links} active={pagePath(Astro.url)} />
-	<main id="main-content" tabindex="-1" data-gap={gap} data-wide={wide ? "" : undefined}>
+	<main id="main-content" data-gap={gap} data-wide={wide ? "" : undefined}>
 		<slot />
 	</main>
 	<Footer />
@@ -106,10 +100,6 @@ const links = [
 	main[data-wide] {
 		max-width: 1200px;
 		justify-content: center;
-	}
-
-	main:focus {
-		outline: none;
 	}
 
 	main[data-gap="sm"] {
