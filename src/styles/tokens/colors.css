@@ -3,7 +3,10 @@
    Dark (pine-black): amber is the loud signal.
    Light ("Day shift"): a cool, faintly green-grey neutral so photos, alerts and severity
    tags carry the colour — the atmosphere (grid + glow) supplies the character.
-   Source: Claude Design project "Daryl Wong Design System", tokens/colors.css (values verbatim). */
+   Source: Claude Design project "Daryl Wong Design System", tokens/colors.css (values verbatim).
+   One deviation: the DS writes the --pattern-* tiles as inline `data:` SVG URIs, which
+   `default-src 'self'` in public/_headers forbids (there is no img-src). They live in
+   ../atmosphere/ as files with the same markup, and Vite fingerprints them. */
 :root {
 	color-scheme: light;
 	--color-text-base: #0b1a13;
@@ -48,6 +51,9 @@
 	--grid-line-major: rgb(11 26 19 / 0.07);
 	--glow: rgb(255 171 46 / 0.2);
 	--vignette: rgb(11 26 19 / 0.05);
+	--pattern-hex: url("../atmosphere/hex-light.svg");
+	--pattern-circuit-tr: url("../atmosphere/circuit-tr-light.svg");
+	--pattern-circuit-bl: url("../atmosphere/circuit-bl-light.svg");
 	--surface-page: var(--color-fill);
 	--surface-card: var(--color-card);
 	--surface-muted: var(--color-button-muted);
@@ -105,6 +111,9 @@
 	--grid-line-major: rgb(214 237 225 / 0.07);
 	--glow: rgb(255 171 46 / 0.16);
 	--vignette: rgb(0 0 0 / 0.55);
+	--pattern-hex: url("../atmosphere/hex-dark.svg");
+	--pattern-circuit-tr: url("../atmosphere/circuit-tr-dark.svg");
+	--pattern-circuit-bl: url("../atmosphere/circuit-bl-dark.svg");
 	--surface-page: var(--color-fill);
 	--surface-card: var(--color-card);
 	--surface-muted: var(--color-button-muted);

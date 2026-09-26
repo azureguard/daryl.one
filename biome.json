@@ -38,6 +38,16 @@
 					}
 				}
 			}
+		},
+		{
+			"includes": ["**/src/styles/atmosphere/**"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"noSvgWithoutTitle": "off"
+					}
+				}
+			}
 		}
 	]
 }

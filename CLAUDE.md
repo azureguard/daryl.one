@@ -73,6 +73,10 @@ headings and labels, IBM Plex Sans for prose, Plex Mono for code only.
 - Recipes key on Ark anatomy attributes, so a native element takes a recipe by
   attribute: `<a data-scope="button" data-part="root" data-variant="secondary"
   data-size="sm">`, `<span data-scope="badge" data-tone="accent">`.
+- The DS writes its atmosphere tiles (`--pattern-hex`, `--pattern-circuit-*`)
+  as inline `data:` SVG URIs, which `default-src 'self'` forbids. Port them as
+  files in `src/styles/atmosphere/` (same markup, one per theme) and point the
+  tokens at them; Vite fingerprints them into `/_astro/`.
 - `recipes/card.css` is site-authored: the DS's Card component
   (`components/data-display/Card.jsx`) expressed as a recipe, since the DS
   ships no card recipe. Everything else in `recipes/` is a DS copy.

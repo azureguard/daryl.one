@@ -1,23 +1,45 @@
 /* Atmosphere — backgrounds are never a flat fill.
-   Surveyor's grid (minor 24px / major 120px) + a sodium glow bleeding in from the
-   top-right like a perimeter light + a vignette pooling bottom-left.
+   Faint honeycomb lattice (hardened-cell motif) + circuit traces bleeding in from the
+   top-right and bottom-left corners only. A surface-coloured band masks both patterns
+   across the centre 840px so the reading column and hairline dividers stay clean. Sodium glow
+   top-right, vignette bottom-left. Pattern tiles are per-theme SVG tokens in colors.css.
    Usage: background: var(--atmosphere), var(--surface-page); */
 :root,
 .dark {
 	--atmosphere:
 		radial-gradient(70rem 42rem at 92% -12%, var(--glow), transparent 62%),
 		radial-gradient(60rem 40rem at -8% 112%, var(--vignette), transparent 60%),
-		linear-gradient(var(--grid-line-major) 1px, transparent 1px) 0 0 / 120px 120px,
-		linear-gradient(90deg, var(--grid-line-major) 1px, transparent 1px) 0 0 / 120px 120px,
-		linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 24px 24px,
-		linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 24px 24px;
+		linear-gradient(
+			90deg,
+			transparent max(0px, calc(50% - 680px)),
+			var(--atmosphere-band) calc(50% - 420px),
+			var(--atmosphere-band) calc(50% + 420px),
+			transparent min(100%, calc(50% + 680px))
+		),
+		var(--pattern-circuit-tr) right top / 520px 360px no-repeat,
+		var(--pattern-circuit-bl) left bottom / 520px 360px no-repeat,
+		var(--pattern-hex) 0 0 / 69px 120px;
 	/* Hazard hatch — redaction bars, critical-severity fills, disabled states */
 	--pattern-hatch: repeating-linear-gradient(
 		-45deg,
 		var(--text-body) 0 6px,
 		color-mix(in oklch, var(--text-body) 82%, var(--surface-page)) 6px 12px
 	);
+	/* The centre band is solid only where the gutters beside it are wide enough to show
+	   the pattern (about 120px each, so from 1080px up). Narrower, a solid band left
+	   gutters of a few pixels and hid the atmosphere entirely on phones in either
+	   orientation and on small tablets, so there it becomes a veil the pattern ghosts
+	   through. The outer fade stops are clamped to the viewport so the ramp into the
+	   band is always on screen. */
+	--atmosphere-band: var(--surface-page);
 	/* Signature chamfer size (cut top-left corner on buttons, tags, cards) */
 	--chamfer: 10px;
 	--chamfer-sm: 6px;
+}
+
+@media (max-width: 67.5rem) {
+	:root,
+	.dark {
+		--atmosphere-band: color-mix(in oklch, var(--surface-page) 55%, transparent);
+	}
 }
