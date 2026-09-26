@@ -47,12 +47,18 @@ importers:
       '@zag-js/collapsible':
         specifier: ^1.44.0
         version: 1.44.0
+      '@zag-js/popover':
+        specifier: ^1.44.0
+        version: 1.44.0
       '@zag-js/select':
         specifier: ^1.44.0
         version: 1.44.0
       '@zag-js/vanilla':
         specifier: ^1.44.0
         version: 1.44.0
+      ae-cvss-calculator:
+        specifier: ^1.0.13
+        version: 1.0.13
       astro:
         specifier: 7.3.5
         version: 7.3.5
@@ -1210,6 +1216,9 @@ packages:
   '@zag-js/anatomy@1.44.0':
     resolution: {integrity: sha512-gVN02k7cUqEDlEDDv3CcStMIqDQ32e7QCH8FVBwwXqbSH8D5KMuqPrmyfdE8irVZuPfY4PtKuZsNvJLYvXDpgA==}
 
+  '@zag-js/aria-hidden@1.44.0':
+    resolution: {integrity: sha512-sk9Zh93piT6NdXL0EW45fvhjrwSHjjPxeKOG+y68731Dqk0sdmP6/E1XQDwXiLhVLDySJ8PhGX8B7Zp+ZiZOIQ==}
+
   '@zag-js/clipboard@1.44.0':
     resolution: {integrity: sha512-bGNVGx9JKbFGqRT44H+coCGjRly87tXdF3dsFO9rHy0H1wz7lDJ+QfSGVcozubmDJRdBKrfj13/2BwKcNsdpBA==}
 
@@ -1228,14 +1237,23 @@ packages:
   '@zag-js/dom-query@1.44.0':
     resolution: {integrity: sha512-BKdiKNjd9iTtaQjjU07YymGkgKVSO7vXu8ukZPyt+F8tOesAv9xW5wCn3fuEI6zNthzOpHD9ejj48YW0mljnpQ==}
 
+  '@zag-js/focus-trap@1.44.0':
+    resolution: {integrity: sha512-L3HMgBLcVZl4+++ivXt3nVTu+9Me9rZO0IcKWb3g5dLPAza8G85rT0VFqCq9znXU/cHc5iSZTDHssFPpYBcn3w==}
+
   '@zag-js/focus-visible@1.44.0':
     resolution: {integrity: sha512-uw/MjetjFP16IiOQLr3snfnEd5772lXPuQR8mct432t4AyPEAskZBwO9MTDbWukNXQ20VKpcorMZm+QXG3NY4g==}
 
   '@zag-js/interact-outside@1.44.0':
     resolution: {integrity: sha512-yFX3eHamp82kax65xIYLemXNH8kD9MvXm7lHttnwlp/XZoAgDTR2l+iLJYU6pLZsuSM9GsrnWQrfHaHWBhyNWw==}
 
+  '@zag-js/popover@1.44.0':
+    resolution: {integrity: sha512-TQ6EVjwxYgow3aHCVRIrAJqn9eM1ld/SoVg3Ftuztc0xIEXeKCh0B2q06mxB+J0CNnmDzfFngzmC7OoV6jKAnw==}
+
   '@zag-js/popper@1.44.0':
     resolution: {integrity: sha512-uSYqdkGlDC/rCQqYecHAfjhASQjziAR2uiFBjceUK9eG8bjua4Ev6vcaFEjrD4EcOKMMosve5mjWfHcHh5lL6A==}
+
+  '@zag-js/remove-scroll@1.44.0':
+    resolution: {integrity: sha512-Y7Oxp63eMOC3UpUj/Uk5d6mDTI//XrfBl780X40zf/FlwTu9Tjaw7T+Hq7kg0oDDXPnP65pb4MxG9UHhGfH7Gg==}
 
   '@zag-js/select@1.44.0':
     resolution: {integrity: sha512-SvLYvx4DtrtLfA0KYmA+qsVwrPYLPkTVigifEqeZKJBQRyHlwAaub7ncC+TsTpCl5XmiV+eitBaaZlHCFbqdaA==}
@@ -1251,6 +1269,9 @@ packages:
 
   '@zag-js/vanilla@1.44.0':
     resolution: {integrity: sha512-3oWhimPLJzlvVbwMiNoSbDI8aDT14angpokN5zDlQbc+PYGewFpbt9MiX76bxECV1JrMoSWOUSu0ONyg++8FIg==}
+
+  ae-cvss-calculator@1.0.13:
+    resolution: {integrity: sha512-QnPO1O5gZ/1NM+X4fbfqN/y5rImEZ8CSkbSk7Arv4RrmxPzxLXr9RSLmsQJykDtXFUXn9wHLxC0/fe/pO78t3w==}
 
   ajv-draft-04@1.0.0:
     resolution: {integrity: sha512-mv00Te6nmYbRp5DCwclxtt7yV/joXJPGS7nM+97GdxvuttCOfgI3K4U25zboyeX0O+myI8ERluxQe5wljMmVIw==}
@@ -3426,6 +3447,10 @@ snapshots:
 
   '@zag-js/anatomy@1.44.0': {}
 
+  '@zag-js/aria-hidden@1.44.0':
+    dependencies:
+      '@zag-js/dom-query': 1.44.0
+
   '@zag-js/clipboard@1.44.0':
     dependencies:
       '@zag-js/anatomy': 1.44.0
@@ -3461,6 +3486,10 @@ snapshots:
     dependencies:
       '@zag-js/types': 1.44.0
 
+  '@zag-js/focus-trap@1.44.0':
+    dependencies:
+      '@zag-js/dom-query': 1.44.0
+
   '@zag-js/focus-visible@1.44.0':
     dependencies:
       '@zag-js/dom-query': 1.44.0
@@ -3470,11 +3499,28 @@ snapshots:
       '@zag-js/dom-query': 1.44.0
       '@zag-js/utils': 1.44.0
 
+  '@zag-js/popover@1.44.0':
+    dependencies:
+      '@zag-js/anatomy': 1.44.0
+      '@zag-js/aria-hidden': 1.44.0
+      '@zag-js/core': 1.44.0
+      '@zag-js/dismissable': 1.44.0
+      '@zag-js/dom-query': 1.44.0
+      '@zag-js/focus-trap': 1.44.0
+      '@zag-js/popper': 1.44.0
+      '@zag-js/remove-scroll': 1.44.0
+      '@zag-js/types': 1.44.0
+      '@zag-js/utils': 1.44.0
+
   '@zag-js/popper@1.44.0':
     dependencies:
       '@floating-ui/dom': 1.8.0
       '@zag-js/dom-query': 1.44.0
       '@zag-js/utils': 1.44.0
+
+  '@zag-js/remove-scroll@1.44.0':
+    dependencies:
+      '@zag-js/dom-query': 1.44.0
 
   '@zag-js/select@1.44.0':
     dependencies:
@@ -3504,6 +3550,8 @@ snapshots:
       '@zag-js/store': 1.44.0
       '@zag-js/types': 1.44.0
       '@zag-js/utils': 1.44.0
+
+  ae-cvss-calculator@1.0.13: {}
 
   ajv-draft-04@1.0.0(ajv@8.20.0):
     dependencies:

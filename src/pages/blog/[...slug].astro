@@ -1,8 +1,8 @@
 ---
 import { getEntry, render } from "astro:content";
 import { basics } from "@cv";
-import Badge from "@/components/Badge.astro";
 import PostNav from "@/components/PostNav.astro";
+import PostTags from "@/components/PostTags.astro";
 import Prose from "@/components/Prose.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { formatDate, getAdjacentPosts, readTime } from "@/lib/blog";
@@ -36,17 +36,7 @@ const adjacent = await getAdjacentPosts(entry.id);
 		</p>
 		<h1><span data-reveal="declassify" data-i="1">{entry.data.title}</span></h1>
 		<p class="lede" data-reveal data-i="3">{entry.data.description}</p>
-		{
-			entry.data.tags && entry.data.tags.length > 0 && (
-				<ul class="tags" aria-label="Tags" data-reveal data-i="4">
-					{entry.data.tags.map((tag) => (
-						<li>
-							<Badge>{tag}</Badge>
-						</li>
-					))}
-				</ul>
-			)
-		}
+		<PostTags cvss={entry.data.cvss} tags={entry.data.tags} data-reveal="" data-i="4" />
 	</header>
 	<Prose>
 		<Content />
@@ -88,14 +78,5 @@ const adjacent = await getAdjacentPosts(entry.id);
 		max-width: 62ch;
 		font-size: var(--text-lg);
 		color: var(--text-muted);
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 </style>

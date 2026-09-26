@@ -44,7 +44,7 @@ static content, but uses the SSR adapter rather than a static export.
   control's Ark anatomy (`data-scope` / `data-part` / `data-state`, ids), so the
   page is styled before any script runs; the machine then takes the markup over.
   Currently: `clipboard` (CopyEmail), `collapsible` (Timeline highlights) and
-  `select` (ThemeSwitch).
+  `select` (ThemeSwitch), `popover` (CVSS details on SeverityBadge).
 - **astro-icon** - Iconify glyphs rendered as inline SVG at build time.
 - **TypeScript 6** - `tsconfig.json` extends `astro/tsconfigs/strictest`. Held
   at 6.x: `@astrojs/check` peers on `^5 || ^6`, and the TS 7 native compiler has
@@ -77,9 +77,10 @@ headings and labels, IBM Plex Sans for prose, Plex Mono for code only.
   as inline `data:` SVG URIs, which `default-src 'self'` forbids. Port them as
   files in `src/styles/atmosphere/` (same markup, one per theme) and point the
   tokens at them; Vite fingerprints them into `/_astro/`.
-- `recipes/card.css` is site-authored: the DS's Card component
-  (`components/data-display/Card.jsx`) expressed as a recipe, since the DS
-  ships no card recipe. Everything else in `recipes/` is a DS copy.
+- `recipes/card.css` and `recipes/popover.css` were authored here and synced
+  to the DS (2026-09-26): the DS Card is now recipe-backed, and SeverityBadge
+  carries the CVSS popover as a reference implementation. Every file in
+  `recipes/` is now a DS copy.
 - `.label` in `global.css` is the one shared class: the condensed-caps label
   recipe (font, weight, tracking, case, size) for dates, tags, nav, eyebrows.
 
@@ -111,7 +112,7 @@ src/
 │   ├── global.css         # Entry: fonts, layered tokens/base/recipes, document rules
 │   ├── print.css          # The global print sheet (unlayered)
 │   ├── tokens/            # DS tokens (colors, type, spacing, motion, ...)
-│   └── recipes/           # DS recipes (button, badge, select, site-nav) + card
+│   └── recipes/           # DS recipes (button, badge, card, popover, select, site-nav)
 ├── icons.ts               # cv.json data value → Iconify id
 ├── cv.d.ts                # Generated CV types
 astro.config.ts            # Integrations, icon include list, adapter, shiki, vite
@@ -124,6 +125,16 @@ public/_headers            # Security/cache headers applied at the edge
 
 - **Content**: edit `src/cv.json` (JSON Resume Schema). Glyphs looked up from
   its data (skill domains, profile networks) are mapped in `src/icons.ts`.
+- **CVSS on posts**: a blog post may set `cvss: "CVSS:3.1/…"` (2.0, 3.x or
+  4.0). `content.config.ts` scores it at build time via `src/lib/cvss.ts`
+  (ae-cvss-calculator) into `{ vector, version, score, severity }`, so the
+  SeverityBadge colour follows the score and an invalid vector fails the
+  build. The badge leads the tag row (`PostTags.astro`) on the index and the
+  post, and takes the landing page's blog-row badge slot (there without its
+  details, since it sits inside a link). Clicking or tapping it opens an Ark
+  UI Popover (Zag `popover`, non-modal) listing the metrics by the spec's
+  subcategories. Not a tooltip: tooltips are hover/keyboard-focus only by
+  design (Zag ignores touch), so the breakdown would be unreachable on phones.
 - **Blog gating**: the blog routes, the nav link and the homepage card appear
   only when `getPublishedPosts()` returns something. With no published post,
   `/blog` rewrites to the site 404.
@@ -231,6 +242,12 @@ These are non-obvious and have bitten before:
 - **Sessions/Images bindings are intentionally off** (`session.driver` = an
   in-memory unstorage driver; `imageService: "compile"` processes `<Image>` at
   build time) so the Worker only has the `ASSETS` binding.
+- **The content cache does not see helpers of `content.config.ts`.** Changing
+  what a schema transform returns via an imported module (e.g. `lib/cvss.ts`)
+  leaves the old parsed entries in `.astro/data-store.json` and
+  `node_modules/.astro/data-store.json`; pages then read fields that are not
+  there and the render dies mid-stream (the HTML stops after `<head>`). Stop
+  the dev server, delete both files, restart.
 - **A CSS `@import` added before its file exists stays broken in dev.** Vite
   caches the failed resolution and serves the stylesheet as a 500 (unstyled
   page, a `vite-error-overlay` swallowing clicks) until `astro dev` restarts.

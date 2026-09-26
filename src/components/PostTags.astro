@@ -1,0 +1,45 @@
+---
+import type { Cvss } from "@/lib/cvss";
+import Badge from "./Badge.astro";
+import SeverityBadge from "./SeverityBadge.astro";
+
+// A post's metadata row: the CVSS severity first when the post has one, then
+// its tags. Shared by the blog index and the post header.
+interface Props {
+	cvss?: Cvss | undefined;
+	tags?: Array<string> | undefined;
+	/** Passed through to the list, e.g. the post header's reveal attributes. */
+	[attribute: `data-${string}`]: string | undefined;
+}
+
+const { cvss, tags = [], ...attributes } = Astro.props;
+---
+
+{
+	(cvss || tags.length > 0) && (
+		<ul class="tags" aria-label="Severity and tags" {...attributes}>
+			{cvss && (
+				<li>
+					<SeverityBadge cvss={cvss} />
+				</li>
+			)}
+			{tags.map((tag) => (
+				<li>
+					<Badge>{tag}</Badge>
+				</li>
+			))}
+		</ul>
+	)
+}
+
+<style>
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

@@ -1,7 +1,7 @@
 ---
 import { basics } from "@cv";
-import Badge from "@/components/Badge.astro";
 import PageHeader from "@/components/PageHeader.astro";
+import PostTags from "@/components/PostTags.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { formatDate, getPublishedPosts, readTime } from "@/lib/blog";
 
@@ -29,15 +29,7 @@ if (posts.length === 0) return Astro.rewrite("/404");
 						<h2>{post.data.title}</h2>
 						<p>{post.data.description}</p>
 					</a>
-					{post.data.tags && post.data.tags.length > 0 && (
-						<ul class="tags" aria-label="Tags">
-							{post.data.tags.map((tag) => (
-								<li>
-									<Badge>{tag}</Badge>
-								</li>
-							))}
-						</ul>
-					)}
+					<PostTags cvss={post.data.cvss} tags={post.data.tags} />
 				</li>
 			))
 		}
@@ -96,14 +88,5 @@ if (posts.length === 0) return Astro.rewrite("/404");
 
 	a p {
 		color: var(--text-muted);
-	}
-
-	.tags {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-		margin: 0;
-		padding: 0;
-		list-style: none;
 	}
 </style>

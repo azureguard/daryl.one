@@ -1,0 +1,178 @@
+---
+import type { Cvss } from "@/lib/cvss";
+
+// The DS SeverityBadge (components/security/SeverityBadge.jsx): a square
+// marker, the severity in condensed caps, and the score in a hairline weight,
+// styled by the badge recipe's `data-severity` tiers. Critical pulses.
+//
+// Colour is chosen from the score, never written by hand: the post states a
+// vector and lib/cvss.ts derives the severity. The visually hidden prefix
+// makes a screen reader say "CVSS 3.1 high 8.1" rather than a bare "high 8.1".
+//
+// Clicking or tapping the badge opens an Ark UI Popover (Zag's popover
+// machine) that spells the vector out, metric by metric; Escape or a click
+// outside closes it. A popover rather than a tooltip: tooltips are hover and
+// keyboard-focus only by design (Zag ignores touch), and this content, a
+// breakdown and a selectable vector, has to be reachable on a phone too.
+//
+// The badge sits inside a bare button rather than being the trigger itself:
+// Zag writes `data-scope="popover"` onto its trigger, which would erase the
+// badge's own `data-scope="badge"` styling. The heading is the popover's
+// title, so the dialog is announced by it.
+//
+// `details={false}` renders the bare badge, for places where it already sits
+// inside a link (the landing page's blog row): a button inside a link is
+// invalid, and the link has its own destination.
+interface Props {
+	cvss: Cvss;
+	details?: boolean;
+}
+
+const { cvss, details = true } = Astro.props;
+---
+
+{
+	details ? (
+		<div class="cvss" data-cvss-popover>
+			<button type="button" class="trigger" data-scope="popover" data-part="trigger">
+				<span data-scope="badge" data-severity={cvss.severity}>
+					<span data-part="marker" aria-hidden="true" />
+					<span class="sr-only">{`${cvss.version.replace(":", " ")} `}</span>
+					{cvss.severity}{" "}
+					<span data-part="score">{cvss.score.toFixed(1)}</span>
+				</span>
+			</button>
+			<div data-scope="popover" data-part="positioner">
+				<div data-scope="popover" data-part="content" hidden>
+					<div data-scope="popover" data-part="arrow">
+						<div data-scope="popover" data-part="arrow-tip" />
+					</div>
+					<p class="heading label" data-scope="popover" data-part="title">
+						{cvss.version} · {cvss.score.toFixed(1)} {cvss.severity}
+					</p>
+					<div class="metrics">
+						{cvss.groups.map((group) => (
+							<>
+								<p class="group label">{group.name}</p>
+								<dl>
+									{group.metrics.map(({ name, value }) => (
+										<div>
+											<dt>{name}</dt>
+											<dd>{value}</dd>
+										</div>
+									))}
+								</dl>
+							</>
+						))}
+					</div>
+					<code>{cvss.vector}</code>
+				</div>
+			</div>
+		</div>
+	) : (
+		<span data-scope="badge" data-severity={cvss.severity}>
+			<span data-part="marker" aria-hidden="true" />
+			<span class="sr-only">{`${cvss.version.replace(":", " ")} `}</span>
+			{cvss.severity}{" "}
+			<span data-part="score">{cvss.score.toFixed(1)}</span>
+		</span>
+	)
+}
+
+<style>
+	.cvss {
+		display: inline-flex;
+	}
+
+	.trigger {
+		display: inline-flex;
+		padding: 0;
+		border: 0;
+		background: none;
+		font: inherit;
+		color: inherit;
+		cursor: pointer;
+	}
+
+	.heading {
+		margin-bottom: var(--space-2);
+		color: var(--text-muted);
+		font-size: var(--text-xs);
+	}
+
+	/* One grid for every group, so the value column lines up down the whole
+	   tooltip; each group label spans both columns. */
+	.metrics {
+		display: grid;
+		grid-template-columns: auto 1fr;
+		gap: 2px var(--space-3);
+	}
+
+	.group {
+		grid-column: 1 / -1;
+		color: var(--color-accent);
+		font-size: var(--text-xs);
+	}
+
+	.group:not(:first-child) {
+		margin-top: var(--space-2);
+	}
+
+	dl,
+	dl div {
+		display: contents;
+	}
+
+	dt {
+		color: var(--text-muted);
+	}
+
+	dd {
+		margin: 0;
+	}
+
+	code {
+		display: block;
+		margin-top: var(--space-2);
+		padding-top: var(--space-2);
+		border-top: 1px solid var(--border-default);
+		color: var(--text-muted);
+		font-size: var(--text-xs);
+		overflow-wrap: anywhere;
+	}
+
+	@media screen {
+		/* An author `display` beats the UA's [hidden] rule, so restate it. */
+		[data-part="content"][hidden] {
+			display: none;
+		}
+	}
+</style>
+
+<script>
+	import * as popover from "@zag-js/popover";
+	import { VanillaMachine } from "@zag-js/vanilla";
+	import { onEachPage, run } from "@/scripts/zag";
+
+	let count = 0;
+
+	onEachPage("[data-cvss-popover]", (root) => {
+		const machine = new VanillaMachine(popover.machine, {
+			id: `cvss-${count++}`,
+			// Non-modal and in place: the page stays interactive, and the content
+			// stays next to its badge in the DOM rather than being portalled.
+			modal: false,
+			portalled: false,
+			positioning: { placement: "bottom-start", gutter: 10 },
+		});
+
+		return run(machine, popover.connect, (api) => [
+			[root.querySelector('[data-part="trigger"]'), api.getTriggerProps()],
+			[root.querySelector('[data-part="positioner"]'), api.getPositionerProps()],
+			[root.querySelector('[data-part="content"]'), api.getContentProps()],
+			[root.querySelector('[data-part="title"]'), api.getTitleProps()],
+			[root.querySelector('[data-part="arrow"]'), api.getArrowProps()],
+			[root.querySelector('[data-part="arrow-tip"]'), api.getArrowTipProps()],
+		]);
+	});
+</script>

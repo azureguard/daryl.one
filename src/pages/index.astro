@@ -2,6 +2,7 @@
 import { getCollection } from "astro:content";
 import { basics, work } from "@cv";
 import Badge from "@/components/Badge.astro";
+import SeverityBadge from "@/components/SeverityBadge.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { formatDate, getPublishedPosts } from "@/lib/blog";
 import { countMeta } from "@/meta";
@@ -12,7 +13,9 @@ import { countMeta } from "@/meta";
 //
 // The Brand card fills that log with invented advisories (CVE ids, severity
 // scores). This is a real person's site, so the rows are the real routes, in
-// the same format, and every badge is a count from the data. The tags are the
+// the same format, and every badge is real data: a count, a date, or, for the
+// latest post, its own CVSS severity when it states a vector (as the Brand
+// card's advisory rows do). The tags are the
 // CV's own headline. The page is still a router: everything is meant to be left.
 const { name, label, summary = "", location } = basics;
 
@@ -31,7 +34,15 @@ const tags = label.split("|").map((tag) => tag.trim());
 // it is absent everywhere (see SiteLayout).
 const entries = [
 	...(latestPost
-		? [{ href: `/blog/${latestPost.id}`, id: "/blog", title: latestPost.data.title, meta: formatDate(latestPost.data.date) }]
+		? [
+				{
+					href: `/blog/${latestPost.id}`,
+					id: "/blog",
+					title: latestPost.data.title,
+					meta: formatDate(latestPost.data.date),
+					cvss: latestPost.data.cvss,
+				},
+			]
 		: []),
 	{ href: "/cv", id: "/cv", title: "The résumé", meta: countMeta(work.length) },
 	{ href: "/about", id: "/about", title: "whoami", meta: undefined },
@@ -78,7 +89,11 @@ const actions = latestPost
 				entries.map((entry, index) => (
 					<a href={entry.href} class="entry" data-reveal data-i={String(10 + index)}>
 						<span class="id">{entry.id}</span>
-						{entry.meta && <Badge>{entry.meta}</Badge>}
+						{"cvss" in entry && entry.cvss ? (
+							<SeverityBadge cvss={entry.cvss} details={false} />
+						) : (
+							entry.meta && <Badge>{entry.meta}</Badge>
+						)}
 						<span class="title">{entry.title}</span>
 					</a>
 				))

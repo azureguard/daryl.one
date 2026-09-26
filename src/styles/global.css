@@ -38,6 +38,7 @@
 @import "./recipes/card.css" layer(recipes);
 @import "./recipes/select.css" layer(recipes);
 @import "./recipes/site-nav.css" layer(recipes);
+@import "./recipes/popover.css" layer(recipes);
 
 @import "./print.css";
 
