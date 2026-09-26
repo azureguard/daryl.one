@@ -166,6 +166,10 @@ pre-Night-Shift layout.
   above: `/projects` lists every cv.json project with the same cards as the
   CV section, linking to case studies where they exist. It is never empty, so
   it is not gated like the blog. Nav order: CV, Projects, Blog, About, Uses.
+- **Print treatment is for the CV only.** The CV is the document people
+  print; other pages print with the browser's defaults plus the global sheet.
+  Print switches on posts, case studies, PostNav and the About portrait were
+  removed, and new non-CV components get none.
 - **Declined: pruning DS components the site does not render.** Forms, Tabs,
   Alert, Divider, IconLink and the security set stay, for future pages and a
   possible Storybook.
@@ -442,9 +446,9 @@ hand-writing the other four-fifths.
     `text-xl` resolves to 23px here, so 52ch computed to 717.6px against a 704px
     row. The row's own measure decides when a title breaks. Don't reintroduce a
     `ch` cap without measuring it.
-  - The whole block is `print:hidden`; it's chrome, and a printed post shouldn't
-    advertise neighbours. Drafts are filtered out of the sequence, so unpublishing
-    a post closes the gap rather than leaving a link to a 404.
+  - Drafts are filtered out of the sequence, so unpublishing a post closes the
+    gap rather than leaving a link to a 404. (It was also `print:hidden`; print
+    treatment is now for the CV only, see the 2026-09-26 sweep.)
 - **The portrait stays on `/about`** (placement and photo superseded by the
   2026-09-26 sweep above). It's the one page whose purpose is "who is
   this person". Note the DS asks for "a plain, naturally-lit headshot … no

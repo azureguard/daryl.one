@@ -23,7 +23,7 @@ const rows = [
 
 {
 	(previous || next) && (
-		<nav aria-label="More posts" data-print="hidden">
+		<nav aria-label="More posts">
 			{rows.map(({ post, label, rel, glyph, dir }) =>
 				post ? (
 					<a href={`/blog/${post.id}`} rel={rel} data-dir={dir}>

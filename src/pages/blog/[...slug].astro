@@ -20,7 +20,7 @@ const adjacent = await getAdjacentPosts(entry.id);
 ---
 
 <SiteLayout title={`${entry.data.title} - ${basics.name}`} gap="sm">
-	<a href="/blog" class="back label" data-print="hidden">&larr; Back to blog</a>
+	<a href="/blog" class="back label">&larr; Back to blog</a>
 	<PageHeader title={entry.data.title}>
 		<Fragment slot="eyebrow">
 			<time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>

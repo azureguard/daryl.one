@@ -318,9 +318,11 @@ These are non-obvious and have bitten before:
   with `data-i`. Micro-interactions stay quiet.
 - **Reduced motion has one mechanism**: the `prefers-reduced-motion` block in
   `tokens/interaction.css` zeroes every duration and delay.
-- **Responsive + print**: mobile-first, with print rules in each component and
-  the global sheet in `Layout.astro`. On paper the display face and accent
-  collapse to Plex Sans and ink via token overrides.
+- **Responsive + print**: mobile-first. Print treatment is for the CV only:
+  the global sheet (`styles/print.css`) plus rules in the components `/cv`
+  renders. Do not add print rules or `data-print` to other pages or to
+  components only they use. On paper the display face and accent collapse to
+  Plex Sans and ink via token overrides.
 - **Type safety**: TypeScript throughout, with CV data typed against `cv.d.ts`.
 - **Heading levels are structural, not stylistic.** Page title is the `h1`;
   `Section.astro` emits the `h2`; entries within a section are `h3`. The Hero
