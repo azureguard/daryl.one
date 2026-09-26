@@ -14,7 +14,7 @@ const items: Array<Language> = languages;
 				{items.map(({ language, fluency }) => (
 					<li>
 						<span>{language}</span>
-						<span class="fluency label">{fluency}</span>
+						<span class="fluency">{fluency}</span>
 					</li>
 				))}
 			</ul>
@@ -38,7 +38,10 @@ const items: Array<Language> = languages;
 		gap: var(--space-3);
 	}
 
+	/* The fluency is content ("Native speaker"), not a UI label, so it stays in
+	   sentence case rather than the condensed-caps label treatment. */
 	.fluency {
+		font-size: var(--text-sm);
 		color: var(--text-muted);
 	}
 
@@ -54,7 +57,7 @@ const items: Array<Language> = languages;
 		}
 
 		.fluency {
-			font-size: 10px;
+			font-size: var(--text-xs);
 		}
 	}
 </style>

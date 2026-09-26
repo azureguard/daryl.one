@@ -9,7 +9,11 @@ interface Props {
 	title: string;
 	/** Vertical rhythm between the page's top-level blocks. */
 	gap?: "sm" | "md" | "lg" | undefined;
-	/** A wider measure for compositions that need two columns (the landing page). */
+	/**
+	 * A wider measure for compositions that need two columns (the landing
+	 * page). Only <main> widens: the nav and footer keep the 760px measure on
+	 * every page, so nothing shifts when navigating away from the landing page.
+	 */
 	wide?: boolean | undefined;
 }
 
@@ -40,11 +44,11 @@ const links = [
 
 <Layout title={title}>
 	<a href="#main-content" class="skip label" data-print="hidden">Skip to main content</a>
-	<SiteNav links={links} active={Astro.url.pathname} wide={wide} />
+	<SiteNav links={links} active={Astro.url.pathname} />
 	<main id="main-content" tabindex="-1" data-gap={gap} data-wide={wide ? "" : undefined}>
 		<slot />
 	</main>
-	<Footer wide={wide} />
+	<Footer />
 	<ThemeSwitch floating watch="#site-nav" backToTop />
 </Layout>
 

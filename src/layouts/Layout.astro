@@ -90,12 +90,26 @@ const description =
 			// ignores the print sheet's `animation: none` for it, so printing
 			// within a second of a page load put every mid-reveal element on paper
 			// blank. Jumping each finite animation to its end state before the
-			// print snapshot is what both engines honour. Infinite ones (the
-			// severity pulse) cannot finish and are left alone.
+			// print snapshot is what both engines honour. Looping ones (the
+			// severity flash) have no end state, so they are rewound to their
+			// first frame, at rest, and held there until printing is done.
+			const held = new Set<Animation>();
+
 			window.addEventListener("beforeprint", () => {
 				for (const animation of document.getAnimations()) {
-					if (animation.effect?.getComputedTiming().iterations !== Number.POSITIVE_INFINITY) animation.finish();
+					if (animation.effect?.getComputedTiming().iterations === Number.POSITIVE_INFINITY) {
+						animation.pause();
+						animation.currentTime = 0;
+						held.add(animation);
+					} else {
+						animation.finish();
+					}
 				}
+			});
+
+			window.addEventListener("afterprint", () => {
+				for (const animation of held) animation.play();
+				held.clear();
 			});
 		</script>
 	</body>

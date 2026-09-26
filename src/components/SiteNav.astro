@@ -1,9 +1,11 @@
 ---
 import ThemeSwitch from "./ThemeSwitch.astro";
 
-// Site-wide top nav, per the DS's SiteNav: wordmark left, condensed-caps links
-// centred, ThemeSwitch right, a hairline bottom border. The links are plain
-// <a> elements so clicks reach `document`, where <ClientRouter /> listens.
+// Site-wide top nav, per the DS's SiteNav: the DW monogram left (the Brand
+// card's wordmark treatment; aria-labelled, since "DW" alone is a weak link
+// name), condensed-caps links centred, ThemeSwitch right, a hairline bottom
+// border. The links are plain <a> elements so clicks reach `document`, where
+// <ClientRouter /> listens.
 //
 // The nav is an inline-size container: at ≤520px recipes/site-nav.css tightens
 // the gutters, and at ≤560px the ThemeSwitch goes icon-only (the width at which
@@ -19,17 +21,15 @@ interface Props {
 	links: Array<{ label: string; href: string }>;
 	/** Current pathname (`Astro.url.pathname`), used to mark the active link. */
 	active: string;
-	/** Follow the page's wide measure, so the wordmark and switch line up with it. */
-	wide?: boolean | undefined;
 }
 
-const { links, active, wide = false } = Astro.props;
+const { links, active } = Astro.props;
 ---
 
 <header id="site-nav" data-print="hidden">
 	<nav aria-label="Primary" data-scope="site-nav" data-part="root">
-		<div data-scope="site-nav" data-part="inner" data-wide={wide ? "" : undefined}>
-			<a href="/" class="wordmark">daryl.one</a>
+		<div data-scope="site-nav" data-part="inner">
+			<a href="/" class="wordmark" aria-label="Daryl Wong, home">DW</a>
 			<ul>
 				{
 					links.map((link) => {
@@ -67,21 +67,21 @@ const { links, active, wide = false } = Astro.props;
 		padding: 0.9rem var(--nav-pad, 24px);
 	}
 
-	[data-part="inner"][data-wide] {
-		max-width: 1200px;
-	}
-
+	/* The monogram, in the Brand card's wordmark treatment: display face at its
+	   heaviest, caps, in the sodium accent. */
 	.wordmark {
 		justify-self: start;
 		font-family: var(--font-display);
 		font-weight: var(--weight-black);
-		font-size: var(--text-sm);
-		color: var(--text-body);
+		font-size: var(--text-2xl);
+		line-height: 1;
+		text-transform: uppercase;
+		color: var(--color-accent);
 		text-decoration: none;
 	}
 
 	.wordmark:hover {
-		color: var(--color-accent);
+		color: var(--text-body);
 	}
 
 	ul {

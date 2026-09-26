@@ -4,8 +4,9 @@ import type { ISODate } from "../cv";
 import Badge from "./Badge.astro";
 
 // Experience as an audit log: dates in the left gutter like log timestamps, a
-// 2px spine with square 8px dots, and a sodium dot plus ACTIVE chip on the
-// current role.
+// 2px spine with square 8px dots, and a sodium dot on the current role. The
+// current role's ACTIVE chip stands in for "– Present" in the date, so the
+// title row carries only the title; on paper the date reads "– Present".
 //
 // Two date treatments, never both at once:
 // - Screen, wide container: the date rail on the left, the timeline's whole
@@ -50,8 +51,14 @@ const { id, entries } = Astro.props;
 			return (
 				<li data-current={isCurrent ? "" : undefined} data-last={index === entries.length - 1 ? "" : undefined}>
 					<p class="rail-date label" data-print="hidden">
-						<time datetime={startDate}>{startDate}</time>
-						<span>&ndash;&nbsp;{isCurrent ? "Present" : <time datetime={endDate}>{endDate}</time>}</span>
+						<time datetime={startDate}>{startDate}</time>{" "}
+						{isCurrent ? (
+							<Badge tone="accent">Active</Badge>
+						) : (
+							<span>
+								&ndash;&nbsp;<time datetime={endDate}>{endDate}</time>
+							</span>
+						)}
 					</p>
 					<span class="rail" aria-hidden="true" data-print="hidden">
 						<span class="dot" />
@@ -60,11 +67,6 @@ const { id, entries } = Astro.props;
 						<div class="head">
 							<h3>
 								<span>{position}</span>
-								{isCurrent && (
-									<span data-print="hidden">
-										<Badge tone="accent">Active</Badge>
-									</span>
-								)}
 							</h3>
 							<p class="print-date label" data-print="only">
 								<time datetime={startDate}>{startDate}</time>
@@ -160,7 +162,8 @@ const { id, entries } = Astro.props;
 	.rail-date {
 		display: flex;
 		flex-wrap: wrap;
-		gap: 0 var(--space-2);
+		align-items: center;
+		gap: var(--space-1) var(--space-2);
 		margin-bottom: var(--space-2);
 		color: var(--text-muted);
 	}
@@ -369,6 +372,13 @@ const { id, entries } = Astro.props;
 		.highlights {
 			margin-top: var(--space-1);
 			font-size: var(--text-xs);
+		}
+
+		/* The employer is a link on screen; on paper an underline only adds
+		   emphasis to a name that should read like the rest of the line. */
+		.org a {
+			color: inherit;
+			text-decoration: none;
 		}
 
 		[data-part="content"] {

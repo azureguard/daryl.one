@@ -80,15 +80,46 @@
 	--sev-surface: var(--severity-critical-surface);
 	--sev-text: var(--severity-critical-text);
 }
+/* High and critical markers flash like a warning beacon: the marker holds steady, then
+   bursts a glow in its own severity colour. Critical double-flashes on a 1.7s cycle; high
+   single-flashes on 2.9s. The cycles share no beat, so badges of the two tiers never fall
+   into step. Every cycle starts and ends at rest (no glow), which is the frame printing
+   holds. Reduced motion freezes both at rest. */
 [data-severity="critical"] [data-part="marker"] {
-	animation: dw-pulse 1.6s var(--ease-standard) infinite;
+	animation: dw-flash-critical 1.7s linear infinite;
 }
-@keyframes dw-pulse {
+[data-severity="high"] [data-part="marker"] {
+	animation: dw-flash-high 2.9s linear infinite;
+}
+@keyframes dw-flash-critical {
 	0%,
+	54%,
+	60%,
+	64%,
+	70%,
 	100% {
-		opacity: 1;
+		box-shadow: 0 0 0 0 transparent;
 	}
-	50% {
-		opacity: 0.25;
+	56%,
+	58%,
+	66%,
+	68% {
+		box-shadow:
+			0 0 0 2px var(--sev-solid),
+			0 0 12px 3px var(--sev-solid);
+	}
+}
+@keyframes dw-flash-high {
+	0%,
+	62%,
+	70%,
+	100% {
+		box-shadow: 0 0 0 0 transparent;
+	}
+	64%,
+	67% {
+		box-shadow:
+			0 0 0 2px var(--sev-solid),
+			0 0 10px 2px var(--sev-solid);
 	}
 }
