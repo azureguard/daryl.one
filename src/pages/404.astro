@@ -1,33 +1,27 @@
 ---
 import { basics } from "@cv";
+import LogBlock from "@/components/LogBlock.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import { getPublishedPosts } from "@/lib/blog";
+import { getPublished } from "@/lib/content";
 
 // Astro serves this file for any unmatched route under `output: "server"`, and
 // the blog routes rewrite to it, so every 404 on the site looks the same.
 // Astro does not set the status itself.
 Astro.response.status = 404;
 
-// The log block is shaped as `{ key, value }` rows so it lifts into a DS
-// `LogBlock` later. `originPathname` survives a rewrite, where `Astro.url`
-// would already read "/404"; Astro adds a trailing slash, which the row drops.
+// The request as a DS LogBlock. `originPathname` survives a rewrite, where
+// `Astro.url` would already read "/404"; Astro adds a trailing slash, which the
+// line drops. Keys are padded so the values line up in the mono column.
 const entries = [
-	{ key: "status", value: "404 NOT FOUND" },
+	{ key: "status", value: "404 NOT FOUND", tone: "highlight" as const },
 	{ key: "resource", value: Astro.originPathname.replace(/(.)\/+$/, "$1") },
 	{ key: "cause", value: "no route matches this address" },
 	{ key: "action", value: "pick one of the links below" },
 ];
-// Keys are padded so the values line up in the monospace block. The `<pre>`
-// below is written tight: inside it, the template's own indentation would
-// render as literal whitespace.
 const keyWidth = Math.max(...entries.map(({ key }) => key.length));
-const rows = entries.map(({ key, value }) => ({
-	label: `${key}:`.padEnd(keyWidth + 1),
-	value,
-	tone: key === "status" ? "signal" : "body",
-}));
+const lines = entries.map(({ key, value, tone }) => ({ text: `${`${key}:`.padEnd(keyWidth + 1)} ${value}`, tone }));
 
-const hasPosts = (await getPublishedPosts()).length > 0;
+const hasPosts = (await getPublished("blog")).length > 0;
 const links = [
 	{ href: "/", label: "← Home" },
 	{ href: "/cv", label: "CV" },
@@ -36,11 +30,7 @@ const links = [
 ---
 
 <SiteLayout title={`Not found - ${basics.name}`} gap="sm">
-	<pre class="log" data-reveal="scan"><code>{
-			rows.map(({ label, value, tone }) => (
-				<span class="row"><span>{label} </span><span data-tone={tone}>{value}</span></span>
-			))
-		}</code></pre>
+	<LogBlock title="request.log" lines={lines} data-reveal="scan" />
 	<h1><span data-reveal="declassify" data-i="2">Nothing on file.</span></h1>
 	<p class="lede">
 		There's no entry at this address. It may have been renamed, moved, or never existed. Check the URL, or pick up the
@@ -58,29 +48,6 @@ const links = [
 </SiteLayout>
 
 <style>
-	.log {
-		margin: 0;
-		overflow-x: auto;
-		padding: var(--space-4);
-		background: var(--surface-card);
-		box-shadow: inset 0 0 0 1px var(--border-default);
-		font-size: var(--text-sm);
-		line-height: var(--leading-relaxed);
-		color: var(--text-muted);
-	}
-
-	.row {
-		display: block;
-	}
-
-	[data-tone="signal"] {
-		color: var(--color-accent);
-	}
-
-	[data-tone="body"] {
-		color: var(--text-body);
-	}
-
 	h1 {
 		font-size: clamp(var(--text-3xl), 9vw, var(--text-4xl));
 		text-transform: uppercase;

@@ -1,11 +1,12 @@
 ---
 import { getEntry, render } from "astro:content";
 import { basics } from "@cv";
+import PageHeader from "@/components/PageHeader.astro";
 import PostNav from "@/components/PostNav.astro";
 import PostTags from "@/components/PostTags.astro";
 import Prose from "@/components/Prose.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import { formatDate, getAdjacentPosts, readTime } from "@/lib/blog";
+import { formatDate, getAdjacentPosts, readTime } from "@/lib/content";
 
 // Rendered on demand: `slug` matches the collection entry's `.id`. An unknown
 // slug or a draft hit directly both become the site 404; a direct hit must not
@@ -20,8 +21,8 @@ const adjacent = await getAdjacentPosts(entry.id);
 
 <SiteLayout title={`${entry.data.title} - ${basics.name}`} gap="sm">
 	<a href="/blog" class="back label" data-print="hidden">&larr; Back to blog</a>
-	<header>
-		<p class="meta label" data-reveal>
+	<PageHeader title={entry.data.title}>
+		<Fragment slot="eyebrow">
 			<time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
 			{
 				entry.data.updated && (
@@ -33,11 +34,10 @@ const adjacent = await getAdjacentPosts(entry.id);
 			}
 			<span aria-hidden="true">·</span>
 			<span>{readTime(entry.body ?? "")}</span>
-		</p>
-		<h1><span data-reveal="declassify" data-i="1">{entry.data.title}</span></h1>
-		<p class="lede" data-reveal data-i="3">{entry.data.description}</p>
-		<PostTags cvss={entry.data.cvss} tags={entry.data.tags} data-reveal="" data-i="4" />
-	</header>
+		</Fragment>
+		<p>{entry.data.description}</p>
+		<PostTags slot="after" cvss={entry.data.cvss} tags={entry.data.tags} data-reveal="" data-i="4" />
+	</PageHeader>
 	<Prose>
 		<Content />
 	</Prose>
@@ -48,35 +48,5 @@ const adjacent = await getAdjacentPosts(entry.id);
 	.back {
 		align-self: flex-start;
 		text-decoration: none;
-	}
-
-	header {
-		display: flex;
-		flex-direction: column;
-		gap: var(--space-4);
-		padding-bottom: var(--space-8);
-		border-bottom: 1px solid var(--border-default);
-	}
-
-	.meta {
-		display: flex;
-		flex-wrap: wrap;
-		gap: var(--space-2);
-		color: var(--text-muted);
-	}
-
-	h1 {
-		font-size: clamp(var(--text-3xl), 8vw, var(--text-4xl));
-		text-transform: uppercase;
-	}
-
-	h1 span {
-		display: inline-block;
-	}
-
-	.lede {
-		max-width: 62ch;
-		font-size: var(--text-lg);
-		color: var(--text-muted);
 	}
 </style>

@@ -1,12 +1,16 @@
 ---
-import { Image } from "astro:assets";
 import { basics, work } from "@cv";
-import avatar from "@/assets/avatar.jpg";
+import { Icon } from "astro-icon/components";
+import Badge from "@/components/Badge.astro";
 import PageHeader from "@/components/PageHeader.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 
 // The terminal "About" page: first-person register, the portrait, and a
 // "Career, briefly" era strip. The split from `/` is register, not subject.
+//
+// The story leads and the portrait sits to its right (below it on phones), as
+// in the DS About template. Until a plain, naturally-lit headshot exists, a
+// person glyph holds the portrait's place; it is decoration, so aria-hidden.
 const { name } = basics;
 
 // Era years come from cv.json's newest-first `work` array; only the three era
@@ -24,7 +28,8 @@ const engineeringStart = Math.min(...engineeringRoles.map((role) => Number(role.
 const eras = [
 	{ range: `${engineeringStart}–${leadershipRole.startDate}`, name: "Software engineering", active: false },
 	{ range: `${leadershipRole.startDate}–${leadershipRole.endDate}`, name: "Technical leadership", active: false },
-	{ range: `${currentRole.startDate}–Present`, name: "Cybersecurity", active: true },
+	// The current era's ACTIVE badge stands in for "–Present", as on the Timeline.
+	{ range: `${currentRole.startDate}`, name: "Cybersecurity", active: true },
 ];
 ---
 
@@ -32,7 +37,6 @@ const eras = [
 	<PageHeader eyebrow="whoami" title="Hi, I'm Daryl." />
 
 	<div class="story">
-		<Image src={avatar} alt={name} loading="eager" width={400} class="portrait" />
 		<div class="prose">
 			<p>
 				I lead security architecture and governance for Dyson's Connected Cloud team, translating obligations like
@@ -50,6 +54,9 @@ const eras = [
 				site running: it's easier to reason about a system you've built yourself.
 			</p>
 		</div>
+		<figure class="portrait" aria-hidden="true" data-print="hidden" data-reveal data-i="4">
+			<Icon name="lucide:user-round" />
+		</figure>
 	</div>
 
 	<section class="eras">
@@ -58,7 +65,10 @@ const eras = [
 			{
 				eras.map((era) => (
 					<div class="era" data-scope="card" data-part="root" data-elevation={era.active ? "raised" : undefined} data-active={era.active ? "" : undefined}>
-						<span class="label range">{era.range}</span>
+						<span class="label range">
+							{era.range}
+							{era.active && <Badge tone="accent">Active</Badge>}
+						</span>
 						<h3>{era.name}</h3>
 					</div>
 				))
@@ -79,12 +89,21 @@ const eras = [
 		gap: var(--space-8);
 	}
 
-	.story :global(.portrait) {
+	.portrait {
+		display: grid;
+		place-items: center;
 		width: 200px;
 		height: 260px;
 		flex-shrink: 0;
-		object-fit: cover;
-		box-shadow: 0 0 0 1px var(--border-default);
+		margin: 0;
+		background: var(--surface-card);
+		box-shadow: inset 0 0 0 1px var(--border-default);
+		color: var(--text-muted);
+	}
+
+	.portrait :global(svg) {
+		width: 45%;
+		height: auto;
 	}
 
 	.prose {
@@ -123,6 +142,10 @@ const eras = [
 	}
 
 	.range {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
 		color: var(--text-muted);
 	}
 

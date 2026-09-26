@@ -1,28 +1,26 @@
 ---
 import { getCollection } from "astro:content";
-import { basics, work } from "@cv";
+import { basics, projects, work } from "@cv";
 import Badge from "@/components/Badge.astro";
 import SeverityBadge from "@/components/SeverityBadge.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import { formatDate, getPublishedPosts } from "@/lib/blog";
+import { formatDate, getPublished } from "@/lib/content";
 import { countMeta } from "@/meta";
 
-// The landing page, after the DS's "Night Shift — direction" Brand card: a
-// declassified headline with the role line and two actions on the left, and a
-// log of entry points on the right, each a thin id over a black title.
-//
-// The Brand card fills that log with invented advisories (CVE ids, severity
-// scores). This is a real person's site, so the rows are the real routes, in
-// the same format, and every badge is real data: a count, a date, or, for the
-// latest post, its own CVSS severity when it states a vector (as the Brand
-// card's advisory rows do). The tags are the
-// CV's own headline. The page is still a router: everything is meant to be left.
+// The landing page, after the DS's "Night Shift — direction" Brand card, which
+// is also the DS's one reference for this page (there is no separate homepage
+// template): a declassified headline with the role line and two actions on the
+// left, and a log of entry points on the right, each a thin id over a black
+// title. The rows are the real routes, and every badge is real data: a count,
+// a date, or, for the latest post, its own CVSS severity when it states a
+// vector. The tags are the CV's own headline. The page is a router: everything
+// is meant to be left.
 const { name, label, summary = "", location } = basics;
 
 const currentRole = work[0];
 if (!currentRole) throw new Error("cv.json: expected at least one work entry");
 
-const posts = await getPublishedPosts();
+const posts = await getPublished("blog");
 const [latestPost] = posts;
 const uses = await getCollection("uses");
 
@@ -45,6 +43,7 @@ const entries = [
 			]
 		: []),
 	{ href: "/cv", id: "/cv", title: "The résumé", meta: countMeta(work.length) },
+	{ href: "/projects", id: "/projects", title: "The sandbox", meta: countMeta(projects.length) },
 	{ href: "/about", id: "/about", title: "whoami", meta: undefined },
 	{ href: "/uses", id: "/uses", title: "The setup", meta: countMeta(uses.length, "item") },
 ];

@@ -1,0 +1,144 @@
+---
+import { getEntry, render } from "astro:content";
+import { basics } from "@cv";
+import Badge from "@/components/Badge.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import Prose from "@/components/Prose.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+// A project case study, linked from its card on /projects and on /cv.
+// Rendered on demand like a post: an unknown slug or a draft becomes the site
+// 404.
+//
+// The fact sheet is a <dl> in condensed caps rather than the DS template's
+// mono block: mono is for code and log content only (the DS readme).
+const { slug } = Astro.params;
+const entry = slug ? await getEntry("projects", slug) : undefined;
+if (!entry || entry.data.draft) return Astro.rewrite("/404");
+
+const { Content } = await render(entry);
+const { title, description, role, scope, stack, period, outcomes = [], tags = [] } = entry.data;
+const facts = [
+	{ term: "Role", detail: role },
+	{ term: "Scope", detail: scope },
+	{ term: "Stack", detail: stack.join(" · ") },
+	{ term: "Period", detail: period },
+];
+---
+
+<SiteLayout title={`${title} - ${basics.name}`} gap="sm">
+	<a href="/projects" class="back label" data-print="hidden">&larr; Back to projects</a>
+	<PageHeader eyebrow="Case study" title={title}>
+		<p>{description}</p>
+		<dl slot="after" class="facts" data-reveal data-i="4">
+			{
+				facts.map(({ term, detail }) => (
+					<div>
+						<dt class="label">{term}</dt>
+						<dd>{detail}</dd>
+					</div>
+				))
+			}
+		</dl>
+	</PageHeader>
+	<Prose>
+		<Content />
+	</Prose>
+	{
+		outcomes.length > 0 && (
+			<section class="outcomes" aria-labelledby="outcomes-heading">
+				<h2 id="outcomes-heading" class="label">In numbers</h2>
+				<ul>
+					{outcomes.map(({ value, label }) => (
+						<li data-scope="card" data-part="root">
+							<span class="value">{value}</span>
+							<span class="caption">{label}</span>
+						</li>
+					))}
+				</ul>
+			</section>
+		)
+	}
+	{
+		tags.length > 0 && (
+			<ul class="tags" aria-label="Tags">
+				{tags.map((tag) => (
+					<li>
+						<Badge>{tag}</Badge>
+					</li>
+				))}
+			</ul>
+		)
+	}
+</SiteLayout>
+
+<style>
+	.back {
+		align-self: flex-start;
+		text-decoration: none;
+	}
+
+	.facts {
+		display: grid;
+		gap: var(--space-2);
+		margin: 0;
+	}
+
+	.facts div {
+		display: grid;
+		grid-template-columns: 6rem 1fr;
+		gap: var(--space-4);
+	}
+
+	.facts dt {
+		color: var(--text-muted);
+	}
+
+	.facts dd {
+		margin: 0;
+		font-size: var(--text-sm);
+	}
+
+	.outcomes {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.outcomes h2 {
+		font-size: var(--text-sm);
+		line-height: 1.2;
+		color: var(--color-accent);
+	}
+
+	.outcomes ul {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+		gap: var(--space-4);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.value {
+		font-family: var(--font-display);
+		font-size: var(--text-3xl);
+		font-weight: var(--weight-heavy);
+		line-height: 1;
+		color: var(--color-accent);
+	}
+
+	.caption {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

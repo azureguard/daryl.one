@@ -42,6 +42,7 @@ export default defineConfig({
 					"shield-check",
 					"sun",
 					"sun-moon",
+					"user-round",
 					"workflow",
 				],
 				"simple-icons": ["github", "linkedin"],

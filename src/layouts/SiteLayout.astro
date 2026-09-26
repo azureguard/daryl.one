@@ -2,7 +2,7 @@
 import Footer from "@/components/Footer.astro";
 import SiteNav from "@/components/SiteNav.astro";
 import ThemeSwitch from "@/components/ThemeSwitch.astro";
-import { getPublishedPosts } from "@/lib/blog";
+import { getPublished } from "@/lib/content";
 import Layout from "./Layout.astro";
 
 interface Props {
@@ -19,12 +19,13 @@ interface Props {
 
 const { title, gap = "lg", wide = false } = Astro.props;
 
-// Nav order follows the DS (CV, Blog, Gallery, About, Uses). Gallery is
-// deferred, and Blog appears only once a post is published: an empty "Audit
+// Nav order follows the DS (CV, Projects, Blog, About, Uses). Gallery is parked
+// in the DS as future scope, and Blog appears only once a post is published: an empty "Audit
 // trail" is a dead end, so the route and every link to it wait for content.
-const hasPosts = (await getPublishedPosts()).length > 0;
+const hasPosts = (await getPublished("blog")).length > 0;
 const links = [
 	{ label: "CV", href: "/cv" },
+	{ label: "Projects", href: "/projects" },
 	...(hasPosts ? [{ label: "Blog", href: "/blog" }] : []),
 	{ label: "About", href: "/about" },
 	{ label: "Uses", href: "/uses" },

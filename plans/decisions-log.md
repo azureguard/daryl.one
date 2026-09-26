@@ -115,6 +115,61 @@ live region, blog helpers).
   wrapped "Follow the Sun" onto two lines. It is now `width: max-content` with
   `white-space: nowrap` rows.
 
+### DS consistency sweep (2026-09-26)
+
+A sweep of the Claude Design project against the site after several two-way
+syncs. The site held the settled decisions; the DS templates still showed the
+pre-Night-Shift layout.
+
+- **The portrait moves right, and a placeholder stands in for it.** The story
+  leads and the portrait supports it, as in the DS About template: on phones
+  the text comes first instead of 260px of photo. The formal studio portrait
+  was off the DS brief ("a plain, naturally-lit headshot"), so it is gone
+  until a plain one exists; a `lucide:user-round` glyph in a card-surface
+  frame keeps the composition. Supersedes the portrait placement below.
+- **The About era strip uses the ACTIVE badge**, as the Timeline does, in
+  place of "–Present". One mark for "current" across the site.
+- **Ongoing technical leadership is a duty, not an era.** Daryl still gives
+  architectural guidance from the security side. Marking the Technical
+  leadership era as still active would contradict the CV's 2026 end date, so
+  it goes in the About prose and as a highlight on the current role.
+- **Case studies are a Markdown collection,** like the blog (no MDX: nothing
+  needs components in content yet). Fact sheet in frontmatter, rendered as a
+  `<dl>` in condensed caps rather than the DS template's mono block, since mono
+  is for code and logs only. `project` must name a `cv.json` project, and the
+  CV card links to it. No listing page and no nav entry: the CV's Projects
+  section is the index. Supersedes "CaseStudy routes are deferred" below.
+- **`PageHeader` gained slots rather than a second header.** The post page had
+  copied its header, h1 and lede styles to put a meta row where the eyebrow
+  goes. An `eyebrow` slot (readable, unlike the aria-hidden prop) and an
+  `after` slot let the post and the case study share it. `getPublishedPosts`
+  became `getPublished(collection)` in `lib/content.ts` for the same reason.
+- **Gallery is parked,** not built and not deleted: the DS keeps the template
+  as future scope, and it is out of every nav.
+- **The DS drops its duplicates.** `ui_kits/portfolio/` re-implemented CV,
+  Blog and Gallery in React on retired tokens; the templates cover each page
+  once. `scraps/` and `uploads/` were working leftovers. The templates import
+  the DS `SiteNav` and a new `Footer` instead of nine inlined copies.
+- **One landing reference: the Brand card.** The DS's Homepage template and
+  its "Night Shift — direction" card described the same page. The card stays
+  (it carries the direction and the load replay) and now shows the real
+  landing: DW nav, real routes, footer. The template is gone.
+- **The DW monogram replaces the lime logo mark everywhere,** including the
+  favicon, which was still the retired circuit glyph. The favicon is the
+  monogram outlined from Big Shoulders 900 (a favicon cannot load the web
+  font), sodium on pine-black with the chamfered corner. The DS's unused
+  Avatar card and photo went with the logo mark.
+- **The 404's log block is the DS LogBlock.** It had been shaped for one;
+  `LogBlock.astro` ports the component with its props, writing tones as
+  `data-tone` rather than the DS's inline styles (CSP).
+- **Projects is in the nav, with its own page.** Superseding "no listing page"
+  above: `/projects` lists every cv.json project with the same cards as the
+  CV section, linking to case studies where they exist. It is never empty, so
+  it is not gated like the blog. Nav order: CV, Projects, Blog, About, Uses.
+- **Declined: pruning DS components the site does not render.** Forms, Tabs,
+  Alert, Divider, IconLink and the security set stay, for future pages and a
+  possible Storybook.
+
 ## Framework: none (React and React Aria were removed)
 
 **The site ships no UI framework.** `design-system-full-plan.md` Phase A had
@@ -293,8 +348,8 @@ hand-writing the other four-fifths.
   re-embeds the nav inline and we hoisted that. The footer is the only place
   GitHub/LinkedIn/Email live, so homepage-only would leave someone arriving on a
   blog post from search with no route to contact.
-- **Gallery and CaseStudy routes are deferred**, not forgotten
-  (drift report §1.1/§1.3). `/` links `/uses` in the third card slot meanwhile.
+- **Gallery is deferred**, not forgotten (drift report §1.1/§1.3). CaseStudy
+  was built on 2026-09-26 (see the consistency sweep above).
 
 ## Components and styling
 
@@ -390,7 +445,8 @@ hand-writing the other four-fifths.
   - The whole block is `print:hidden`; it's chrome, and a printed post shouldn't
     advertise neighbours. Drafts are filtered out of the sequence, so unpublishing
     a post closes the gap rather than leaving a link to a 404.
-- **The portrait stays on `/about`.** It's the one page whose purpose is "who is
+- **The portrait stays on `/about`** (placement and photo superseded by the
+  2026-09-26 sweep above). It's the one page whose purpose is "who is
   this person". Note the DS asks for "a plain, naturally-lit headshot … no
   stylized color grading" — the current formal studio portrait is off that
   brief, which is a photo-selection question rather than a placement one.

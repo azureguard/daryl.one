@@ -3,11 +3,11 @@ import { basics } from "@cv";
 import PageHeader from "@/components/PageHeader.astro";
 import PostTags from "@/components/PostTags.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
-import { formatDate, getPublishedPosts, readTime } from "@/lib/blog";
+import { formatDate, getPublished, readTime } from "@/lib/content";
 
 // With nothing published, /blog is the site 404 rather than an empty log.
 // SiteLayout and the homepage drop their links on the same condition.
-const posts = await getPublishedPosts();
+const posts = await getPublished("blog");
 if (posts.length === 0) return Astro.rewrite("/404");
 ---
 

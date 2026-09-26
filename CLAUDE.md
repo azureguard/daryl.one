@@ -67,9 +67,20 @@ headings and labels, IBM Plex Sans for prose, Plex Mono for code only.
   project's `tokens/` and `recipes/`, values verbatim. Each file's header notes
   any deviation (font family names, CSP-safe reveal ordering, the reduced-motion
   delay). Re-sync by diffing against the project, not by rewriting.
-- The DS templates (`templates/*.dc.html`) lag the token layer (sans h1s,
-  rounded dots). Use them for page structure only; tokens, recipes,
-  `components/CONVENTIONS.md` and `brand/night-shift.card.html` decide the look.
+- The DS templates (`templates/*.dc.html`) mirror the live pages (re-synced
+  2026-09-26) and import the DS `SiteNav`/`Footer` rather than inlining them.
+  The landing page has no template: `brand/night-shift.card.html` is its one
+  reference. The favicon is the DS's `assets/favicon.svg` (the DW monogram,
+  outlined from Big Shoulders 900).
+- `_ds_bundle.js` and `_ds_manifest.json` in the DS are build output of the
+  design-sync CLI, not rebuilt by Claude Design. Changing a component's `.jsx`,
+  or adding/deleting a card or template, leaves them stale (a deleted card
+  404s in the pane, a changed component keeps its old render) until they are
+  regenerated and uploaded with it. The bundle header's `sourceHashes` are
+  sha256 of each source, truncated to 12 hex chars.
+  When a page changes here, update its template. Gallery is parked there as
+  future scope; the DS keeps components the site does not render yet (forms,
+  Tabs, Alert, Divider, IconLink, the security set) on purpose.
 - Recipes key on Ark anatomy attributes, so a native element takes a recipe by
   attribute: `<a data-scope="button" data-part="root" data-variant="secondary"
   data-size="sm">`, `<span data-scope="badge" data-tone="accent">`.
@@ -90,7 +101,7 @@ headings and labels, IBM Plex Sans for prose, Plex Mono for code only.
 src/
 ├── components/
 │   ├── Section.astro      # Section wrapper (h2 + eyebrow/meta)
-│   ├── PageHeader.astro   # Page header (h1 + eyebrow + lede slot)
+│   ├── PageHeader.astro   # Page header (h1 + eyebrow prop/slot + lede + `after` slot)
 │   ├── SiteNav.astro      # Primary nav + ThemeSwitch (plain <a> links)
 │   ├── ThemeSwitch.astro  # Theme select (Zag select): nav + floating dock
 │   ├── CopyEmail.astro    # Click-to-copy email (Zag clipboard)
@@ -98,14 +109,16 @@ src/
 │   ├── Badge.astro        # Chamfered chip (badge recipe)
 │   ├── Prose.astro        # Markdown typography wrapper
 │   ├── Timeline.astro     # Experience/volunteer audit log (Zag collapsible)
+│   ├── ProjectCards.astro # cv.json projects as cards (CV section + /projects)
+│   ├── LogBlock.astro     # DS LogBlock: annotated log lines (the 404's request)
 │   ├── PostNav.astro      # Previous/next post links
 │   └── sections/          # Hero, About, Experience, Projects, Skills, Education, ...
 ├── layouts/
 │   ├── Layout.astro       # SEO <head>, theme script, beforeprint handler
 │   └── SiteLayout.astro   # Skip link + nav + <main> measure + footer
-├── pages/                 # index (hub), cv, about, uses, blog/, 404
-├── content/               # blog/ and uses/ collections (schema in content.config.ts)
-├── lib/blog.ts            # getPublishedPosts, getAdjacentPosts, readTime, formatDate
+├── pages/                 # index (hub), cv, about, uses, blog/, projects/, 404
+├── content/               # blog/, projects/ and uses/ collections (schema in content.config.ts)
+├── lib/content.ts         # getPublished(blog|projects), getAdjacentPosts, readTime, formatDate
 ├── scripts/zag.ts         # Mounts Zag machines per page load, stops them per swap
 ├── meta.ts                # countMeta / rangeMeta for section eyebrows
 ├── styles/
@@ -135,8 +148,16 @@ public/_headers            # Security/cache headers applied at the edge
   UI Popover (Zag `popover`, non-modal) listing the metrics by the spec's
   subcategories. Not a tooltip: tooltips are hover/keyboard-focus only by
   design (Zag ignores touch), so the breakdown would be unreachable on phones.
+- **Case studies**: `src/content/projects/*.md`, rendered at
+  `/projects/<slug>`. Frontmatter carries the fact sheet (`role`, `scope`,
+  `stack`, `period`) and optional `outcomes` tiles; `project` must name a
+  `cv.json` project exactly (the build fails otherwise), and that project's
+  card links to it on `/cv` and on `/projects`, which lists every `cv.json`
+  project (`ProjectCards.astro`, shared with the CV section). `/projects` always
+  has content, so unlike the blog its nav link is never gated. Drafts and
+  unknown slugs rewrite to the 404.
 - **Blog gating**: the blog routes, the nav link and the homepage card appear
-  only when `getPublishedPosts()` returns something. With no published post,
+  only when `getPublished("blog")` returns something. With no published post,
   `/blog` rewrites to the site 404.
 - **Theme system**: `tokens/colors.css` defines semantic custom properties for
   `:root` (light, "Day shift") and `.dark` (dark, "Night shift"). Components use

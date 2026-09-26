@@ -1,0 +1,17 @@
+---
+import { basics } from "@cv";
+import PageHeader from "@/components/PageHeader.astro";
+import ProjectCards from "@/components/ProjectCards.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+// Every cv.json project, the same cards as the CV's Projects section; one with
+// a published case study links through to /projects/<slug>. It always has
+// content, so unlike the blog the route and its nav link are never gated.
+---
+
+<SiteLayout title={`Projects - ${basics.name}`} gap="md">
+	<PageHeader eyebrow="Sandbox" title="Projects">
+		<p>Things built outside the day job, and the case studies behind them.</p>
+	</PageHeader>
+	<ProjectCards headingLevel={2} />
+</SiteLayout>

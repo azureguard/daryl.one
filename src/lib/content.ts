@@ -1,13 +1,21 @@
-/** Shared helpers for the blog index, the post page and the homepage strip. */
+/** Shared helpers for the dated collections: the blog and the case studies. */
 
-import { getCollection } from "astro:content";
+import { type CollectionEntry, getCollection } from "astro:content";
 
 const WORDS_PER_MINUTE = 210;
 
-/** Every non-draft post, newest first. The one definition of "the blog". */
-export async function getPublishedPosts() {
-	const posts = await getCollection("blog", ({ data }) => !data.draft);
-	return posts.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+type Dated = "blog" | "projects";
+
+/**
+ * Every non-draft entry of a dated collection, newest first. The one
+ * definition of what is published: routes, nav links and cards key off it.
+ */
+export async function getPublished<C extends Dated>(collection: C): Promise<Array<CollectionEntry<C>>> {
+	const entries: Array<CollectionEntry<C>> = await getCollection(
+		collection,
+		({ data }: CollectionEntry<Dated>) => !data.draft,
+	);
+	return entries.sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
 }
 
 /** The subset of a post's data the prev/next pair needs to render. */
@@ -30,7 +38,7 @@ export async function getAdjacentPosts(id: string): Promise<{
 	previous: AdjacentPost | undefined;
 	next: AdjacentPost | undefined;
 }> {
-	const posts = await getPublishedPosts();
+	const posts = await getPublished("blog");
 
 	const index = posts.findIndex((post) => post.id === id);
 	const at = (offset: number): AdjacentPost | undefined => {

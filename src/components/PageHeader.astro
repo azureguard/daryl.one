@@ -1,9 +1,13 @@
 ---
-// Page-level header, one level up from Section's. The eyebrow is decorative
-// labelling over the h1, so it is aria-hidden; the lede goes in the slot.
-// `data-reveal="declassify"` is the page's one orchestrated load moment.
+// Page-level header, one level up from Section's. The lede goes in the default
+// slot. `data-reveal="declassify"` is the page's one orchestrated load moment.
+//
+// Over the h1 sits either the `eyebrow` prop, a decorative classifier and so
+// aria-hidden, or an `eyebrow` slot for real content in that place (a post's
+// date and read time), which stays readable. The `after` slot takes a row
+// under the lede (a post's tags).
 interface Props {
-	eyebrow: string;
+	eyebrow?: string | undefined;
 	title: string;
 }
 
@@ -11,9 +15,22 @@ const { eyebrow, title } = Astro.props;
 ---
 
 <header>
-	<p class="label eyebrow" aria-hidden="true" data-reveal>{eyebrow}</p>
+	{
+		Astro.slots.has("eyebrow") ? (
+			<div class="label meta" data-reveal>
+				<slot name="eyebrow" />
+			</div>
+		) : (
+			eyebrow && (
+				<p class="label eyebrow" aria-hidden="true" data-reveal>
+					{eyebrow}
+				</p>
+			)
+		)
+	}
 	<h1><span data-reveal="declassify" data-i="1">{title}</span></h1>
 	<div class="lede" data-reveal data-i="3"><slot /></div>
+	<slot name="after" />
 </header>
 
 <style>
@@ -27,6 +44,13 @@ const { eyebrow, title } = Astro.props;
 
 	.eyebrow {
 		color: var(--color-accent);
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		color: var(--text-muted);
 	}
 
 	h1 {
