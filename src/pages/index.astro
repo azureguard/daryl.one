@@ -186,11 +186,16 @@ const actions = latestPost
 		text-decoration: none;
 	}
 
+	/* The route, as a label: heavy and tracked so it holds up at this size,
+	   muted and a step down so the title stays the line you read. Paths keep
+	   their case. */
 	.id {
-		font-family: var(--font-display);
-		font-weight: var(--weight-hair);
-		font-size: var(--text-xl);
+		font-family: var(--font-label);
+		font-weight: var(--weight-label);
+		letter-spacing: var(--tracking-label);
+		font-size: var(--text-base);
 		line-height: 1;
+		color: var(--text-muted);
 	}
 
 	.title {

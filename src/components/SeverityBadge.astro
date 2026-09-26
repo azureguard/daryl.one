@@ -2,7 +2,7 @@
 import type { Cvss } from "@/lib/cvss";
 
 // The DS SeverityBadge (components/security/SeverityBadge.jsx): a square
-// marker, the severity in condensed caps, and the score in a hairline weight,
+// marker, the severity in condensed caps, and the score at a medium weight,
 // styled by the badge recipe's `data-severity` tiers. Critical pulses.
 //
 // Colour is chosen from the score, never written by hand: the post states a
@@ -10,10 +10,8 @@ import type { Cvss } from "@/lib/cvss";
 // makes a screen reader say "CVSS 3.1 high 8.1" rather than a bare "high 8.1".
 //
 // Clicking or tapping the badge opens an Ark UI Popover (Zag's popover
-// machine) that spells the vector out, metric by metric; Escape or a click
-// outside closes it. A popover rather than a tooltip: tooltips are hover and
-// keyboard-focus only by design (Zag ignores touch), and this content, a
-// breakdown and a selectable vector, has to be reachable on a phone too.
+// machine) that spells the vector out, metric by metric. A popover, not a
+// tooltip, because tooltips are unreachable on touch.
 //
 // The badge sits inside a bare button rather than being the trigger itself:
 // Zag writes `data-scope="popover"` onto its trigger, which would erase the

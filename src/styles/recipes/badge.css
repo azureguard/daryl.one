@@ -50,9 +50,12 @@
 	background: var(--sev-solid);
 	flex-shrink: 0;
 }
+/* The score is a figure, not a label: a medium weight a touch larger than the
+   level, so it reads clearly without outweighing it (a hairline was too thin
+   to read at chip size). The one weight outside the display face's extremes. */
 [data-scope="badge"] [data-part="score"] {
-	font-weight: var(--weight-thin);
-	font-size: 1.25em;
+	font-weight: var(--weight-strong);
+	font-size: 1.1em;
 	letter-spacing: 0;
 }
 [data-severity="info"] {
