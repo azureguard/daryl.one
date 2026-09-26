@@ -156,6 +156,12 @@ public/_headers            # Security/cache headers applied at the edge
   project (`ProjectCards.astro`, shared with the CV section). `/projects` always
   has content, so unlike the blog its nav link is never gated. Drafts and
   unknown slugs rewrite to the 404.
+- **External links in Markdown** open in a new tab with `rel="noopener
+  noreferrer"` and end in the `charm:link-external` glyph (aria-hidden, a word
+  joiner keeps it on the last word's line), via
+  `rehype-external-links` in `astro.config.ts`. Absolute http(s) URLs only;
+  site links stay in-tab. Hand-written external links in components set the
+  same attributes and glyph themselves.
 - **Blog gating**: the blog routes, the nav link and the homepage card appear
   only when `getPublished("blog")` returns something. With no published post,
   `/blog` rewrites to the site 404.

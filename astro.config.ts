@@ -5,12 +5,47 @@ import { fileURLToPath } from "node:url";
 import { defineConfig } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
+import { unified } from "@astrojs/markdown-remark";
 import sitemap from "@astrojs/sitemap";
 
 import icon from "astro-icon";
 import robotsTxt from "astro-robots-txt";
+import charm from "@iconify-json/charm/icons.json" with { type: "json" };
+import rehypeExternalLinks from "rehype-external-links";
 
 const root = dirname(fileURLToPath(import.meta.url));
+
+// The external-link glyph the components render through astro-icon
+// (`charm:link-external`), as a HAST node for Markdown. It is decorative: the
+// icon is aria-hidden and adds no text. A word joiner ahead of it stops a line
+// break between the link's last word and the icon.
+const [, polylinePoints = "", pathData = ""] =
+	charm.icons["link-external"].body.match(/points="([^"]+)"[^]*? d="([^"]+)"/) ?? [];
+const externalLinkIcon = [
+	{ type: "text", value: "\u2060" },
+	{
+		type: "element",
+		tagName: "svg",
+		properties: { className: ["external-link-icon"], viewBox: "0 0 16 16", ariaHidden: "true", focusable: "false" },
+		children: [
+			{
+				type: "element",
+				tagName: "g",
+				properties: {
+					fill: "none",
+					stroke: "currentColor",
+					strokeLinecap: "round",
+					strokeLinejoin: "round",
+					strokeWidth: "1.5",
+				},
+				children: [
+					{ type: "element", tagName: "polyline", properties: { points: polylinePoints }, children: [] },
+					{ type: "element", tagName: "path", properties: { d: pathData }, children: [] },
+				],
+			},
+		],
+	},
+];
 // aube installs packages as symlinks into a virtual store outside the project
 // root, which Vite's dev-server fs allowlist rejects — fontsource woff2
 // requests 403 in dev without the resolved real paths.
@@ -53,6 +88,15 @@ export default defineConfig({
 	],
 	output: "server",
 	markdown: {
+		// Off-site links in posts and case studies open in a new tab with no
+		// referrer and carry the external-link glyph, as the site's hand-written
+		// external links already do. Only absolute http(s) URLs count as
+		// external; site links stay in-tab.
+		processor: unified({
+			rehypePlugins: [
+				[rehypeExternalLinks, { target: "_blank", rel: ["noopener", "noreferrer"], content: externalLinkIcon }],
+			],
+		}),
 		// Shiki otherwise writes its palette onto the element as an inline
 		// `style`, which no stylesheet can override. `defaultColor: false` emits
 		// --shiki-light / --shiki-dark instead, and global.css picks the pair.

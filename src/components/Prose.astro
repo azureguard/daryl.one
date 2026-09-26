@@ -38,6 +38,16 @@
 		margin-top: 0.4em;
 	}
 
+	/* The external-link glyph astro.config.ts appends to off-site links. */
+	.prose :global(.external-link-icon) {
+		display: inline-block;
+		width: 0.7em;
+		height: 0.7em;
+		margin-left: 0.25em;
+		vertical-align: baseline;
+		color: var(--color-accent);
+	}
+
 	.prose :global(li::marker) {
 		color: var(--color-accent);
 	}

@@ -470,8 +470,6 @@ hand-writing the other four-fifths.
 
 ### Declined, with reasons
 
-- **"Opens in new tab" cues on external links.** Advisory (WCAG G201), not
-  required, and it would add screen-reader noise to every profile and tool link.
 - **Moving focus to `<main>` on client-side navigation.** Astro's ClientRouter
   already ships a route announcer (`astro-route-announcer` is in the HTML), so
   page changes *are* announced. Auto-moving focus is itself contested practice,
