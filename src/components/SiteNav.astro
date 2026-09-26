@@ -6,8 +6,9 @@ import ThemeSwitch from "./ThemeSwitch.astro";
 // <a> elements so clicks reach `document`, where <ClientRouter /> listens.
 //
 // The nav is an inline-size container: at ≤520px recipes/site-nav.css tightens
-// the gutters and the ThemeSwitch goes icon-only, so the header stays on one
-// line on phones without a media query. The `1fr auto 1fr` grid centres the
+// the gutters, and at ≤560px the ThemeSwitch goes icon-only (the width at which
+// its longest label, "Follow the Sun", still clears the links), so the header
+// stays on one line on phones without a media query. The `1fr auto 1fr` grid centres the
 // links on the nav's own width, not on whatever its neighbours leave.
 //
 // The active link is an underline, not a chip: a chip is Badge's language.

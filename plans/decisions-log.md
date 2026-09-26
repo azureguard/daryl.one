@@ -98,6 +98,23 @@ live region, blog helpers).
   padding rule in `recipes/select.css`. Written to the Claude Design project
   (`recipes/select.css`, `ThemeSwitch.prompt.md`) on 2026-09-26.
 
+### Theme labels in the shift register (2026-09-26)
+
+- **Follow the Sun / Night Shift / Day Shift** replace System / Dark / Light;
+  the values stay `system` / `dark` / `light`. Synced to the DS.
+- **Measured before and after, 320-1280px.** The longer labels needed the
+  revealed value's cap raised from 8em to 9em ("Follow the Sun" plus chevron
+  is ~118px). Below the nav's compact width, the trigger used to slide its
+  label out on hover, focus and open; that grew it over the links (9px with
+  "System" at 360px, 62px with "Follow the Sun"). The nav trigger now stays
+  icon-only there, since the open menu shows every label; the floating dock
+  keeps its slide-out. The compact threshold moved from 520px to 560px, the
+  width at which the full label clears the links by the grid's own 24px gap.
+- **The menu sizes to its longest label.** Its positioner is absolutely placed
+  inside the narrow trigger, so it shrink-wrapped to its 176px minimum and
+  wrapped "Follow the Sun" onto two lines. It is now `width: max-content` with
+  `white-space: nowrap` rows.
+
 ## Framework: none (React and React Aria were removed)
 
 **The site ships no UI framework.** `design-system-full-plan.md` Phase A had

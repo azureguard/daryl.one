@@ -1,28 +1,23 @@
 ---
 import { Icon } from "astro-icon/components";
 
-// Theme select (System / Dark / Light): the DS's ThemeSwitch, Ark UI Select
-// anatomy styled by recipes/select.css, with behaviour from Zag's select
-// machine (keyboard navigation, typeahead, dismiss on outside click).
+// Theme select (Follow the Sun / Night Shift / Day Shift, i.e. system / dark /
+// light): Ark UI Select anatomy styled by recipes/select.css, with behaviour
+// from Zag's select machine (keyboard navigation, typeahead, dismiss on
+// outside click). A visually hidden "Theme" label names the combobox.
 //
-// Two placements, one component:
-// - In the nav: `compact="auto"` goes icon-only when the nav's container is
-//   ≤520px, so the header stays one line on phones; hover, focus or opening
-//   slides the value back out. Pure CSS (a container query), so SSR-safe.
-// - `floating`: a fixed bottom-right tile that fades in once the nav scrolls
-//   out of view, rests dimmed, and brightens on hover. `backToTop` joins an ↑
-//   tile that scrolls to the top and hands focus back to the nav.
-//
-// Screen readers: as the DS specifies (`srHidden`, default true), the theme
-// control is hidden from assistive tech and the tab order, since the theme
-// already follows prefers-color-scheme. Back-to-top stays exposed.
+// Two placements, one component: in the nav (icon-only in a narrow nav, see
+// the recipe), and `floating`, a fixed bottom-right dock that appears once the
+// nav scrolls out of view; `backToTop` joins an ↑ tile that scrolls to the top
+// and hands focus back to the nav. The hidden dock is `inert`.
 //
 // The initial theme is applied by Layout.astro's head script before paint;
-// the server renders the "System" state and the script syncs it on mount.
+// the server renders the "system" state and the script syncs it on mount.
+// Labels live once, in OPTIONS; the script reads them back from the menu items.
 interface Props {
 	/** "outline" = hairline box (default); "ghost" = bare, for the nav bar. */
 	variant?: "outline" | "ghost";
-	/** Icon-only: "auto" at a ≤520px nav container, "always", or "never". */
+	/** Icon-only: "auto" at a ≤560px nav container, "always", or "never". */
 	compact?: "auto" | "always" | "never";
 	/** Fixed bottom-right tile shown once the element matching `watch` leaves view. */
 	floating?: boolean;
@@ -30,35 +25,32 @@ interface Props {
 	watch?: string;
 	/** Floating only: a joined back-to-top tile. */
 	backToTop?: boolean;
-	/**
-	 * Hide the theme control from assistive tech and the tab order (the DS
-	 * default). `false` exposes Zag's full listbox combobox instead.
-	 */
-	srHidden?: boolean;
 }
 
-const { variant = "outline", compact = "auto", floating = false, watch, backToTop = false, srHidden = true } = Astro.props;
+const { variant = "outline", compact = "auto", floating = false, watch, backToTop = false } = Astro.props;
+
+// One instance per placement, so the placement makes the ids unique.
+const id = floating ? "theme-dock" : "theme-nav";
 
 const OPTIONS = [
-	{ value: "system", label: "System", icon: "lucide:sun-moon" },
-	{ value: "dark", label: "Dark", icon: "lucide:moon" },
-	{ value: "light", label: "Light", icon: "lucide:sun" },
+	{ value: "system", label: "Follow the Sun", icon: "lucide:sun-moon" },
+	{ value: "dark", label: "Night Shift", icon: "lucide:moon" },
+	{ value: "light", label: "Day Shift", icon: "lucide:sun" },
 ];
 ---
 
 <div
-	class:list={["theme-switch", { floating }]}
-	data-theme-switch
+	data-theme-switch={id}
 	data-watch={watch}
-	data-sr-hidden={srHidden ? "" : undefined}
 	data-scope="select"
 	data-part="root"
 	data-state="closed"
 	data-compact={floating ? "always" : compact}
 	data-floating={floating ? "" : undefined}
-	aria-hidden={floating ? "true" : undefined}
+	inert={floating}
 	data-print="hidden"
 >
+	<span id={`${id}-label`} class="sr-only" data-scope="select" data-part="label">Theme</span>
 	<div data-scope="select" data-part="control">
 		{
 			floating && backToTop && (
@@ -69,7 +61,6 @@ const OPTIONS = [
 					data-back-to-top
 					aria-label="Back to top"
 					title="Back to top"
-					tabindex="-1"
 				>
 					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true">
 						<path d="M8 13.5V3M3 7.5l5-5 5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" />
@@ -83,8 +74,6 @@ const OPTIONS = [
 			data-part="trigger"
 			data-state="closed"
 			data-variant={variant}
-			tabindex={srHidden ? "-1" : undefined}
-			aria-hidden={srHidden ? "true" : undefined}
 		>
 			<span data-scope="select" data-part="value-icon">
 				{
@@ -96,7 +85,7 @@ const OPTIONS = [
 				}
 			</span>
 			<span data-scope="select" data-part="reveal">
-				<span data-scope="select" data-part="value-text">System</span>
+				<span data-scope="select" data-part="value-text">{OPTIONS[0]?.label}</span>
 				<svg data-scope="select" data-part="indicator" data-state="closed" viewBox="0 0 10 10" fill="none" aria-hidden="true">
 					<path
 						d={floating ? "M1 6.5l4-4 4 4" : "M1 3.5l4 4 4-4"}
@@ -108,7 +97,7 @@ const OPTIONS = [
 			</span>
 		</button>
 	</div>
-	<div data-scope="select" data-part="positioner" aria-hidden={srHidden ? "true" : undefined}>
+	<div data-scope="select" data-part="positioner">
 		<ul data-scope="select" data-part="content" data-state="closed" tabindex="-1" hidden>
 			{
 				OPTIONS.map(({ value, label, icon }) => (
@@ -140,7 +129,7 @@ const OPTIONS = [
 		height: 16px;
 	}
 
-	.floating [data-part="value-icon"] :global(svg) {
+	[data-floating] [data-part="value-icon"] :global(svg) {
 		width: 18px;
 		height: 18px;
 	}
@@ -162,7 +151,6 @@ const OPTIONS = [
 
 	type Theme = "system" | "dark" | "light";
 
-	const LABEL: Record<Theme, string> = { system: "System", dark: "Dark", light: "Light" };
 	const collection = select.collection({ items: ["system", "dark", "light"] });
 	const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
 
@@ -186,20 +174,19 @@ const OPTIONS = [
 		for (const set of setters) set(value);
 	};
 
-	let count = 0;
-
 	onEachPage("[data-theme-switch]", (root) => {
 		const trigger = root.querySelector<HTMLElement>('[data-part="trigger"]');
 		const content = root.querySelector<HTMLElement>('[data-part="content"]');
 		const items = [...root.querySelectorAll<HTMLElement>('[data-part="item"]')];
+		const labels = new Map(
+			items.map((item) => [item.dataset.value, item.querySelector('[data-part="item-text"]')?.textContent?.trim() ?? ""]),
+		);
 		const icons = [...root.querySelectorAll<HTMLElement>("[data-theme-icon]")];
-		// srHidden: out of the tab order and hidden from assistive tech.
-		const srHidden = root.hasAttribute("data-sr-hidden");
-		const hideTrigger = srHidden ? { tabIndex: -1, "aria-hidden": "true" } : {};
-		const hideContent = srHidden ? { tabIndex: -1 } : {};
+		const id = root.dataset.themeSwitch ?? "theme";
 
 		const machine = new VanillaMachine(select.machine, {
-			id: `theme-${count++}`,
+			id,
+			ids: { label: `${id}-label` },
 			collection,
 			defaultValue: [readStoredTheme()],
 			deselectable: false,
@@ -223,10 +210,10 @@ const OPTIONS = [
 			return [
 				[root, { ...api.getRootProps(), "data-state": state }],
 				[root.querySelector('[data-part="control"]'), api.getControlProps()],
-				[trigger, { ...api.getTriggerProps(), ...hideTrigger }],
+				[trigger, api.getTriggerProps()],
 				[root.querySelector('[data-part="indicator"]'), api.getIndicatorProps()],
-				[root.querySelector('[data-part="value-text"]'), { ...api.getValueTextProps(), children: LABEL[value] }],
-				[content, { ...api.getContentProps(), ...hideContent }],
+				[root.querySelector('[data-part="value-text"]'), { ...api.getValueTextProps(), children: labels.get(value) }],
+				[content, api.getContentProps()],
 				...items.map((item): [Element, Record<string, unknown>] => [
 					item,
 					api.getItemProps({ item: item.dataset.value ?? "" }),
@@ -250,7 +237,7 @@ const OPTIONS = [
 	});
 
 	// Floating only: show the dock once the watched element (the nav) is out of
-	// view, and keep it out of the tab order and accessibility tree while hidden.
+	// view; while hidden it is inert, out of the tab order and accessibility tree.
 	function watchNav(root: HTMLElement, close: () => void): () => void {
 		const watched = root.dataset.watch ? document.querySelector(root.dataset.watch) : null;
 		if (!root.hasAttribute("data-floating") || !watched) return () => {};
@@ -258,8 +245,7 @@ const OPTIONS = [
 		const backToTop = root.querySelector<HTMLElement>("[data-back-to-top]");
 		const setVisible = (visible: boolean) => {
 			root.toggleAttribute("data-visible", visible);
-			root.setAttribute("aria-hidden", String(!visible));
-			backToTop?.setAttribute("tabindex", visible ? "0" : "-1");
+			root.inert = !visible;
 			if (!visible) close();
 		};
 
