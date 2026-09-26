@@ -9,9 +9,11 @@ interface Props {
 	title: string;
 	/** Vertical rhythm between the page's top-level blocks. */
 	gap?: "sm" | "md" | "lg" | undefined;
+	/** A wider measure for compositions that need two columns (the landing page). */
+	wide?: boolean | undefined;
 }
 
-const { title, gap = "lg" } = Astro.props;
+const { title, gap = "lg", wide = false } = Astro.props;
 
 // Nav order follows the DS (CV, Blog, Gallery, About, Uses). Gallery is
 // deferred, and Blog appears only once a post is published: an empty "Audit
@@ -38,11 +40,11 @@ const links = [
 
 <Layout title={title}>
 	<a href="#main-content" class="skip label" data-print="hidden">Skip to main content</a>
-	<SiteNav links={links} active={Astro.url.pathname} />
-	<main id="main-content" tabindex="-1" data-gap={gap}>
+	<SiteNav links={links} active={Astro.url.pathname} wide={wide} />
+	<main id="main-content" tabindex="-1" data-gap={gap} data-wide={wide ? "" : undefined}>
 		<slot />
 	</main>
-	<Footer />
+	<Footer wide={wide} />
 	<ThemeSwitch floating watch="#site-nav" backToTop />
 </Layout>
 
@@ -64,12 +66,33 @@ const links = [
 		transform: none;
 	}
 
+	/* Short pages keep the footer at the bottom of the screen: <main> takes the
+	   leftover height. */
+	@media screen {
+		:global(body) {
+			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			flex: 1 0 auto;
+			width: 100%;
+		}
+	}
+
 	main {
 		display: flex;
 		flex-direction: column;
 		max-width: 760px;
 		margin-inline: auto;
 		padding: var(--space-16) var(--space-6) var(--space-20);
+	}
+
+	/* A one-screen composition is centred in whatever height is left between
+	   the nav and the footer. */
+	main[data-wide] {
+		max-width: 1200px;
+		justify-content: center;
 	}
 
 	main:focus {
@@ -91,6 +114,12 @@ const links = [
 	@media (min-width: 48rem) {
 		main {
 			padding-block: var(--space-24);
+		}
+
+		/* The reading measure's generous padding is for long pages; a one-screen
+		   composition sits closer to the nav and footer. */
+		main[data-wide] {
+			padding-block: var(--space-12);
 		}
 	}
 

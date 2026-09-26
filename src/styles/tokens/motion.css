@@ -19,9 +19,8 @@
    data-reveal="declassify" → a redaction bar wipes off left→right (headlines, key facts)
    data-reveal="scan"     → a sodium scanline sweeps once across the element (hero blocks)
 
-   The DS orders reveals with an inline style="--i:N". That is a style
-   attribute, which the site's CSP (style-src 'self') forbids, so the order is
-   an attribute here and the rules below map it onto --i. */
+   The DS orders reveals with an inline style="--i:N". The site writes no style
+   attributes, so the order is an attribute here and the rules below map it onto --i. */
 @keyframes dw-rise {
 	from {
 		opacity: 0;
@@ -133,4 +132,16 @@
 }
 [data-i="12"] {
 	--i: 12;
+}
+[data-i="13"] {
+	--i: 13;
+}
+[data-i="14"] {
+	--i: 14;
+}
+[data-i="15"] {
+	--i: 15;
+}
+[data-i="16"] {
+	--i: 16;
 }

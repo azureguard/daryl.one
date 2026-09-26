@@ -19,14 +19,16 @@ interface Props {
 	links: Array<{ label: string; href: string }>;
 	/** Current pathname (`Astro.url.pathname`), used to mark the active link. */
 	active: string;
+	/** Follow the page's wide measure, so the wordmark and switch line up with it. */
+	wide?: boolean | undefined;
 }
 
-const { links, active } = Astro.props;
+const { links, active, wide = false } = Astro.props;
 ---
 
 <header id="site-nav" data-print="hidden">
 	<nav aria-label="Primary" data-scope="site-nav" data-part="root">
-		<div data-scope="site-nav" data-part="inner">
+		<div data-scope="site-nav" data-part="inner" data-wide={wide ? "" : undefined}>
 			<a href="/" class="wordmark">daryl.one</a>
 			<ul>
 				{
@@ -63,6 +65,10 @@ const { links, active } = Astro.props;
 		max-width: 760px;
 		margin-inline: auto;
 		padding: 0.9rem var(--nav-pad, 24px);
+	}
+
+	[data-part="inner"][data-wide] {
+		max-width: 1200px;
 	}
 
 	.wordmark {

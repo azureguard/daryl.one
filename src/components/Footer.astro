@@ -5,12 +5,18 @@ import CopyEmail from "@/components/CopyEmail.astro";
 // Site-wide footer: the one place in the IA the GitHub/LinkedIn/Email links
 // live, so SiteLayout renders it on every route — a reader landing on a blog
 // post from search still has a route to contact. Links come from cv.json.
+interface Props {
+	/** Follow the page's wide measure (the landing page). */
+	wide?: boolean | undefined;
+}
+
+const { wide = false } = Astro.props;
 const { email, name, profiles } = basics;
 const year = new Date().getFullYear();
 ---
 
 <footer data-print="hidden">
-	<div class="inner">
+	<div class="inner" data-wide={wide ? "" : undefined}>
 		<p class="label">© {year} {name}</p>
 		<nav aria-label="Elsewhere" class="label">
 			<CopyEmail email={email} label="Email" withIcon={false} />
@@ -40,6 +46,10 @@ const year = new Date().getFullYear();
 		margin-inline: auto;
 		padding: var(--space-6);
 		color: var(--text-muted);
+	}
+
+	.inner[data-wide] {
+		max-width: 1200px;
 	}
 
 	nav {

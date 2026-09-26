@@ -295,12 +295,14 @@
 }
 /* Dock clearance: the floating tile is fixed over the page, so a page that hosts one
    reserves its footprint at the end of the scroll. Without it the last row (footer
-   links on phones) sits under the dock at full scroll and cannot be tapped. */
+   links on phones) sits under the dock at full scroll and cannot be tapped. Reserved
+   only while the dock is visible: on a page too short to scroll the nav away, the dock
+   never appears and the clearance would only add dead space (and a needless scroll). */
 :root {
 	--dock-clearance: calc(44px + 2 * max(16px, env(safe-area-inset-bottom)));
 }
 @media screen {
-	body:has([data-scope="select"][data-floating]) {
+	body:has([data-scope="select"][data-floating][data-visible]) {
 		padding-bottom: var(--dock-clearance);
 	}
 }
