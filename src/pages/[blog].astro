@@ -1,19 +1,28 @@
 ---
 import { basics } from "@cv";
+import type { InferGetStaticPropsType } from "astro";
 import PageHeader from "@/components/PageHeader.astro";
 import PostTags from "@/components/PostTags.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { formatDate, getPublished, readTime } from "@/lib/content";
 
-// With nothing published, /blog is the site 404 rather than an empty log.
-// SiteLayout and the homepage drop their links on the same condition.
-const posts = await getPublished("blog");
-if (posts.length === 0) return Astro.rewrite("/404");
+// The blog index at /blog. It is a dynamic route only so it can opt out of
+// the build: with nothing published it yields no path, /blog is never written,
+// and a request for it falls through to the on-demand 404 rather than an empty
+// log. SiteLayout and the homepage drop their links on the same condition.
+export async function getStaticPaths() {
+	const posts = await getPublished("blog");
+	return posts.length > 0 ? [{ params: { blog: "blog" }, props: { posts } }] : [];
+}
+
+const { posts } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+
+const lede = "Notes on cloud security, detection engineering, and reviewable systems. A running log, newest first.";
 ---
 
-<SiteLayout title={`Blog - ${basics.name}`} gap="sm">
+<SiteLayout title={`Blog - ${basics.name}`} description={lede} gap="sm">
 	<PageHeader eyebrow="Blog" title="Audit trail">
-		<p>Notes on cloud security, detection engineering, and reviewable systems. A running log, newest first.</p>
+		<p>{lede}</p>
 	</PageHeader>
 
 	<ol class="posts">

@@ -86,7 +86,12 @@ export default defineConfig({
 		sitemap(),
 		robotsTxt(),
 	],
-	output: "server",
+	// Every page is prerendered to a static asset, served from Cloudflare's cache
+	// ahead of the Worker; only the 404 renders on demand. `file` output with no
+	// trailing slash gives `/about` → about.html, matching the canonical URLs and
+	// the sitemap.
+	trailingSlash: "never",
+	build: { format: "file" },
 	markdown: {
 		// Off-site links in posts and case studies open in a new tab with no
 		// referrer and carry the external-link glyph, as the site's hand-written
@@ -108,7 +113,13 @@ export default defineConfig({
 	},
 	// `compile` processes <Image> at build time, so the Worker needs no
 	// Cloudflare Images (IMAGES) binding.
-	adapter: cloudflare({ imageService: "compile" }),
+	adapter: cloudflare({
+		imageService: "compile",
+		// Prerendering runs in Node rather than workerd: the preview images are
+		// drawn with CanvasKit (WebAssembly loaded from disk), which workerd
+		// cannot load. Only the 404 renders on demand, in workerd.
+		prerenderEnvironment: "node",
+	}),
 	// Setting any non-KV session driver stops the adapter from auto-provisioning
 	// the SESSION KV namespace. Sessions are unused, so an in-memory driver is fine.
 	session: { driver: { entrypoint: "unstorage/drivers/memory" } },

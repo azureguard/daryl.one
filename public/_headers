@@ -1,5 +1,5 @@
 /*
-	Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; script-src 'self'; style-src 'self';
+	Content-Security-Policy: default-src 'self'; frame-ancestors 'none'; script-src 'self'; style-src 'self' 'unsafe-inline';
 	Cross-Origin-Embedder-Policy: credentialless
 	Cross-Origin-Opener-Policy: same-origin
 	Permissions-Policy: bluetooth=(), camera=(), geolocation=(), microphone=(), payment=(), usb=()
@@ -9,3 +9,6 @@
 
 https://:project.workers.dev/*
 	X-Robots-Tag: noindex
+
+/_astro/*
+	Cache-Control: public, max-age=31536000, immutable

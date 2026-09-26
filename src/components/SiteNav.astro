@@ -1,25 +1,20 @@
 ---
 import ThemeSwitch from "./ThemeSwitch.astro";
 
-// Site-wide top nav, per the DS's SiteNav: the DW monogram left (the Brand
-// card's wordmark treatment; aria-labelled, since "DW" alone is a weak link
-// name), condensed-caps links centred, ThemeSwitch right, a hairline bottom
-// border. The links are plain <a> elements so clicks reach `document`, where
-// <ClientRouter /> listens.
+// Site-wide top nav, per the DS's SiteNav: the DW monogram left (aria-labelled,
+// since "DW" alone is a weak link name), links centred, ThemeSwitch right.
 //
-// The nav is an inline-size container: at ≤520px recipes/site-nav.css tightens
-// the gutters, and at ≤560px the ThemeSwitch goes icon-only (the width at which
-// its longest label, "Follow the Sun", still clears the links), so the header
-// stays on one line on phones without a media query. The `1fr auto 1fr` grid centres the
-// links on the nav's own width, not on whatever its neighbours leave.
+// The nav is an inline-size container, so recipes/site-nav.css and the
+// ThemeSwitch's compact mode respond to its width and the header stays on one
+// line on phones. The equal outer columns centre the links on the nav's own
+// width, not on whatever its neighbours leave.
 //
-// The active link is an underline, not a chip: a chip is Badge's language.
 // The nav is not `transition:persist`-ed, so `aria-current` is recomputed on
 // every navigation. `id="site-nav"` is what the floating ThemeSwitch watches.
 
 interface Props {
 	links: Array<{ label: string; href: string }>;
-	/** Current pathname (`Astro.url.pathname`), used to mark the active link. */
+	/** Current page path (`pagePath(Astro.url)`), used to mark the active link. */
 	active: string;
 }
 
@@ -67,8 +62,7 @@ const { links, active } = Astro.props;
 		padding: 0.9rem var(--nav-pad, 24px);
 	}
 
-	/* The monogram, in the Brand card's wordmark treatment: display face at its
-	   heaviest, caps, in the sodium accent. */
+	/* The Brand card's wordmark treatment. */
 	.wordmark {
 		justify-self: start;
 		font-family: var(--font-display);

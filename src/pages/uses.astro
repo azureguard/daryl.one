@@ -22,11 +22,12 @@ const groups = Object.entries(Object.groupBy(items, (item) => item.data.category
 		}),
 	}))
 	.sort((a, b) => a.category.localeCompare(b.category));
+const lede = "The hardware, software, and cloud tooling on my desk day to day. Kept current, not aspirational.";
 ---
 
-<SiteLayout title={`Uses - ${basics.name}`}>
+<SiteLayout title={`Uses - ${basics.name}`} description={lede}>
 	<PageHeader eyebrow="Inventory" title="What I use">
-		<p>The hardware, software, and cloud tooling on my desk day to day. Kept current, not aspirational.</p>
+		<p>{lede}</p>
 	</PageHeader>
 
 	{

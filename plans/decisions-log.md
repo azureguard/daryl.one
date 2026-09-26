@@ -170,6 +170,23 @@ pre-Night-Shift layout.
   print; other pages print with the browser's defaults plus the global sheet.
   Print switches on posts, case studies, PostNav and the About portrait were
   removed, and new non-CV components get none.
+- **Prerendered, cached, and indexable.** Pages were rendered per request,
+  which also kept posts and case studies out of the sitemap (@astrojs/sitemap
+  cannot list on-demand routes). Every page but the 404 is now prerendered and
+  served from Cloudflare's asset cache; the 404 stays on demand for its status
+  and path. `/_astro/*` is cached for a year (fingerprinted). File output with
+  no trailing slash keeps sitemap and canonical URLs identical.
+- **CSP on HTML: `'unsafe-inline'` for styles only.** Once HTML became a
+  static asset, `_headers`' CSP reached it and blocked the ClientRouter
+  transition style and Shiki's token styles. The site accepts no user input,
+  so inline styles carry little risk; `script-src` stays strict. Nonces were
+  considered and rejected (Worker on every request, no cover for style
+  attributes, breaks ClientRouter navigation); Astro's own CSP supports neither
+  ClientRouter nor Shiki.
+- **SEO from libraries.** astro-seo (head), astro-seo-schema + schema-dts
+  (JSON-LD), astro-og-canvas (preview images), @astrojs/rss, @astrojs/sitemap,
+  astro-robots-txt. Fixed pages share one preview card built from cv.json
+  rather than a per-page registry that would restate each page's copy.
 - **Declined: pruning DS components the site does not render.** Forms, Tabs,
   Alert, Divider, IconLink and the security set stay, for future pages and a
   possible Storybook.
@@ -542,10 +559,9 @@ adding, removing and changing approaches. What changed and why:
   carry a `:root` prefix. Verified in Chromium print emulation and by printing
   from Firefox 150 over WebDriver BiDi, before and after.
 
-Declined: prerendering every page as a static asset. It would remove the
-Worker render per request and let `public/_headers` apply to HTML, but the SSR
-choice is deliberate and the reason is not recorded here — log it before
-changing it. Also declined: sharing the theme-resolution functions between the
+Declined at the time: prerendering every page as a static asset (superseded
+2026-09-26: every page but the 404 is now prerendered; see the consistency
+sweep). Also declined: sharing the theme-resolution functions between the
 head script and `ThemeSwitch` via an import, because Vite would split the shared
 module into its own chunk and add a request before first paint.
 

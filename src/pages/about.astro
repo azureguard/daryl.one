@@ -22,7 +22,8 @@ const leadershipRole = work.find((role) => role.position === "Technical Lead");
 if (!leadershipRole) throw new Error("cv.json: expected a 'Technical Lead' work entry");
 
 const engineeringRoles = work.filter((role) => /software engineer/i.test(role.position));
-if (engineeringRoles.length === 0) throw new Error("cv.json: expected at least one software-engineer-titled work entry");
+if (engineeringRoles.length === 0)
+	throw new Error("cv.json: expected at least one software-engineer-titled work entry");
 const engineeringStart = Math.min(...engineeringRoles.map((role) => Number(role.startDate)));
 
 const eras = [
@@ -33,25 +34,26 @@ const eras = [
 ];
 ---
 
-<SiteLayout title={`About - ${name}`}>
+<SiteLayout title={`About - ${name}`} description="The journey from cloud software engineering, onwards.">
 	<PageHeader eyebrow="whoami" title="Hi, I'm Daryl." />
 
 	<div class="story">
 		<div class="prose">
 			<p>
-				I lead security architecture and governance for Dyson's Connected Cloud team, translating obligations like
-				the EU Cyber Resilience Act and K-ISMS into controls that engineering teams can actually ship against, across
-				an IoT platform serving millions of connected devices on AWS. I own the vulnerability gate that blocks
-				deployments on high and critical findings sitewide, with final say on disputed results.
+				I lead security architecture and governance for Dyson's Connected Cloud team, translating obligations like the
+				EU Cyber Resilience Act and K-ISMS into controls that engineering teams can actually ship against, across an IoT
+				platform serving millions of connected devices on AWS. I own the vulnerability gate that blocks deployments on
+				high and critical findings sitewide, with final say on disputed results.
 			</p>
 			<p>
-				I got here through cloud software engineering: leading delivery on an MLOps platform before moving into
-				security full-time, which is why I still reach for architecture diagrams and CI/CD pipelines as often as risk
-				registers.
+				I got here through cloud software engineering: leading delivery on an MLOps platform before moving into security
+				full-time, which is why I still reach for architecture diagrams and CI/CD pipelines as often as risk registers.
+				In practice I'm still a technical lead, now giving engineering teams architectural guidance from the security
+				side.
 			</p>
 			<p>
-				I'm currently pursuing CISSP, and outside of work I keep a home lab running for the same reason I keep this
-				site running: it's easier to reason about a system you've built yourself.
+				I'm currently pursuing CISSP, and outside of work I keep a home lab running for the same reason I keep this site
+				running: it's easier to reason about a system you've built yourself.
 			</p>
 		</div>
 		<figure class="portrait" aria-hidden="true" data-reveal data-i="4">
@@ -62,23 +64,29 @@ const eras = [
 	<section class="eras">
 		<h2 class="label">Career, briefly</h2>
 		<div class="grid">
-			{
-				eras.map((era) => (
-					<div class="era" data-scope="card" data-part="root" data-elevation={era.active ? "raised" : undefined} data-active={era.active ? "" : undefined}>
-						<span class="label range">
-							{era.range}
-							{era.active && <Badge tone="accent">Active</Badge>}
-						</span>
-						<h3>{era.name}</h3>
-					</div>
-				))
-			}
+			{eras.map((era) => (
+				<div
+					class="era"
+					data-scope="card"
+					data-part="root"
+					data-elevation={era.active ? "raised" : undefined}
+					data-active={era.active ? "" : undefined}
+				>
+					<span class="label range">
+						{era.range}
+						{era.active && <Badge tone="accent">Active</Badge>}
+					</span>
+					<h3>{era.name}</h3>
+				</div>
+			))}
 		</div>
 	</section>
 
 	<div class="onward">
 		<p class="label">The full history lives in the CV</p>
-		<a href="/cv" data-scope="button" data-part="root" data-variant="secondary" data-size="sm">Read the CV →</a>
+		<a href="/cv" data-scope="button" data-part="root" data-variant="secondary" data-size="sm">
+			Read the CV →
+		</a>
 	</div>
 </SiteLayout>
 
@@ -90,7 +98,7 @@ const eras = [
 	}
 
 	.portrait {
-		display: grid;
+		display: none;
 		place-items: center;
 		width: 200px;
 		height: 260px;

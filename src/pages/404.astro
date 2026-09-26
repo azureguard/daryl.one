@@ -4,9 +4,11 @@ import LogBlock from "@/components/LogBlock.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { getPublished } from "@/lib/content";
 
-// Astro serves this file for any unmatched route under `output: "server"`, and
-// the blog routes rewrite to it, so every 404 on the site looks the same.
-// Astro does not set the status itself.
+// The one page rendered on demand: every other route is a prerendered asset,
+// so a request that matches none reaches the Worker, which renders this with
+// the real status and the requested path. Astro does not set the status itself.
+export const prerender = false;
+
 Astro.response.status = 404;
 
 // The request as a DS LogBlock. `originPathname` survives a rewrite, where
@@ -29,7 +31,7 @@ const links = [
 ];
 ---
 
-<SiteLayout title={`Not found - ${basics.name}`} gap="sm">
+<SiteLayout title={`Not found - ${basics.name}`} description="There is no page at this address." gap="sm">
 	<LogBlock title="request.log" lines={lines} data-reveal="scan" />
 	<h1><span data-reveal="declassify" data-i="2">Nothing on file.</span></h1>
 	<p class="lede">

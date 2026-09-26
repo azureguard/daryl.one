@@ -26,14 +26,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Architecture
 
-A personal portfolio: an Astro site rendered on-demand (`output: "server"`) and
-deployed as a **Cloudflare Worker** (with static assets). It is functionally
-static content, but uses the SSR adapter rather than a static export.
+A personal portfolio: an Astro site deployed as a **Cloudflare Worker** with
+static assets. Every page is **prerendered** at build (`build.format: "file"`,
+`trailingSlash: "never"`) and served from Cloudflare's asset cache ahead of the
+Worker; only the 404 renders on demand, in the Worker, so it gets the real
+status and the requested path.
 
 ### Key Technologies
 
-- **Astro** - SSR via the `@astrojs/cloudflare` adapter (Cloudflare Workers
-  target). **No UI framework**: no React, no islands, no `client:*` directives.
+- **Astro** - prerendered pages plus an on-demand 404 via the
+  `@astrojs/cloudflare` adapter (Cloudflare Workers target). **No UI framework**: no React, no islands, no `client:*` directives.
 - **Plain CSS, no utility engine.** Design tokens and recipes are CSS files in
   `src/styles/`; components style themselves with scoped `<style>` blocks.
   **Cascade layers** decide precedence: `tokens` → `base` → `recipes` are
@@ -162,9 +164,22 @@ public/_headers            # Security/cache headers applied at the edge
   `rehype-external-links` in `astro.config.ts`. Absolute http(s) URLs only;
   site links stay in-tab. Hand-written external links in components set the
   same attributes and glyph themselves.
-- **Blog gating**: the blog routes, the nav link and the homepage card appear
-  only when `getPublished("blog")` returns something. With no published post,
-  `/blog` rewrites to the site 404.
+- **Blog gating**: the blog routes, the nav link, the homepage card and the
+  RSS `<link rel="alternate">` appear only when `getPublished("blog")` returns
+  something. The index is `src/pages/[blog].astro`, a dynamic route only so it
+  can yield no path when empty: then `/blog` is never built and falls through
+  to the on-demand 404. (A prerendered page cannot `Astro.rewrite` to the
+  on-demand 404; the build fails.)
+- **SEO**: the head is `astro-seo` in `Layout.astro` (description, canonical,
+  Open Graph with `og:site_name`/`og:locale`, article tags, Twitter large card);
+  JSON-LD is `astro-seo-schema` with `schema-dts` types, built in
+  `lib/structured-data.ts` (WebSite on `/`, Person on `/cv`, BlogPosting and
+  Article on posts and case studies). Preview images are `astro-og-canvas`
+  (`pages/og/[...route].ts`, data in `lib/og.ts`): a site card from `cv.json`
+  and one per post and case study; fixed pages share the site card. Sitemap
+  (`@astrojs/sitemap`), `robots.txt` (`astro-robots-txt`) and `/rss.xml`
+  (`@astrojs/rss`) are generated at build. Pages keep their own titles and
+  ledes; nothing restates them in a registry.
 - **Theme system**: `tokens/colors.css` defines semantic custom properties for
   `:root` (light, "Day shift") and `.dark` (dark, "Night shift"). Components use
   the semantic layer (`--surface-*`, `--text-*`, `--border-*`, `--color-accent`,
@@ -243,13 +258,29 @@ These are non-obvious and have bitten before:
   `onEachPage()` from `src/scripts/zag.ts`; it mounts on `astro:page-load` and
   stops machines on `astro:before-swap`. Pass the server-rendered ids via the
   machine's `ids` prop so it adopts the existing markup.
-- **CSP: no inline `style` attributes or `<style>` from our own code.**
-  `public/_headers` sets `style-src 'self'`. The DS writes reveal order as
-  `style="--i:N"`; here it is `data-i="N"`, mapped in `tokens/motion.css`. Zag's
-  vanilla `spreadProps` writes style *objects* through CSSOM, which CSP allows;
-  a style *string* would be blocked. Note that `_headers` currently reaches
-  static assets only, not the SSR HTML, so a violation does not show in
-  production; inject the header in Playwright to test it.
+- **CSP reaches the HTML, because the HTML is a static asset.**
+  `public/_headers` applies to prerendered pages (not to the on-demand 404).
+  `script-src 'self'` is strict: no inline scripts (JSON-LD data blocks are
+  not executed, so they are fine). `style-src` allows `'unsafe-inline'`: the
+  ClientRouter transition `<style>` and Shiki's token attributes need it, and
+  the site takes no user input (decided 2026-09-26). Nonces were ruled out:
+  they need the Worker on every request, do not cover style attributes, and
+  break ClientRouter navigation. Test CSP with `aube build` + `astro preview`,
+  which applies `_headers`.
+- **Prerendered pages see their output filename as `Astro.url.pathname`**
+  (`/cv.html`, `/index.html`). Use `pagePath(Astro.url)` from `lib/url.ts`
+  for anything that compares or publishes a path (canonical, og:image,
+  JSON-LD, the nav's active link), or canonicals get `.html` and the nav
+  loses its highlight.
+- **Prerendering runs in Node** (`prerenderEnvironment: "node"`): the preview
+  images are CanvasKit WebAssembly, which workerd cannot load.
+  `canvaskit-wasm` must be a direct dependency, or the isolated store leaves it
+  bundled and the build dies with "__dirname is not defined".
+- **CI builds without the blog and case-study content** (those folders are
+  untracked). Check a change against empty collections: move
+  `src/content/blog` and `src/content/projects` aside, build, move them back.
+- **Check the build's exit code, not its log.** The log prints "✓ Completed"
+  for intermediate steps even when a later step fails.
 - **Dev server is workerd.** A CJS dep re-optimized mid-request desyncs the
   workerd module runner ("module is not defined"). `vite.optimizeDeps.include`
   pre-bundles `astro-icon/components` and `@iconify/utils` for that reason.

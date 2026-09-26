@@ -5,6 +5,7 @@ import Badge from "@/components/Badge.astro";
 import SeverityBadge from "@/components/SeverityBadge.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { formatDate, getPublished } from "@/lib/content";
+import { websiteSchema } from "@/lib/structured-data";
 import { countMeta } from "@/meta";
 
 // The landing page, after the DS's "Night Shift — direction" Brand card, which
@@ -60,7 +61,7 @@ const actions = latestPost
 		];
 ---
 
-<SiteLayout title={`${name} - ${label}`} gap="md" wide>
+<SiteLayout title={`${name} - ${label}`} schema={websiteSchema} gap="md" wide>
 	<div class="brand">
 		<div class="hero" data-reveal="scan" data-i="1">
 			<p class="role label" data-reveal data-i="2">

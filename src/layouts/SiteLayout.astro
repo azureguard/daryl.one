@@ -1,12 +1,20 @@
 ---
+import type { Thing, WithContext } from "schema-dts";
 import Footer from "@/components/Footer.astro";
 import SiteNav from "@/components/SiteNav.astro";
 import ThemeSwitch from "@/components/ThemeSwitch.astro";
 import { getPublished } from "@/lib/content";
+import { pagePath } from "@/lib/url";
 import Layout from "./Layout.astro";
 
 interface Props {
 	title: string;
+	/** Passed to Layout's meta description; defaults to the CV summary. */
+	description?: string | undefined;
+	/** Passed to Layout: marks a post or case study as an Open Graph article. */
+	article?: { published: Date; modified?: Date | undefined; tags?: Array<string> | undefined } | undefined;
+	/** Passed to Layout: the page's schema.org JSON-LD. */
+	schema?: WithContext<Thing> | undefined;
 	/** Vertical rhythm between the page's top-level blocks. */
 	gap?: "sm" | "md" | "lg" | undefined;
 	/**
@@ -17,7 +25,7 @@ interface Props {
 	wide?: boolean | undefined;
 }
 
-const { title, gap = "lg", wide = false } = Astro.props;
+const { title, description, article, schema, gap = "lg", wide = false } = Astro.props;
 
 // Nav order follows the DS (CV, Projects, Blog, About, Uses). Gallery is parked
 // in the DS as future scope, and Blog appears only once a post is published: an empty "Audit
@@ -43,9 +51,9 @@ const links = [
 // treatment is below, after the screen rule, in this same stylesheet.
 ---
 
-<Layout title={title}>
+<Layout title={title} description={description} article={article} schema={schema}>
 	<a href="#main-content" class="skip label" data-print="hidden">Skip to main content</a>
-	<SiteNav links={links} active={Astro.url.pathname} />
+	<SiteNav links={links} active={pagePath(Astro.url)} />
 	<main id="main-content" tabindex="-1" data-gap={gap} data-wide={wide ? "" : undefined}>
 		<slot />
 	</main>

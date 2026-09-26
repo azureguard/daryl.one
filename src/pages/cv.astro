@@ -11,11 +11,12 @@ import References from "@/components/sections/References.astro";
 import Skills from "@/components/sections/Skills.astro";
 import Volunteer from "@/components/sections/Volunteer.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
+import { personSchema } from "@/lib/structured-data";
 
-const { name, label } = basics;
+const { name } = basics;
 ---
 
-<SiteLayout title={`${name} - ${label}`}>
+<SiteLayout title={`CV - ${name}`} schema={personSchema}>
 	<Hero />
 	<About />
 	<Experience />
