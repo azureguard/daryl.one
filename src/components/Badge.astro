@@ -1,0 +1,13 @@
+---
+// Chamfered label chip, styled entirely by the DS badge recipe
+// (src/styles/recipes/badge.css). `default` is the hairline outline used for
+// content tags; `accent` is the solid status chip (the ACTIVE marker).
+// Its print treatment is in src/styles/print.css.
+interface Props {
+	tone?: "default" | "accent";
+}
+
+const { tone = "default" } = Astro.props;
+---
+
+<span data-scope="badge" data-tone={tone}><slot /></span>

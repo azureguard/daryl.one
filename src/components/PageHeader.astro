@@ -1,0 +1,50 @@
+---
+// Page-level header, one level up from Section's. The eyebrow is decorative
+// labelling over the h1, so it is aria-hidden; the lede goes in the slot.
+// `data-reveal="declassify"` is the page's one orchestrated load moment.
+interface Props {
+	eyebrow: string;
+	title: string;
+}
+
+const { eyebrow, title } = Astro.props;
+---
+
+<header>
+	<p class="label eyebrow" aria-hidden="true" data-reveal>{eyebrow}</p>
+	<h1><span data-reveal="declassify" data-i="1">{title}</span></h1>
+	<div class="lede" data-reveal data-i="3"><slot /></div>
+</header>
+
+<style>
+	header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+		padding-bottom: var(--space-8);
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	.eyebrow {
+		color: var(--color-accent);
+	}
+
+	h1 {
+		font-size: clamp(var(--text-3xl), 9vw, var(--text-4xl));
+		text-transform: uppercase;
+	}
+
+	h1 span {
+		display: inline-block;
+	}
+
+	.lede {
+		max-width: 62ch;
+		font-size: var(--text-lg);
+		color: var(--text-muted);
+	}
+
+	.lede:empty {
+		display: none;
+	}
+</style>

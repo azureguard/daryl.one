@@ -10,7 +10,6 @@
 		"defaultBranch": "main"
 	},
 	"formatter": {
-		"lineWidth": 120,
 		"useEditorconfig": true
 	},
 	"javascript": {
@@ -24,12 +23,21 @@
 		},
 		"linter": {
 			"enabled": true
-		},
-		"parser": {
-			"tailwindDirectives": true
 		}
 	},
 	"html": {
 		"experimentalFullSupportEnabled": true
-	}
+	},
+	"overrides": [
+		{
+			"includes": ["**/src/styles/tokens/**", "**/src/styles/recipes/**"],
+			"linter": {
+				"rules": {
+					"style": {
+						"noDescendingSpecificity": "off"
+					}
+				}
+			}
+		}
+	]
 }

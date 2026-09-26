@@ -1,0 +1,108 @@
+---
+import { getCollection } from "astro:content";
+import { basics } from "@cv";
+import { Icon } from "astro-icon/components";
+import PageHeader from "@/components/PageHeader.astro";
+import Section from "@/components/Section.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { countMeta } from "@/meta";
+
+// Categories render alphabetically; within each, items with an `order` sort
+// first by it and the rest fall back to alphabetical by title.
+const items = await getCollection("uses");
+
+const groups = Object.entries(Object.groupBy(items, (item) => item.data.category))
+	.map(([category, entries = []]) => ({
+		category,
+		entries: entries.sort((a, b) => {
+			if (a.data.order !== undefined && b.data.order !== undefined) return a.data.order - b.data.order;
+			if (a.data.order !== undefined) return -1;
+			if (b.data.order !== undefined) return 1;
+			return a.data.title.localeCompare(b.data.title);
+		}),
+	}))
+	.sort((a, b) => a.category.localeCompare(b.category));
+---
+
+<SiteLayout title={`Uses - ${basics.name}`}>
+	<PageHeader eyebrow="Inventory" title="What I use">
+		<p>The hardware, software, and cloud tooling on my desk day to day. Kept current, not aspirational.</p>
+	</PageHeader>
+
+	{
+		groups.map(({ category, entries }) => (
+			<Section title={category} meta={countMeta(entries.length, "item")}>
+				<ol class="items">
+					{entries.map((item) => (
+						<li>
+							<h3>
+								{item.data.url ? (
+									<a href={item.data.url} target="_blank" rel="noopener noreferrer">
+										<span>{item.data.title}</span>
+										<Icon name="charm:link-external" aria-hidden="true" />
+									</a>
+								) : (
+									item.data.title
+								)}
+							</h3>
+							<p>{item.data.description}</p>
+						</li>
+					))}
+				</ol>
+			</Section>
+		))
+	}
+</SiteLayout>
+
+<style>
+	.items {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.items li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding-block: var(--space-6);
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	.items li:first-child {
+		padding-top: 0;
+	}
+
+	.items li:last-child {
+		border-bottom: 0;
+	}
+
+	h3 {
+		font-size: var(--text-xl);
+		text-transform: uppercase;
+	}
+
+	h3 a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	h3 a:hover {
+		color: var(--color-accent);
+	}
+
+	h3 :global(svg) {
+		width: 0.7em;
+		height: 0.7em;
+		color: var(--text-muted);
+	}
+
+	.items p {
+		color: var(--text-muted);
+	}
+</style>

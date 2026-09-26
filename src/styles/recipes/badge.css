@@ -1,0 +1,94 @@
+/* Badge / tag — chamfered label chip. data-scope="badge" data-tone. Also used by SeverityBadge (data-severity). */
+[data-scope="badge"] {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	font-family: var(--font-label);
+	font-weight: var(--weight-label);
+	letter-spacing: var(--tracking-label);
+	text-transform: uppercase;
+	font-size: var(--text-sm);
+	line-height: 1;
+	padding: 0.4em 0.7em 0.35em 0.9em;
+	color: var(--text-body);
+	background: linear-gradient(
+		135deg,
+		transparent var(--chamfer-sm),
+		var(--badge-bg, var(--surface-muted)) var(--chamfer-sm)
+	);
+	white-space: nowrap;
+}
+[data-scope="badge"][data-tone="accent"] {
+	--badge-bg: var(--color-button-accent);
+	color: var(--text-on-accent);
+}
+[data-scope="badge"][data-tone="outline"],
+[data-scope="badge"][data-tone="default"] {
+	background: none;
+	box-shadow: inset 0 0 0 1px var(--border-raised);
+	padding-left: 0.7em;
+}
+[data-scope="badge"][data-tone="success"] {
+	--badge-bg: var(--status-success-surface);
+	color: var(--status-success-text);
+}
+[data-scope="badge"][data-tone="warning"] {
+	--badge-bg: var(--status-warning-surface);
+	color: var(--status-warning-text);
+}
+[data-scope="badge"][data-tone="danger"] {
+	--badge-bg: var(--status-danger-surface);
+	color: var(--status-danger-text);
+}
+[data-scope="badge"][data-severity] {
+	--badge-bg: var(--sev-surface);
+	color: var(--sev-text);
+}
+[data-scope="badge"] [data-part="marker"] {
+	width: 8px;
+	height: 8px;
+	background: var(--sev-solid);
+	flex-shrink: 0;
+}
+[data-scope="badge"] [data-part="score"] {
+	font-weight: var(--weight-thin);
+	font-size: 1.25em;
+	letter-spacing: 0;
+}
+[data-severity="info"] {
+	--sev-solid: var(--severity-info);
+	--sev-surface: var(--severity-info-surface);
+	--sev-text: var(--severity-info-text);
+}
+[data-severity="low"] {
+	--sev-solid: var(--severity-low);
+	--sev-surface: var(--severity-low-surface);
+	--sev-text: var(--severity-low-text);
+}
+[data-severity="medium"] {
+	--sev-solid: var(--severity-medium);
+	--sev-surface: var(--severity-medium-surface);
+	--sev-text: var(--severity-medium-text);
+}
+[data-severity="high"] {
+	--sev-solid: var(--severity-high);
+	--sev-surface: var(--severity-high-surface);
+	--sev-text: var(--severity-high-text);
+}
+[data-severity="critical"] {
+	--sev-solid: var(--severity-critical);
+	--sev-surface: var(--severity-critical-surface);
+	--sev-text: var(--severity-critical-text);
+}
+[data-severity="critical"] [data-part="marker"] {
+	animation: dw-pulse 1.6s var(--ease-standard) infinite;
+}
+@keyframes dw-pulse {
+	0%,
+	100% {
+		opacity: 1;
+	}
+	50% {
+		opacity: 0.25;
+	}
+}

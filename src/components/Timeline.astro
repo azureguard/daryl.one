@@ -1,7 +1,23 @@
 ---
 import { Icon } from "astro-icon/components";
 import type { ISODate } from "../cv";
-import Icons from "../icons";
+import Badge from "./Badge.astro";
+
+// Experience as an audit log: dates in the left gutter like log timestamps, a
+// 2px spine with square 8px dots, and a sodium dot plus ACTIVE chip on the
+// current role.
+//
+// Two date treatments, never both at once:
+// - Screen, wide container: the date rail on the left, the timeline's whole
+//   idea. Below the container breakpoint it stacks above the title, in flow.
+// - Print: the rail is hidden (a two-column date gutter confuses ATS parsers
+//   reading the PDF) and the date reappears right-aligned on the title row,
+//   in normal flow next to the role it belongs to.
+//
+// Highlights are a Zag collapsible (Ark UI's Collapsible). The server renders
+// the anatomy with the current role open and the rest closed. On paper every
+// one prints: the `[hidden]` restatement below is screen-only, so in print the
+// list's own `display` wins over the UA's [hidden] rule.
 
 // `| undefined` alongside `?` keeps these assignable under exactOptionalPropertyTypes
 // when callers build entries by spreading schema objects.
@@ -17,175 +33,369 @@ export interface TimelineEntry {
 }
 
 interface Props {
+	/** Prefix for the collapsible ids, unique per page ("work", "volunteer"). */
+	id: string;
 	entries: Array<TimelineEntry>;
 }
 
-const { entries } = Astro.props;
+const { id, entries } = Astro.props;
 ---
 
-<ul class="@container flex flex-col">
+<ul class="timeline">
 	{
-		entries.map(
-			(
-				{
-					name,
-					startDate,
-					endDate,
-					position,
-					summary,
-					highlights,
-					url,
-					location,
-				},
-				index,
-			) => {
-				const isCurrent = !endDate;
-				const isLast = index === entries.length - 1;
-
-				return (
-					<li class="relative print:py-0.5">
-						<div class="relative grid pb-1 @lg:grid-cols-12 @lg:gap-6 print:grid-cols-1 print:gap-1 print:pb-0">
-							<header class="relative mt-1 mb-2 flex flex-wrap items-center gap-x-2 gap-y-1.5 font-mono text-xs text-skin-muted @lg:col-span-2 @lg:mt-1.5 @lg:mb-0 @lg:flex-col @lg:items-start print:hidden">
-								<time datetime={startDate}>{startDate}</time>
-								{isCurrent ? (
-									<span class="inline-flex w-fit items-center gap-1.5 rounded-sm border border-skin-hue/40 px-1.5 py-px text-[10px] font-medium tracking-widest text-skin-hue">
-										<span
-											class="size-1 rounded-full bg-skin-hue"
-											aria-hidden="true"
-										/>
-										ACTIVE
+		entries.map(({ name, startDate, endDate, position, summary, highlights, url, location }, index) => {
+			const isCurrent = !endDate;
+			const scope = `${id}-${index}`;
+			const state = isCurrent ? "open" : "closed";
+			return (
+				<li data-current={isCurrent ? "" : undefined} data-last={index === entries.length - 1 ? "" : undefined}>
+					<p class="rail-date label" data-print="hidden">
+						<time datetime={startDate}>{startDate}</time>
+						<span>&ndash;&nbsp;{isCurrent ? "Present" : <time datetime={endDate}>{endDate}</time>}</span>
+					</p>
+					<span class="rail" aria-hidden="true" data-print="hidden">
+						<span class="dot" />
+					</span>
+					<div class="body">
+						<div class="head">
+							<h3>
+								<span>{position}</span>
+								{isCurrent && (
+									<span data-print="hidden">
+										<Badge tone="accent">Active</Badge>
 									</span>
-								) : (
-									<time datetime={endDate}>&ndash;&nbsp;{endDate}</time>
 								)}
-							</header>
-							<div
-								class:list={[
-									"relative flex flex-col @lg:col-span-10 print:pb-0 print:before:hidden",
-									isLast ? "pb-2" : "pb-10",
-									"before:absolute before:mt-2 before:-ml-6 before:h-full before:w-px before:bg-skin-edge @max-lg:before:hidden",
-								]}
-							>
-								<div
-									class:list={[
-										"absolute mt-2 size-1.5 -translate-x-[26.5px] rounded-full ring-3 ring-skin-fill @max-lg:hidden print:hidden",
-										isCurrent ? "bg-skin-hue" : "bg-skin-edge",
-									]}
-									aria-hidden="true"
-								/>
-								{/*
-								 * Print keeps the date in the same block as the title: Firefox does not
-								 * implement `break-after: avoid`, so a separate date row can be orphaned
-								 * at a page break. `break-inside: avoid` on this group is what both
-								 * engines honour.
-								 */}
-								<div class="print:break-inside-avoid">
-									<p class="hidden items-baseline gap-x-2 font-mono text-xs text-skin-muted print:flex">
-										<time datetime={startDate}>{startDate}</time>
-										{isCurrent ? (
-											<span class="tracking-widest">· ACTIVE</span>
-										) : (
-											<time datetime={endDate}>&ndash;&nbsp;{endDate}</time>
-										)}
-									</p>
-									<h3 class="text-lg leading-tight print:text-base">
-										<span class="font-normal">{position}</span>
-										<span class="mx-1 text-skin-muted" aria-hidden="true">
-											@
-										</span>
-										{url ? (
-											<a
-												class="group/link font-semibold text-skin-hue underline decoration-dotted decoration-skin-hue/60 underline-offset-4 print:no-underline"
-												href={url}
-												title={`View ${name}`}
-												target="_blank"
-												rel="noopener noreferrer"
-											>
-												{name}
-												<Icon
-													aria-hidden="true"
-													name={Icons.Link}
-													class="ml-0.5 inline-block h-3.5 w-3.5 shrink-0 -translate-y-px transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5 group-focus-visible/link:translate-x-0.5 group-focus-visible/link:-translate-y-0.5 motion-reduce:transition-none print:hidden"
-												/>
-											</a>
-										) : (
-											<span class="font-semibold">{name}</span>
-										)}
-									</h3>
-									{location && (
-										<div class="mt-1 font-mono text-xs text-skin-muted">
-											{location}
-										</div>
-									)}
-									{summary && (
-										<p class="mt-3 text-sm text-skin-muted print:mt-1 print:text-xs">
-											{summary}
-										</p>
-									)}
-								</div>
-								{highlights && highlights.length > 0 && (
-									<div class="mt-3 text-sm print:mt-1 print:text-xs">
-										<details class="group/hl" open={isCurrent}>
-											<summary class="flex w-fit cursor-pointer list-none items-center gap-1.5 rounded-xs font-mono text-xs text-skin-muted transition-colors hover:text-skin-base motion-reduce:transition-none [&::-webkit-details-marker]:hidden">
-												<span class="group-open/hl:hidden">show more</span>
-												<span class="hidden group-open/hl:inline">
-													show less
-												</span>
-												<svg
-													class="h-3.5 w-3.5 transition-transform group-open/hl:rotate-180 motion-reduce:transition-none"
-													viewBox="0 0 24 24"
-													stroke="currentColor"
-													stroke-width="2"
-													fill="none"
-													aria-hidden="true"
-												>
-													<polyline points="6 9 12 15 18 9" />
-												</svg>
-											</summary>
-											<ul class="mt-3 flex list-disc flex-col gap-2 text-skin-muted print:mt-0 print:gap-1">
-												{highlights.map((highlight) => (
-													<li class="ml-4">{highlight}</li>
-												))}
-											</ul>
-										</details>
-									</div>
-								)}
-							</div>
+							</h3>
+							<p class="print-date label" data-print="only">
+								<time datetime={startDate}>{startDate}</time>
+								<span aria-hidden="true">&nbsp;&ndash;&nbsp;</span>
+								{isCurrent ? <span>Present</span> : <time datetime={endDate}>{endDate}</time>}
+							</p>
 						</div>
-					</li>
-				);
-			},
-		)
+						{/*
+						 * The employer is content, not metadata: sans at text-sm, not a
+						 * condensed label. It is the most scannable fact on a CV.
+						 */}
+						<p class="org">
+							{url ? (
+								<a href={url} title={`View ${name}`} target="_blank" rel="noopener noreferrer">
+									{name}
+									<Icon name="charm:link-external" aria-hidden="true" data-print="hidden" />
+								</a>
+							) : (
+								<span>{name}</span>
+							)}
+							{location && (
+								<>
+									<span aria-hidden="true">&middot;</span>
+									<span>{location}</span>
+								</>
+							)}
+						</p>
+						{summary && <p class="summary">{summary}</p>}
+						{highlights && highlights.length > 0 && (
+							<div
+								class="highlights"
+								data-timeline-collapsible={scope}
+								data-scope="collapsible"
+								data-part="root"
+								data-state={state}
+								id={`${scope}-root`}
+							>
+								<button
+									type="button"
+									class="toggle label"
+									data-print="hidden"
+									data-scope="collapsible"
+									data-part="trigger"
+									data-state={state}
+									id={`${scope}-trigger`}
+									aria-controls={`${scope}-content`}
+									aria-expanded={isCurrent ? "true" : "false"}
+								>
+									<span class="more">Show more</span>
+									<span class="less">Show less</span>
+									<Icon name="lucide:chevron-down" aria-hidden="true" />
+								</button>
+								<ul
+									data-scope="collapsible"
+									data-part="content"
+									data-state={state}
+									id={`${scope}-content`}
+									hidden={!isCurrent}
+								>
+									{highlights.map((highlight) => (
+										<li>{highlight}</li>
+									))}
+								</ul>
+							</div>
+						)}
+					</div>
+				</li>
+			);
+		})
 	}
 </ul>
 
 <style>
-	@reference "../styles/global.css";
+	.timeline {
+		container-type: inline-size;
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
 
-	li::marker {
-		@apply text-skin-hue;
+	.timeline > li {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		padding-bottom: var(--space-10);
+	}
+
+	.timeline > li[data-last] {
+		padding-bottom: 0;
+	}
+
+	.rail-date {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0 var(--space-2);
+		margin-bottom: var(--space-2);
+		color: var(--text-muted);
+	}
+
+	[data-current] .rail-date {
+		color: var(--color-accent);
+	}
+
+	.rail {
+		display: none;
+	}
+
+	.head h3 {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2) var(--space-3);
+		font-size: var(--text-xl);
+	}
+
+	.org {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0 var(--space-2);
+		margin-top: var(--space-1);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.org a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-1);
+	}
+
+	.org :global(svg) {
+		width: 0.9em;
+		height: 0.9em;
+	}
+
+	.summary {
+		margin-top: var(--space-3);
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.highlights {
+		margin-top: var(--space-3);
+		font-size: var(--text-sm);
+	}
+
+	.toggle {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		padding: 0;
+		border: 0;
+		background: none;
+		color: var(--text-muted);
+		font-size: var(--text-xs);
+		cursor: pointer;
+		transition: color var(--motion-hover);
+	}
+
+	.toggle:hover {
+		color: var(--text-body);
+	}
+
+	.toggle :global(svg) {
+		width: 1.1em;
+		height: 1.1em;
+		transition: transform var(--motion-panel);
+	}
+
+	.toggle[data-state="open"] :global(svg) {
+		transform: rotate(180deg);
+	}
+
+	.toggle[data-state="open"] .more,
+	.toggle[data-state="closed"] .less {
+		display: none;
+	}
+
+	[data-part="content"] {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		margin: var(--space-3) 0 0;
+		padding-left: 1.1em;
+		/* Nested inside the timeline's own <li>, so the UA default is a circle. */
+		list-style: disc;
+	}
+
+	[data-part="content"] li::marker {
+		color: var(--color-accent);
+	}
+
+	@media screen {
+		/* An author `display` beats the UA's [hidden] rule, so restate it. */
+		[data-part="content"][hidden] {
+			display: none;
+		}
+	}
+
+	/* The rail: a date gutter, a 2px spine with a square dot, then the body. */
+	@container (min-width: 34rem) {
+		.timeline > li {
+			grid-template-columns: 6.5rem 1rem minmax(0, 1fr);
+			column-gap: var(--space-3);
+			padding-bottom: 0;
+		}
+
+		.rail-date {
+			flex-direction: column;
+			align-items: flex-end;
+			margin: 0;
+			padding-top: 0.3rem;
+			text-align: right;
+		}
+
+		.rail {
+			position: relative;
+			display: block;
+		}
+
+		.rail::before {
+			content: "";
+			position: absolute;
+			top: 0.55rem;
+			bottom: 0;
+			left: calc(50% - 1px);
+			width: 2px;
+			background: var(--border-default);
+		}
+
+		[data-last] .rail::before {
+			bottom: auto;
+			height: 0.6rem;
+		}
+
+		.dot {
+			position: absolute;
+			top: 0.55rem;
+			left: calc(50% - 4px);
+			width: 8px;
+			height: 8px;
+			border: 2px solid var(--border-default);
+			background: var(--surface-page);
+		}
+
+		[data-current] .dot {
+			border-color: var(--color-signal);
+			background: var(--color-signal);
+		}
+
+		.body {
+			padding-bottom: var(--space-10);
+		}
+
+		[data-last] .body {
+			padding-bottom: 0;
+		}
+	}
+
+	@media print {
+		/*
+		 * Stop the list being a query container on paper. Container-query rules
+		 * are emitted after media-query ones, so the wide-rail layout would win
+		 * here; dropping container-type switches it off at once, leaving the
+		 * stacked form in plain DOM order, which ATS parsers read. Firefox also
+		 * drops a contained block that spans a page break, so this is what keeps
+		 * Experience on paper.
+		 */
+		.timeline {
+			container-type: normal;
+		}
+
+		.timeline > li {
+			padding-bottom: var(--space-2);
+		}
+
+		/* Firefox ignores `break-after: avoid`, so the title row is glued to
+		   its org line with `break-inside` on a group it does honour. */
+		.head {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: baseline;
+			justify-content: space-between;
+			gap: 0 var(--space-3);
+			break-inside: avoid;
+		}
+
+		.head h3 {
+			font-size: var(--text-base);
+		}
+
+		.print-date {
+			font-size: var(--text-xs);
+			text-transform: none;
+			white-space: nowrap;
+		}
+
+		.org,
+		.summary,
+		.highlights {
+			margin-top: var(--space-1);
+			font-size: var(--text-xs);
+		}
+
+		[data-part="content"] {
+			margin-top: var(--space-1);
+			gap: var(--space-1);
+		}
 	}
 </style>
 
 <script>
-	// Print fallback for the ::details-content rule in Layout.astro: browsers
-	// without that pseudo-element still get highlights expanded when printing.
-	// Astro dedupes this script even when multiple timelines render.
-	const collapsed = new Set<HTMLDetailsElement>();
+	import * as collapsible from "@zag-js/collapsible";
+	import { VanillaMachine } from "@zag-js/vanilla";
+	import { onEachPage, run } from "@/scripts/zag";
 
-	window.addEventListener("beforeprint", () => {
-		for (const details of document.querySelectorAll<HTMLDetailsElement>(
-			"details:not([open])",
-		)) {
-			collapsed.add(details);
-			details.open = true;
-		}
-	});
+	onEachPage("[data-timeline-collapsible]", (root) => {
+		const scope = root.dataset.timelineCollapsible ?? "";
+		const machine = new VanillaMachine(collapsible.machine, {
+			id: scope,
+			// The server-rendered ids, so the machine adopts the existing markup.
+			ids: { root: `${scope}-root`, trigger: `${scope}-trigger`, content: `${scope}-content` },
+			defaultOpen: root.dataset.state === "open",
+		});
 
-	window.addEventListener("afterprint", () => {
-		for (const details of collapsed) {
-			details.open = false;
-		}
-		collapsed.clear();
+		return run(machine, collapsible.connect, (api) => [
+			[root, api.getRootProps()],
+			[root.querySelector('[data-part="trigger"]'), api.getTriggerProps()],
+			[root.querySelector('[data-part="content"]'), api.getContentProps()],
+		]);
 	});
 </script>

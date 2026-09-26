@@ -11,8 +11,8 @@ const entries = (volunteer as Array<Volunteer>).map(({ organization, ...rest }) 
 
 {
 	entries.length > 0 && (
-		<Section className={Astro.props.className} title="Volunteer" meta={rangeMeta(entries)}>
-			<Timeline entries={entries} />
+		<Section title="Volunteer" eyebrow="Service" meta={rangeMeta(entries)}>
+			<Timeline id="volunteer" entries={entries} />
 		</Section>
 	)
 }

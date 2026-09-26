@@ -1,0 +1,8 @@
+/* SiteNav container behaviour — tighten gutters when the nav itself is narrow. */
+@container (max-width: 520px) {
+	[data-scope="site-nav"][data-part="inner"] {
+		--nav-gap: var(--space-3);
+		--nav-pad: 16px;
+		--nav-link-gap: var(--space-4);
+	}
+}

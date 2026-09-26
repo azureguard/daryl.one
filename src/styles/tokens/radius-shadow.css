@@ -1,0 +1,15 @@
+/* No rounded SaaS corners, no pills. Shape language = square + a chamfered
+   top-left corner (see --chamfer in atmosphere.css). Elevation = border shift. */
+:root {
+	--radius-sm: 0;
+	--radius-md: 0;
+	--radius-lg: 0;
+	--radius-xl: 0;
+	--radius-full: 9999px; /* full: circular photos only, never buttons/tags */
+	--shadow-sm: none;
+	--shadow-md: none;
+	--shadow-lg: 0 24px 48px -24px var(--vignette);
+	--focus-ring: 0 0 0 2px var(--focus-ring-color);
+	--focus-ring-width: 2px;
+	--focus-ring-offset: 3px;
+}

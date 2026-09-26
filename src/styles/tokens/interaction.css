@@ -1,0 +1,28 @@
+/* Keyboard focus is always visible. Signature ring: 2px DASHED in the accent —
+   reads as a deliberate annotation mark, not the default soft glow.
+   `summary` is added to the DS selector list: the site has disclosure summaries.
+   The reduced-motion block also zeroes animation-delay, which the DS file does
+   not: a staggered `data-reveal` keeps its delay otherwise, and with fill-mode
+   `both` the element stays invisible for the whole stagger. */
+:where(a, button, select, input, textarea, summary, [tabindex], [role="button"]):focus-visible {
+	outline: var(--focus-ring-width) dashed var(--focus-ring-color);
+	outline-offset: var(--focus-ring-offset);
+	border-radius: var(--radius-sm);
+}
+/* biome-ignore-start lint/complexity/noImportantStyles: reduced motion must beat every animation and transition declaration */
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-delay: 0s !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+		scroll-behavior: auto !important;
+	}
+}
+/* biome-ignore-end lint/complexity/noImportantStyles: see above */
+::placeholder {
+	color: var(--text-muted);
+	opacity: 1;
+}

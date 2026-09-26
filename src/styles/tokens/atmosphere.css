@@ -1,0 +1,23 @@
+/* Atmosphere — backgrounds are never a flat fill.
+   Surveyor's grid (minor 24px / major 120px) + a sodium glow bleeding in from the
+   top-right like a perimeter light + a vignette pooling bottom-left.
+   Usage: background: var(--atmosphere), var(--surface-page); */
+:root,
+.dark {
+	--atmosphere:
+		radial-gradient(70rem 42rem at 92% -12%, var(--glow), transparent 62%),
+		radial-gradient(60rem 40rem at -8% 112%, var(--vignette), transparent 60%),
+		linear-gradient(var(--grid-line-major) 1px, transparent 1px) 0 0 / 120px 120px,
+		linear-gradient(90deg, var(--grid-line-major) 1px, transparent 1px) 0 0 / 120px 120px,
+		linear-gradient(var(--grid-line) 1px, transparent 1px) 0 0 / 24px 24px,
+		linear-gradient(90deg, var(--grid-line) 1px, transparent 1px) 0 0 / 24px 24px;
+	/* Hazard hatch — redaction bars, critical-severity fills, disabled states */
+	--pattern-hatch: repeating-linear-gradient(
+		-45deg,
+		var(--text-body) 0 6px,
+		color-mix(in oklch, var(--text-body) 82%, var(--surface-page)) 6px 12px
+	);
+	/* Signature chamfer size (cut top-left corner on buttons, tags, cards) */
+	--chamfer: 10px;
+	--chamfer-sm: 6px;
+}

@@ -1,0 +1,46 @@
+/* Element defaults, so the page is on-brand before any script runs. */
+body {
+	font-family: var(--font-sans);
+	font-size: var(--text-base);
+	line-height: var(--leading-normal);
+	color: var(--text-body);
+	background: var(--atmosphere), var(--surface-page);
+	background-attachment: fixed;
+	-webkit-font-smoothing: antialiased;
+}
+h1,
+h2 {
+	font-family: var(--font-display);
+	font-weight: var(--weight-black);
+	line-height: var(--leading-display);
+	letter-spacing: -0.005em;
+	text-wrap: balance;
+}
+h3 {
+	font-family: var(--font-display);
+	font-weight: var(--weight-heavy);
+	line-height: var(--leading-tight);
+	letter-spacing: 0.01em;
+}
+a {
+	color: var(--link-color);
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.2em;
+	transition:
+		color var(--motion-hover),
+		text-decoration-thickness var(--motion-hover);
+}
+a:hover {
+	color: var(--link-hover);
+	text-decoration-thickness: 3px;
+}
+::selection {
+	background: var(--color-signal);
+	color: #140b00;
+}
+code,
+pre,
+kbd,
+samp {
+	font-family: var(--font-mono);
+}

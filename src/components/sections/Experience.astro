@@ -8,6 +8,6 @@ import Timeline from "../Timeline.astro";
 const jobs: Array<Work> = work;
 ---
 
-<Section className={Astro.props.className} title="Experience" meta={rangeMeta(jobs)}>
-	<Timeline entries={jobs} />
+<Section title="Experience" eyebrow="Audit log" meta={rangeMeta(jobs)}>
+	<Timeline id="work" entries={jobs} />
 </Section>

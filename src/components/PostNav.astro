@@ -1,0 +1,108 @@
+---
+import type { AdjacentPost } from "@/lib/blog";
+import { formatDate } from "@/lib/blog";
+
+interface Props {
+	previous: AdjacentPost | undefined;
+	next: AdjacentPost | undefined;
+}
+
+const { previous, next } = Astro.props;
+
+// Two stacked full-width rows, not two columns: side by side, each title gets
+// ~40ch and wraps. "Previous" is the OLDER post, "next" the NEWER one.
+//
+// The label rows mirror each other (`data-dir="next"` reverses the row), so the
+// arrow always sits beside the word it reinforces. The arrow stays on the
+// one-line label row, never beside a title that might wrap.
+const rows = [
+	{ post: previous, label: "Previous", rel: "prev", glyph: "←", dir: "prev" },
+	{ post: next, label: "Next", rel: "next", glyph: "→", dir: "next" },
+] as const;
+---
+
+{
+	(previous || next) && (
+		<nav aria-label="More posts" data-print="hidden">
+			{rows.map(({ post, label, rel, glyph, dir }) =>
+				post ? (
+					<a href={`/blog/${post.id}`} rel={rel} data-dir={dir}>
+						<span class="row label">
+							<span aria-hidden="true" class="glyph">
+								{glyph}
+							</span>
+							<span>{label}</span>
+							<span aria-hidden="true">&middot;</span>
+							<time datetime={post.date.toISOString()}>{formatDate(post.date)}</time>
+						</span>
+						<span class="title">{post.title}</span>
+					</a>
+				) : null,
+			)}
+		</nav>
+	)
+}
+
+<style>
+	nav {
+		border-top: 1px solid var(--border-default);
+	}
+
+	a {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: var(--space-2);
+		padding-block: var(--space-8);
+		border-bottom: 1px solid var(--border-default);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	a:last-child {
+		border-bottom: 0;
+	}
+
+	a[data-dir="next"] {
+		align-items: flex-end;
+		text-align: right;
+	}
+
+	.row {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--text-muted);
+	}
+
+	a[data-dir="next"] .row {
+		flex-direction: row-reverse;
+	}
+
+	.glyph {
+		display: inline-block;
+		transition: transform var(--motion-hover);
+	}
+
+	a[data-dir="prev"]:is(:hover, :focus-visible) .glyph {
+		transform: translateX(-4px);
+	}
+
+	a[data-dir="next"]:is(:hover, :focus-visible) .glyph {
+		transform: translateX(4px);
+	}
+
+	.title {
+		font-family: var(--font-display);
+		font-weight: var(--weight-black);
+		font-size: var(--text-2xl);
+		line-height: var(--leading-tight);
+		text-transform: uppercase;
+		text-wrap: balance;
+		transition: color var(--motion-hover);
+	}
+
+	a:hover .title {
+		color: var(--color-accent);
+	}
+</style>

@@ -1,0 +1,33 @@
+/* Families differ from the DS file by one name each: fontsource registers the
+   variable faces as "<Family> Variable", so those names lead each stack. */
+:root {
+	--font-display: "Big Shoulders Display Variable", "Big Shoulders Display", "Big Shoulders", Impact, sans-serif;
+	--font-sans: "IBM Plex Sans Variable", "IBM Plex Sans", ui-sans-serif, sans-serif;
+	--font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace; /* code + log content only */
+	/* Labels (tags, dates, nav, captions) = condensed display at heavy weight, uppercase. */
+	--font-label: var(--font-display);
+	--weight-label: 800;
+	--tracking-label: 0.08em;
+	/* Weight extremes — never 400 vs 600 for hierarchy */
+	--weight-hair: 100;
+	--weight-thin: 200;
+	--weight-body: 400;
+	--weight-strong: 500;
+	--weight-heavy: 800;
+	--weight-black: 900;
+	/* Scale: tight reading cluster for blog prose, then 3x+ jumps into display */
+	--text-xs: 0.8rem;
+	--text-sm: 0.9rem;
+	--text-base: 1.0625rem; /* 17px body */
+	--text-lg: 1.25rem;
+	--text-xl: 1.5rem;
+	--text-2xl: 2rem;
+	--text-3xl: 2.75rem;
+	--text-4xl: 4.5rem; /* 3x xl — page titles */
+	--text-5xl: 7rem; /* hero */
+	--text-display: clamp(4rem, 11vw, 9.5rem);
+	--leading-display: 0.88;
+	--leading-tight: 1.1;
+	--leading-normal: 1.6;
+	--leading-relaxed: 1.75;
+}

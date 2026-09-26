@@ -5,8 +5,21 @@ import Section from "../Section.astro";
 const { summary } = basics;
 ---
 
-<Section title="About">
-	<p>
-		{summary}
-	</p>
+<Section title="About" eyebrow="Identity">
+	<p class="summary">{summary}</p>
 </Section>
+
+<style>
+	.summary {
+		max-width: 68ch;
+		color: var(--text-muted);
+	}
+
+	@media print {
+		.summary {
+			max-width: none;
+			font-size: var(--text-xs);
+			line-height: 1.45;
+		}
+	}
+</style>

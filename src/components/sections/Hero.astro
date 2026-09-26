@@ -1,253 +1,143 @@
 ---
-import { Image } from "astro:assets";
 import { basics } from "@cv";
 import { Icon } from "astro-icon/components";
-import avatar from "@/assets/avatar.jpg";
-import Section from "@/components/Section.astro";
+import CopyEmail from "@/components/CopyEmail.astro";
 import Icons from "../../icons";
 
+// No photo here, deliberately: a divergence from the DS resume template. The
+// printed CV never had one, and the site's IA gives the portrait to /about.
+// See plans/decisions-log.md.
+//
+// `label` renders as a <p>, not an <h2>: it is a tagline, not a section
+// heading, and as a heading it pushed every real section down a level.
+//
+// The contact block is a row of links on screen and a right-aligned plain-text
+// block on paper, so the printed header stays compact and parseable.
 const { name, label, location, profiles, email } = basics;
 const { city, region } = location;
 
 const linkedInfo = profiles.find(({ network }) => network === "LinkedIn");
-const linkedUrl = linkedInfo?.url;
-
 const stripProtocol = (value: string) => value.replace(/^https?:\/\//, "");
 // The site URL is omitted: the email address already carries the domain.
-const printContact = [email, linkedUrl && stripProtocol(linkedUrl)].filter(
-	Boolean,
-);
+const printContact = [email, linkedInfo?.url && stripProtocol(linkedInfo.url)].filter(Boolean);
 ---
 
-<Section>
-	<div class="flex flex-col-reverse gap-8">
-		<div class="info">
-			<div class="flex flex-col gap-1 print:gap-0.5">
-				<h1>{name}</h1>
-				<h2>{label}</h2>
-				<div
-					class="flex items-center gap-2 pt-2 font-mono text-xs text-skin-muted print:hidden"
-				>
-					<Icon aria-hidden="true" name={Icons.Globe} />
-					{city}, {region}
-				</div>
-			</div>
-			<footer
-				class="hidden font-mono text-xs text-skin-muted print:flex print:flex-col print:items-end print:gap-0.5 print:text-right"
-			>
-				{printContact.map((line) => <div>{line}</div>)}
-				<div>
-					{city}, {region}
-				</div>
-			</footer>
-			<footer class="links">
-				{
-					email && (
-						<div class="relative flex items-center">
-							<span
-								data-copy-toast
-								role="status"
-								class="pointer-events-none absolute -top-8 left-0 rounded-sm border border-skin-edge bg-skin-fill px-2 py-0.5 font-mono text-xs text-skin-hue opacity-0 transition-opacity duration-200 motion-reduce:transition-none"
-							>
-								copied
-							</span>
-							<button
-								type="button"
-								data-copy-email={email}
-								aria-label={`Copy email address: ${email}`}
-								class="group flex cursor-pointer items-center justify-center"
-							>
-								<svg
-									data-copy-check
-									class="hidden h-4 w-4 stroke-current"
-									xmlns="http://www.w3.org/2000/svg"
-									fill="none"
-									viewBox="0 0 24 24"
-									stroke-width="1.5"
-									stroke="currentColor"
-									aria-hidden="true"
-								>
-									<path
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										d="M4.5 12.75l6 6 9-13.5"
-									/>
-								</svg>
-								<span data-copy-idle>
-									<Icon aria-hidden="true" name={Icons.Email} size="18" />
-								</span>
-							</button>
-						</div>
-					)
-				}
-				{
-					profiles.map(({ network, url }) => {
-						return (
-							<a
-								href={url}
-								title={`Visit ${name} profile on ${network}`}
-								target="_blank"
-								rel="noopener noreferrer"
-							>
-								<span class="sr-only">Visit {name} profile on {network}</span>
-								{Icons[network] && (
-									<Icon aria-hidden="true" name={Icons[network]} />
-								)}
-							</a>
-						);
-					})
-				}
-			</footer>
-		</div>
-		<figure class="relative w-fit print:hidden">
-			<Image src={avatar} alt={name} loading="eager" />
-			<div class="pointer-events-none absolute -inset-2">
-				<div
-					class="absolute -inset-y-8 right-0 w-px bg-skin-hue/50 mask-[linear-gradient(to_top,transparent,white_4rem,white_calc(100%-4rem),transparent)]"
-				>
-				</div>
-				<div
-					class="absolute -inset-y-8 left-0 w-px bg-skin-hue/50 mask-[linear-gradient(to_top,transparent,white_4rem,white_calc(100%-4rem),transparent)]"
-				>
-				</div>
-				<div
-					class="absolute -inset-x-8 bottom-0 h-px bg-skin-hue/50 mask-[linear-gradient(to_left,transparent,white_4rem,white_calc(100%-4rem),transparent)]"
-				>
-				</div>
-				<div
-					class="absolute -inset-x-8 top-0 h-px bg-skin-hue/50 mask-[linear-gradient(to_left,transparent,white_4rem,white_calc(100%-4rem),transparent)]"
-				>
-				</div>
-			</div>
-		</figure>
+<header class="hero">
+	<div class="identity">
+		<h1><span data-reveal="declassify">{name}</span></h1>
+		<p class="tagline label" data-reveal data-i="2">{label}</p>
 	</div>
-</Section>
+	<div class="print-contact" data-print="only">
+		{printContact.map((line) => <p>{line}</p>)}
+		<p>{city}, {region}</p>
+	</div>
+	<div class="contact label" data-print="hidden" data-reveal data-i="3">
+		<span class="item">
+			<Icon name="charm:globe" aria-hidden="true" />
+			{city}, {region}
+		</span>
+		{email && <CopyEmail email={email} />}
+		{
+			profiles.map(({ network, url, username }) => (
+				<a href={url} title={`Visit ${name} profile on ${network}`} target="_blank" rel="noopener noreferrer" class="item">
+					{Icons[network] && <Icon name={Icons[network]} aria-hidden="true" />}
+					<span>{username}</span>
+				</a>
+			))
+		}
+	</div>
+</header>
 
 <style>
-	@reference "../../styles/global.css";
+	.hero {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
 
-	.info {
-		@apply flex flex-col gap-1 pr-8 print:flex-row print:items-start print:justify-between print:gap-0 print:pr-0;
+	.identity {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
 	}
 
 	h1 {
-		@apply text-4xl font-semibold tracking-tight print:text-2xl;
+		font-size: clamp(var(--text-3xl), 13vw, var(--text-5xl));
+		text-transform: uppercase;
 	}
 
-	h2 {
-		@apply text-base font-normal tracking-normal text-balance text-skin-muted print:text-base;
+	h1 span {
+		display: inline-block;
 	}
 
-	img {
-		@apply aspect-square w-32 rounded-sm bg-cover;
+	.tagline {
+		color: var(--color-accent);
+		font-size: var(--text-base);
 	}
 
-	/*
-	 * Scoped narrowly to the copy-button's icon wrapper. These rules are
-	 * unlayered, so a broad `span` selector would beat layered utilities —
-	 * including the button's hover:text-skin-inverted — which is why the
-	 * hover invert must live here alongside the base colour.
-	 */
-	.links button span {
-		@apply flex items-center text-skin-hue;
+	.contact {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2) var(--space-6);
+		color: var(--text-muted);
 	}
 
-	/*
-	 * The copy script toggles the `hidden` utility on this span; that utility
-	 * is layered, so the unlayered flex above would override it and both icons
-	 * would show. Re-assert the hide at equal (unlayered) footing.
-	 */
-	.links button span.hidden {
-		display: none;
+	.item {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
 	}
 
-	.links button:hover span {
-		@apply text-skin-inverted;
+	a.item {
+		color: inherit;
+		text-decoration: none;
 	}
 
-	/*
-	 * Scoped to `.links` (not the `footer` element) so this unlayered rule
-	 * can't fight the print-only contact footer's `hidden` utility. The
-	 * print:hidden lives HERE (not in the markup) for the same reason:
-	 * an unlayered `display: flex` would beat a layered utility.
-	 */
-	.links {
-		@apply mt-2 flex gap-1 text-sm print:hidden;
+	a.item:hover {
+		color: var(--color-accent);
 	}
 
-	.links a,
-	.links button {
-		@apply inline-flex size-8 items-center justify-center rounded-sm p-1 text-skin-hue transition-colors duration-200 hover:bg-skin-button-accent hover:text-skin-inverted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-skin-hue motion-reduce:transition-none;
+	.contact :global(svg) {
+		width: 1.1em;
+		height: 1.1em;
 	}
 
-	/* `screen and` keeps these unlayered rules from beating print:hidden when the print page is narrow. */
-	@media screen and (width <= 700px) {
-		.container {
-			flex-direction: column-reverse;
+	@media print {
+		.hero {
+			flex-direction: row;
+			align-items: flex-start;
+			justify-content: space-between;
+			gap: var(--space-4);
 		}
 
-		.info {
-			@apply pr-0 md:items-center md:justify-center;
+		.identity {
+			gap: var(--space-1);
 		}
 
-		figure {
-			@apply flex md:items-center md:justify-center;
+		h1 {
+			font-size: var(--text-2xl);
+			line-height: var(--leading-tight);
+			text-transform: none;
 		}
 
-		h2 {
-			text-wrap: balance;
+		.tagline {
+			font-family: var(--font-sans);
+			font-weight: var(--weight-body);
+			font-size: var(--text-xs);
+			letter-spacing: normal;
+			text-transform: none;
+			color: var(--text-muted);
 		}
 
-		figure {
-			@apply md:mx-auto;
+		.print-contact {
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
+			gap: 0.1rem;
+			font-size: var(--text-xs);
+			text-align: right;
+			color: var(--text-muted);
 		}
 	}
 </style>
-
-<script>
-	const button = document.querySelector<HTMLButtonElement>("[data-copy-email]");
-	const toast = document.querySelector<HTMLElement>("[data-copy-toast]");
-	const check = button?.querySelector<SVGElement>("[data-copy-check]");
-	const idle = button?.querySelector<HTMLElement>("[data-copy-idle]");
-	let timer: ReturnType<typeof setTimeout> | undefined;
-
-	const copyFallback = (text: string): boolean => {
-		const textarea = document.createElement("textarea");
-		textarea.value = text;
-		textarea.setAttribute("readonly", "");
-		textarea.style.position = "fixed";
-		textarea.style.opacity = "0";
-		document.body.appendChild(textarea);
-		textarea.select();
-		let copied = false;
-		try {
-			copied = document.execCommand("copy");
-		} catch {
-			copied = false;
-		}
-		textarea.remove();
-		return copied;
-	};
-
-	button?.addEventListener("click", async () => {
-		const email = button.dataset.copyEmail;
-		if (!email) return;
-
-		try {
-			await navigator.clipboard.writeText(email);
-		} catch {
-			if (!copyFallback(email)) return;
-		}
-
-		check?.classList.remove("hidden");
-		idle?.classList.add("hidden");
-		toast?.classList.replace("opacity-0", "opacity-100");
-
-		clearTimeout(timer);
-		timer = setTimeout(() => {
-			check?.classList.add("hidden");
-			idle?.classList.remove("hidden");
-			toast?.classList.replace("opacity-100", "opacity-0");
-		}, 2000);
-	});
-</script>

@@ -1,0 +1,101 @@
+---
+import { getEntry, render } from "astro:content";
+import { basics } from "@cv";
+import Badge from "@/components/Badge.astro";
+import PostNav from "@/components/PostNav.astro";
+import Prose from "@/components/Prose.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { formatDate, getAdjacentPosts, readTime } from "@/lib/blog";
+
+// Rendered on demand: `slug` matches the collection entry's `.id`. An unknown
+// slug or a draft hit directly both become the site 404; a direct hit must not
+// leak a draft.
+const { slug } = Astro.params;
+const entry = slug ? await getEntry("blog", slug) : undefined;
+if (!entry || entry.data.draft) return Astro.rewrite("/404");
+
+const { Content } = await render(entry);
+const adjacent = await getAdjacentPosts(entry.id);
+---
+
+<SiteLayout title={`${entry.data.title} - ${basics.name}`} gap="sm">
+	<a href="/blog" class="back label" data-print="hidden">&larr; Back to blog</a>
+	<header>
+		<p class="meta label" data-reveal>
+			<time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+			{
+				entry.data.updated && (
+					<>
+						<span aria-hidden="true">·</span>
+						<span>updated {formatDate(entry.data.updated)}</span>
+					</>
+				)
+			}
+			<span aria-hidden="true">·</span>
+			<span>{readTime(entry.body ?? "")}</span>
+		</p>
+		<h1><span data-reveal="declassify" data-i="1">{entry.data.title}</span></h1>
+		<p class="lede" data-reveal data-i="3">{entry.data.description}</p>
+		{
+			entry.data.tags && entry.data.tags.length > 0 && (
+				<ul class="tags" aria-label="Tags" data-reveal data-i="4">
+					{entry.data.tags.map((tag) => (
+						<li>
+							<Badge>{tag}</Badge>
+						</li>
+					))}
+				</ul>
+			)
+		}
+	</header>
+	<Prose>
+		<Content />
+	</Prose>
+	<PostNav previous={adjacent.previous} next={adjacent.next} />
+</SiteLayout>
+
+<style>
+	.back {
+		align-self: flex-start;
+		text-decoration: none;
+	}
+
+	header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+		padding-bottom: var(--space-8);
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		color: var(--text-muted);
+	}
+
+	h1 {
+		font-size: clamp(var(--text-3xl), 8vw, var(--text-4xl));
+		text-transform: uppercase;
+	}
+
+	h1 span {
+		display: inline-block;
+	}
+
+	.lede {
+		max-width: 62ch;
+		font-size: var(--text-lg);
+		color: var(--text-muted);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

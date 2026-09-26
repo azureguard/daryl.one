@@ -1,0 +1,109 @@
+---
+import ThemeSwitch from "./ThemeSwitch.astro";
+
+// Site-wide top nav, per the DS's SiteNav: wordmark left, condensed-caps links
+// centred, ThemeSwitch right, a hairline bottom border. The links are plain
+// <a> elements so clicks reach `document`, where <ClientRouter /> listens.
+//
+// The nav is an inline-size container: at ≤520px recipes/site-nav.css tightens
+// the gutters and the ThemeSwitch goes icon-only, so the header stays on one
+// line on phones without a media query. The `1fr auto 1fr` grid centres the
+// links on the nav's own width, not on whatever its neighbours leave.
+//
+// The active link is an underline, not a chip: a chip is Badge's language.
+// The nav is not `transition:persist`-ed, so `aria-current` is recomputed on
+// every navigation. `id="site-nav"` is what the floating ThemeSwitch watches.
+
+interface Props {
+	links: Array<{ label: string; href: string }>;
+	/** Current pathname (`Astro.url.pathname`), used to mark the active link. */
+	active: string;
+}
+
+const { links, active } = Astro.props;
+---
+
+<header id="site-nav" data-print="hidden">
+	<nav aria-label="Primary" data-scope="site-nav" data-part="root">
+		<div data-scope="site-nav" data-part="inner">
+			<a href="/" class="wordmark">daryl.one</a>
+			<ul>
+				{
+					links.map((link) => {
+						const isActive = active === link.href || active.startsWith(`${link.href}/`);
+						return (
+							<li>
+								<a href={link.href} class="label" aria-current={isActive ? "page" : undefined}>
+									{link.label}
+								</a>
+							</li>
+						);
+					})
+				}
+			</ul>
+			<div class="end">
+				<ThemeSwitch variant="ghost" />
+			</div>
+		</div>
+	</nav>
+</header>
+
+<style>
+	nav {
+		container-type: inline-size;
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	[data-part="inner"] {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+		align-items: center;
+		gap: var(--nav-gap, var(--space-6));
+		max-width: 760px;
+		margin-inline: auto;
+		padding: 0.9rem var(--nav-pad, 24px);
+	}
+
+	.wordmark {
+		justify-self: start;
+		font-family: var(--font-display);
+		font-weight: var(--weight-black);
+		font-size: var(--text-sm);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	.wordmark:hover {
+		color: var(--color-accent);
+	}
+
+	ul {
+		display: flex;
+		gap: var(--nav-link-gap, var(--space-5));
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	ul a {
+		padding-bottom: 2px;
+		border-bottom: 1px solid transparent;
+		color: var(--text-muted);
+		letter-spacing: 0.07em;
+		text-decoration: none;
+		transition: color var(--motion-hover);
+	}
+
+	ul a:hover {
+		color: var(--text-body);
+	}
+
+	ul a[aria-current="page"] {
+		color: var(--color-accent);
+		border-bottom-color: var(--color-accent);
+	}
+
+	.end {
+		justify-self: end;
+	}
+</style>
