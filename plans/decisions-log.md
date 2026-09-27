@@ -44,9 +44,15 @@ isn't: read the entry before "fixing" it. How to work with the code is in
   @astrojs/rss, @astrojs/sitemap, astro-robots-txt). Fixed pages share one
   preview card built from `cv.json`, rather than a registry that restates each
   page's copy.
-- **Declined: sharing the theme-resolution code** between the head script and
-  ThemeSwitch through an import. Vite would split it into its own chunk and add
-  a request before first paint.
+- **The head theme script is inline, allowed by its CSP hash.** As a bundled
+  module it ran after first paint (dark-preference visitors saw light, then
+  every colour transition). Declined: an external classic script (a
+  render-blocking request) and a CSS-only system default (duplicates the DS's
+  dark tokens and still flashes a stored choice). Also declined: sharing its
+  code with ThemeSwitch, which an inline script can't import.
+- **Stylesheets inline into every page.** Linked, they were a render-blocking
+  round trip ahead of the fonts; brotli'd, the inlined CSS costs ~7KB per page
+  and mobile FCP fell by ~0.3–0.5s.
 
 ## Information architecture
 

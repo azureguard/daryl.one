@@ -1,5 +1,10 @@
 /* Motion — spend it on ONE orchestrated moment (page load), keep micro-interactions quiet.
-   prefers-reduced-motion is honoured globally in interaction.css. */
+   prefers-reduced-motion is honoured globally in interaction.css.
+   Animate transform and opacity only: the compositor runs those without touching the page.
+   Keyframes on box-shadow, colour or filters repaint every frame (forever, in a loop), and
+   top/left/width/height/margin re-run layout and count as layout shift (CLS). Paint a
+   glow or colour once on a pseudo-element and fade its opacity; move things by transform.
+   Hover transitions on colour are fine: they are brief and user-triggered. */
 :root {
 	--duration-instant: 80ms;
 	--duration-fast: 140ms;
@@ -51,14 +56,14 @@
 }
 @keyframes dw-scan {
 	0% {
-		top: 0;
+		transform: translateY(0);
 		opacity: 1;
 	}
 	90% {
 		opacity: 1;
 	}
 	100% {
-		top: 100%;
+		transform: translateY(100%);
 		opacity: 0;
 	}
 }
@@ -84,14 +89,15 @@
 	position: relative;
 	overflow: hidden;
 }
+/* The scanline layer spans the block and draws the 2px line at its top edge, so translateY(100%)
+   (its own height, which is the block's) sweeps it to the bottom. Sweeping a 2px line by `top`
+   was a layout shift on every frame. drop-shadow is the line's glow, rasterised once. */
 [data-reveal="scan"]::before {
 	content: "";
 	position: absolute;
-	left: 0;
-	right: 0;
-	height: 2px;
-	background: var(--color-signal);
-	box-shadow: 0 0 18px 2px var(--glow);
+	inset: 0;
+	background: linear-gradient(var(--color-signal) 2px, transparent 2px);
+	filter: drop-shadow(0 0 18px var(--glow));
 	animation: dw-scan 1400ms var(--ease-standard) both;
 	animation-delay: calc(var(--i, 0) * var(--stagger));
 	pointer-events: none;

@@ -1,7 +1,9 @@
 // @ts-check
-import { realpathSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import type { AstroIntegration } from "astro";
 import { defineConfig } from "astro/config";
 
 import cloudflare from "@astrojs/cloudflare";
@@ -55,6 +57,27 @@ const fontDirs = [
 	"@fontsource/ibm-plex-mono",
 ].map((pkg) => realpathSync(resolve(root, "node_modules", pkg)));
 
+// The head's theme script (src/scripts/theme-init.js) is inlined so it runs
+// before first paint, and `script-src 'self'` would block it. This adds its
+// hash to the built `_headers` CSP, and fails the build if the page doesn't
+// carry the file's exact bytes (a mismatch would silently block the script).
+const themeInitHash = {
+	name: "theme-init-csp-hash",
+	hooks: {
+		"astro:build:done": ({ dir }) => {
+			const script = readFileSync(resolve(root, "src/scripts/theme-init.js"), "utf8");
+			if (!readFileSync(new URL("index.html", dir), "utf8").includes(`<script>${script}</script>`)) {
+				throw new Error("theme-init.js is not inlined verbatim in index.html; its CSP hash would not match");
+			}
+			const hash = createHash("sha256").update(script).digest("base64");
+			const headersFile = new URL("_headers", dir);
+			const headers = readFileSync(headersFile, "utf8");
+			if (!headers.includes("script-src 'self';")) throw new Error("_headers has no `script-src 'self';` to extend");
+			writeFileSync(headersFile, headers.replace("script-src 'self';", `script-src 'self' 'sha256-${hash}';`));
+		},
+	},
+} satisfies AstroIntegration;
+
 // https://astro.build/config
 export default defineConfig({
 	site: "https://daryl.one",
@@ -85,13 +108,18 @@ export default defineConfig({
 		}),
 		sitemap(),
 		robotsTxt(),
+		themeInitHash,
 	],
 	// Every page is prerendered to a static asset, served from Cloudflare's cache
 	// ahead of the Worker; only the 404 renders on demand. `file` output with no
 	// trailing slash gives `/about` → about.html, matching the canonical URLs and
 	// the sitemap.
 	trailingSlash: "never",
-	build: { format: "file" },
+	// Stylesheets are inlined into each page: an external one is a render-blocking
+	// round trip ahead of the fonts it references, which dominated mobile FCP.
+	// ("auto" would inline nothing, as it keys on `assetsInlineLimit`, set to 0
+	// below for scripts.)
+	build: { format: "file", inlineStylesheets: "always" },
 	markdown: {
 		// Off-site links in posts and case studies open in a new tab with no
 		// referrer and carry the external-link glyph, as the site's hand-written

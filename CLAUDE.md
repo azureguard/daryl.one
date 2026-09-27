@@ -159,10 +159,21 @@ These have bitten before.
 - **Prerendering runs in Node** (`prerenderEnvironment: "node"`) because
   CanvasKit (preview images) can't load in workerd. `canvaskit-wasm` must be a
   direct dependency, or the build dies with "__dirname is not defined".
-- **CSP reaches the HTML** (it's a static asset). `script-src 'self'` is strict;
-  `style-src` allows `'unsafe-inline'` for the ClientRouter transition and
-  Shiki (reasons in the decisions log). Our own code still writes no inline
-  style attributes: reveal order is `data-i`, not `style="--i"`.
+- **CSP reaches the HTML** (it's a static asset). `script-src 'self'` is strict
+  except for one hash: the head's `src/scripts/theme-init.js`, inlined because a
+  bundled `<script>` is a deferred module that runs after first paint (a theme
+  flash, and every colour transition firing). A build hook in `astro.config.ts`
+  adds its hash to the built `_headers`. `style-src` allows `'unsafe-inline'`
+  for the ClientRouter transition and Shiki (reasons in the decisions log). Our
+  own code still writes no inline style attributes: reveal order is `data-i`,
+  not `style="--i"`.
+- **Stylesheets are inlined** (`inlineStylesheets: "always"`); `"auto"` would
+  inline nothing, since it keys on `assetsInlineLimit`, which is 0 for scripts.
+  Local preview serves HTML uncompressed, so judge Lighthouse there by
+  compressed size, not its FCP.
+- **Animate `transform` and `opacity` only** (a DS rule, in `tokens/motion.css`).
+  Keyframes on `box-shadow` or `top` repaint every frame, and `top` counts as
+  layout shift; the severity flash and scanline are the worked examples.
 - **Dev is workerd.** A CJS dep re-optimized mid-request desyncs it ("module is
   not defined"); `vite.optimizeDeps.include` pre-bundles the icon deps for that.
 - **`aube build` while `aube dev` runs breaks dev** (every route 500s,

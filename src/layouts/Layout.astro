@@ -7,6 +7,7 @@ import type { Thing, WithContext } from "schema-dts";
 import { getPublished } from "@/lib/content";
 import { ogImageFor } from "@/lib/og";
 import { pagePath } from "@/lib/url";
+import themeInit from "@/scripts/theme-init.js?raw";
 import "../styles/global.css";
 
 interface Props {
@@ -80,36 +81,7 @@ const hasPosts = (await getPublished("blog")).length > 0;
 		<meta name="theme-color" content="#06110c" media="(prefers-color-scheme: dark)" />
 		<ClientRouter />
 
-		<script>
-			// Applies the theme class before first paint, so there is no flash of
-			// the wrong theme. ThemeSwitch.astro owns changes after load; both read
-			// the same "theme" localStorage key.
-			//
-			// Astro's swap copies the NEW document's <html> attributes over the old
-			// one, which drops the class this script added, and bundled scripts do
-			// not re-run after a navigation. So the class is also applied to
-			// `newDocument` in astro:before-swap, which fires before the swap and
-			// before paint. The listener sits on `document`, which persists.
-			type Theme = "light" | "dark" | "system";
-
-			function resolveTheme(): "light" | "dark" {
-				const stored = localStorage.getItem("theme") as Theme | null;
-				const theme: Theme = stored === "dark" || stored === "light" ? stored : "system";
-				if (theme !== "system") return theme;
-				return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
-			}
-
-			function applyTheme(target: Document) {
-				target.documentElement.classList.remove("light", "dark");
-				target.documentElement.classList.add(resolveTheme());
-			}
-
-			applyTheme(document);
-
-			document.addEventListener("astro:before-swap", (event) => {
-				applyTheme(event.newDocument);
-			});
-		</script>
+		<script is:inline set:html={themeInit} />
 	</head>
 	<body>
 		<slot />
