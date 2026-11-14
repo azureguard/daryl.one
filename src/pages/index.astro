@@ -30,7 +30,7 @@ const lede = summary.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? summary;
 const tags = label.split("|").map((tag) => tag.trim());
 
 // Blog leads when it has content, like the Brand card's first row; otherwise
-// it is absent everywhere (see SiteLayout).
+// it is absent everywhere (see SiteLayout). Uses is gated the same way.
 const entries = [
 	...(latestPost
 		? [
@@ -46,7 +46,9 @@ const entries = [
 	{ href: "/cv", id: "/cv", title: "The résumé", meta: countMeta(work.length) },
 	{ href: "/projects", id: "/projects", title: "The sandbox", meta: countMeta(projects.length) },
 	{ href: "/about", id: "/about", title: "whoami", meta: undefined },
-	{ href: "/uses", id: "/uses", title: "The setup", meta: countMeta(uses.length, "item") },
+	...(uses.length > 0
+		? [{ href: "/uses", id: "/uses", title: "The setup", meta: countMeta(uses.length, "item") }]
+		: []),
 ];
 
 // Primary action follows the Brand card: the writing first when it exists.

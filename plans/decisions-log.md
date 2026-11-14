@@ -60,7 +60,8 @@ isn't: read the entry before "fixing" it. How to work with the code is in
   left; `/about` is first-person. The split is register, not subject.
 - **Nav order: CV, Projects, Blog, About, Uses.** `/projects` lists every
   `cv.json` project and is never empty, so it isn't gated. The blog appears
-  only once a post is published: an empty "Audit trail" is a dead end.
+  only once a post is published: an empty "Audit trail" is a dead end. Uses is
+  gated the same way: its entries are untracked, so CI would ship it empty.
 - **The footer is site-wide.** It's the only place the contact links live, so
   a reader arriving on a post from search still has a route to them.
 - **Case studies are Markdown, like the blog** (nothing needs MDX yet),

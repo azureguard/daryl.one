@@ -50,7 +50,7 @@ src/
 ├── layouts/SiteLayout.astro   # skip link, nav, <main> measure, footer; pages pass title/description/gap
 ├── components/                # PageHeader (eyebrow prop/slot, lede, `after` slot), Section, Timeline,
 │                              # ProjectCards (CV + /projects), LogBlock (404), SiteNav, ThemeSwitch, ...
-├── pages/[blog].astro         # /blog index (see Blog gating)
+├── pages/[blog].astro         # /blog index; [uses].astro likewise (see Content gating)
 ├── pages/og/[...route].ts     # preview images (astro-og-canvas); data in lib/og.ts
 ├── pages/rss.xml.ts           # @astrojs/rss
 ├── lib/content.ts             # getPublished(blog|projects), getAdjacentPosts, readTime, formatDate
@@ -102,11 +102,12 @@ IBM Plex Sans for prose, Plex Mono for code only).
 - **Case studies** (`src/content/projects/`): `project` must name a `cv.json`
   project exactly (build fails otherwise); that project's card links to it on
   `/cv` and `/projects`. Drafts are not built.
-- **Blog gating**: blog routes, the nav link, the homepage row and the RSS
+- **Content gating**: blog routes, the nav link, the homepage row and the RSS
   `<link rel="alternate">` exist only while `getPublished("blog")` is
-  non-empty. `/blog` is `[blog].astro`, a dynamic route so it can yield no
-  path and fall through to the 404 (a prerendered page cannot rewrite to the
-  on-demand 404).
+  non-empty; `/uses`, its nav link and homepage row only while the `uses`
+  collection is. `/blog` and `/uses` are `[blog].astro` / `[uses].astro`,
+  dynamic routes so they can yield no path and fall through to the 404 (a
+  prerendered page cannot rewrite to the on-demand 404).
 - **SEO**: libraries, not hand-built tags. astro-seo (head), astro-seo-schema
   (JSON-LD: WebSite on `/`, Person on `/cv`, BlogPosting/Article), astro-og-canvas
   (a site card from `cv.json` shared by fixed pages, one per post and case
@@ -138,9 +139,9 @@ IBM Plex Sans for prose, Plex Mono for code only).
   the `--assets` flag is required or previews 404.
 - Cloudflare steps need `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`. The
   `daryl.one` domain is attached to the Worker by hand in the dashboard.
-- **CI builds without blog and case-study content** (untracked). Check changes
-  against empty collections: move `src/content/blog` and `src/content/projects`
-  aside, build, move them back.
+- **CI builds without any `src/content`** (untracked: blog, case studies,
+  uses). Check changes against empty collections: move `src/content` aside,
+  build, move it back.
 
 ## Code style
 

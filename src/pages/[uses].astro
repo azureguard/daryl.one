@@ -1,15 +1,26 @@
 ---
 import { getCollection } from "astro:content";
 import { basics } from "@cv";
+import type { InferGetStaticPropsType } from "astro";
 import { Icon } from "astro-icon/components";
 import PageHeader from "@/components/PageHeader.astro";
 import Section from "@/components/Section.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { countMeta } from "@/meta";
 
+// Like /blog, a dynamic route only so it can opt out of the build: with no
+// entries it yields no path and /uses falls through to the on-demand 404
+// rather than an empty inventory. SiteLayout and the homepage drop their links
+// on the same condition.
+export async function getStaticPaths() {
+	const items = await getCollection("uses");
+	return items.length > 0 ? [{ params: { uses: "uses" }, props: { items } }] : [];
+}
+
+const { items } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+
 // Categories render alphabetically; within each, items with an `order` sort
 // first by it and the rest fall back to alphabetical by title.
-const items = await getCollection("uses");
 
 const groups = Object.entries(Object.groupBy(items, (item) => item.data.category))
 	.map(([category, entries = []]) => ({

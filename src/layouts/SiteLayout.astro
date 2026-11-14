@@ -1,4 +1,5 @@
 ---
+import { getCollection } from "astro:content";
 import type { Thing, WithContext } from "schema-dts";
 import Footer from "@/components/Footer.astro";
 import SiteNav from "@/components/SiteNav.astro";
@@ -27,15 +28,16 @@ interface Props {
 
 const { title, description, article, schema, gap = "lg", wide = false } = Astro.props;
 
-// Nav order follows the DS. Blog appears only once a post is published (see
-// Blog gating in CLAUDE.md).
+// Nav order follows the DS. Blog appears only once a post is published and
+// Uses only once it has an entry (see Content gating in CLAUDE.md).
 const hasPosts = (await getPublished("blog")).length > 0;
+const hasUses = (await getCollection("uses")).length > 0;
 const links = [
 	{ label: "CV", href: "/cv" },
 	{ label: "Projects", href: "/projects" },
 	...(hasPosts ? [{ label: "Blog", href: "/blog" }] : []),
 	{ label: "About", href: "/about" },
-	{ label: "Uses", href: "/uses" },
+	...(hasUses ? [{ label: "Uses", href: "/uses" }] : []),
 ];
 
 // Skip link (WCAG 2.4.1). <main> needs no tabindex: following a fragment link
