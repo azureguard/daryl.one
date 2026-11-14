@@ -1,0 +1,30 @@
+/* Card — the Card component (components/data-display/Card.jsx) as a recipe: a flat
+   surface with a hairline border; `raised` is the surface tier plus the stronger border,
+   never a shadow. Target: any element with data-scope="card" data-part="root", plus
+   optional data-elevation="raised" and data-padding="sm|md|lg" (default md). A linked card
+   (an <a>) takes the accent hairline on hover. */
+[data-scope="card"][data-part="root"] {
+	display: flex;
+	flex-direction: column;
+	gap: var(--space-2);
+	padding: var(--space-6);
+	background: var(--surface-card);
+	box-shadow: inset 0 0 0 1px var(--border-default);
+	color: var(--text-body);
+	text-decoration: none;
+	transition: box-shadow var(--motion-hover);
+}
+[data-scope="card"][data-elevation="raised"] {
+	background: var(--surface-raised);
+	box-shadow: inset 0 0 0 1px var(--border-raised);
+}
+[data-scope="card"][data-padding="sm"] {
+	padding: var(--space-4);
+}
+[data-scope="card"][data-padding="lg"] {
+	padding: var(--space-8);
+}
+a[data-scope="card"]:hover {
+	color: var(--text-body);
+	box-shadow: inset 0 0 0 1px var(--color-accent);
+}

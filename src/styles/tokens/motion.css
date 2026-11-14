@@ -1,0 +1,153 @@
+/* Motion — spend it on ONE orchestrated moment (page load), keep micro-interactions quiet.
+   prefers-reduced-motion is honoured globally in interaction.css.
+   Animate transform and opacity only: the compositor runs those without touching the page.
+   Keyframes on box-shadow, colour or filters repaint every frame (forever, in a loop), and
+   top/left/width/height/margin re-run layout and count as layout shift (CLS). Paint a
+   glow or colour once on a pseudo-element and fade its opacity; move things by transform.
+   Hover transitions on colour are fine: they are brief and user-triggered. */
+:root {
+	--duration-instant: 80ms;
+	--duration-fast: 140ms;
+	--duration-base: 220ms;
+	--duration-slow: 360ms;
+	--duration-reveal: 720ms;
+	--stagger: 80ms;
+	--ease-standard: cubic-bezier(0.2, 0, 0, 1);
+	--ease-emphasized: cubic-bezier(0.3, 0, 0, 1);
+	--ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+	--ease-exit: cubic-bezier(0.3, 0, 1, 1);
+	--motion-hover: var(--duration-fast) var(--ease-standard);
+	--motion-panel: var(--duration-base) var(--ease-emphasized);
+}
+/* Page-load choreography. Put data-reveal on elements, and data-i="N" for order.
+   data-reveal            → rise + fade
+   data-reveal="declassify" → a redaction bar wipes off left→right (headlines, key facts)
+   data-reveal="scan"     → a sodium scanline sweeps once across the element (hero blocks)
+
+   The DS orders reveals with an inline style="--i:N". The site writes no style
+   attributes, so the order is an attribute here and the rules below map it onto --i. */
+@keyframes dw-rise {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+@keyframes dw-declassify {
+	0% {
+		clip-path: inset(0 100% 0 0);
+	}
+	100% {
+		clip-path: inset(0 0 0 0);
+	}
+}
+@keyframes dw-bar {
+	0% {
+		transform: scaleX(1);
+		transform-origin: right;
+	}
+	100% {
+		transform: scaleX(0);
+		transform-origin: right;
+	}
+}
+@keyframes dw-scan {
+	0% {
+		transform: translateY(0);
+		opacity: 1;
+	}
+	90% {
+		opacity: 1;
+	}
+	100% {
+		transform: translateY(100%);
+		opacity: 0;
+	}
+}
+[data-reveal] {
+	animation: dw-rise var(--duration-reveal) var(--ease-entrance) both;
+	animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+[data-reveal="declassify"] {
+	position: relative;
+	animation: dw-rise var(--duration-slow) var(--ease-entrance) both;
+	animation-delay: calc(var(--i, 0) * var(--stagger));
+}
+[data-reveal="declassify"]::after {
+	content: "";
+	position: absolute;
+	inset: 0.08em -0.04em;
+	background: var(--text-body);
+	animation: dw-bar var(--duration-reveal) var(--ease-emphasized) both;
+	animation-delay: calc(var(--i, 0) * var(--stagger) + 180ms);
+	pointer-events: none;
+}
+[data-reveal="scan"] {
+	position: relative;
+	overflow: hidden;
+}
+/* The scanline layer spans the block and draws the 2px line at its top edge, so translateY(100%)
+   (its own height, which is the block's) sweeps it to the bottom. Sweeping a 2px line by `top`
+   was a layout shift on every frame. drop-shadow is the line's glow, rasterised once. */
+[data-reveal="scan"]::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: linear-gradient(var(--color-signal) 2px, transparent 2px);
+	filter: drop-shadow(0 0 18px var(--glow));
+	animation: dw-scan 1400ms var(--ease-standard) both;
+	animation-delay: calc(var(--i, 0) * var(--stagger));
+	pointer-events: none;
+	z-index: 1;
+}
+[data-i="1"] {
+	--i: 1;
+}
+[data-i="2"] {
+	--i: 2;
+}
+[data-i="3"] {
+	--i: 3;
+}
+[data-i="4"] {
+	--i: 4;
+}
+[data-i="5"] {
+	--i: 5;
+}
+[data-i="6"] {
+	--i: 6;
+}
+[data-i="7"] {
+	--i: 7;
+}
+[data-i="8"] {
+	--i: 8;
+}
+[data-i="9"] {
+	--i: 9;
+}
+[data-i="10"] {
+	--i: 10;
+}
+[data-i="11"] {
+	--i: 11;
+}
+[data-i="12"] {
+	--i: 12;
+}
+[data-i="13"] {
+	--i: 13;
+}
+[data-i="14"] {
+	--i: 14;
+}
+[data-i="15"] {
+	--i: 15;
+}
+[data-i="16"] {
+	--i: 16;
+}

@@ -1,0 +1,179 @@
+---
+import { basics, work } from "@cv";
+import { Icon } from "astro-icon/components";
+import Badge from "@/components/Badge.astro";
+import PageHeader from "@/components/PageHeader.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+
+// The terminal "About" page: first-person register, the portrait, and a
+// "Career, briefly" era strip. The split from `/` is register, not subject.
+//
+// The story leads and the portrait sits to its right (below it on phones), as
+// in the DS About template. Until a plain, naturally-lit headshot exists, a
+// person glyph holds the portrait's place; it is decoration, so aria-hidden.
+const { name } = basics;
+
+// Era years come from cv.json's newest-first `work` array; only the three era
+// names are hand-authored. "Career, briefly" is a real h2 over h3 era cards.
+const currentRole = work[0];
+if (!currentRole) throw new Error("cv.json: expected at least one work entry");
+
+const leadershipRole = work.find((role) => role.position === "Technical Lead");
+if (!leadershipRole) throw new Error("cv.json: expected a 'Technical Lead' work entry");
+
+const engineeringRoles = work.filter((role) => /software engineer/i.test(role.position));
+if (engineeringRoles.length === 0)
+	throw new Error("cv.json: expected at least one software-engineer-titled work entry");
+const engineeringStart = Math.min(...engineeringRoles.map((role) => Number(role.startDate)));
+
+const eras = [
+	{ range: `${engineeringStart}–${leadershipRole.startDate}`, name: "Software engineering", active: false },
+	{ range: `${leadershipRole.startDate}–${leadershipRole.endDate}`, name: "Technical leadership", active: false },
+	// The current era's ACTIVE badge stands in for "–Present", as on the Timeline.
+	{ range: `${currentRole.startDate}`, name: "Cybersecurity", active: true },
+];
+---
+
+<SiteLayout title={`About - ${name}`} description="The journey from cloud software engineering, onwards.">
+	<PageHeader eyebrow="whoami" title="Hi, I'm Daryl." />
+
+	<div class="story">
+		<div class="prose">
+			<p>
+				I lead security architecture and governance for Dyson's Connected Cloud team, translating obligations like the
+				EU Cyber Resilience Act and K-ISMS into controls that engineering teams can actually ship against, across an IoT
+				platform serving millions of connected devices on AWS. I own the vulnerability gate that blocks deployments on
+				high and critical findings sitewide, with final say on disputed results.
+			</p>
+			<p>
+				I got here through cloud software engineering: leading delivery on an MLOps platform before moving into security
+				full-time, which is why I still reach for architecture diagrams and CI/CD pipelines as often as risk registers.
+				In practice I'm still a technical lead, now giving engineering teams architectural guidance from the security
+				side.
+			</p>
+			<p>
+				I'm currently pursuing CISSP, and outside of work I keep a home lab running for the same reason I keep this site
+				running: it's easier to reason about a system you've built yourself.
+			</p>
+		</div>
+		<figure class="portrait" aria-hidden="true" data-reveal data-i="4">
+			<Icon name="lucide:user-round" />
+		</figure>
+	</div>
+
+	<section class="eras">
+		<h2 class="label">Career, briefly</h2>
+		<div class="grid">
+			{eras.map((era) => (
+				<div
+					class="era"
+					data-scope="card"
+					data-part="root"
+					data-elevation={era.active ? "raised" : undefined}
+					data-active={era.active ? "" : undefined}
+				>
+					<span class="label range">
+						{era.range}
+						{era.active && <Badge tone="accent">Active</Badge>}
+					</span>
+					<h3>{era.name}</h3>
+				</div>
+			))}
+		</div>
+	</section>
+
+	<div class="onward">
+		<p class="label">The full history lives in the CV</p>
+		<a href="/cv" data-scope="button" data-part="root" data-variant="secondary" data-size="sm">
+			Read the CV →
+		</a>
+	</div>
+</SiteLayout>
+
+<style>
+	.story {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-8);
+	}
+
+	.portrait {
+		display: none;
+		place-items: center;
+		width: 200px;
+		height: 260px;
+		flex-shrink: 0;
+		margin: 0;
+		background: var(--surface-card);
+		box-shadow: inset 0 0 0 1px var(--border-default);
+		color: var(--text-muted);
+	}
+
+	.portrait :global(svg) {
+		width: 45%;
+		height: auto;
+	}
+
+	.prose {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
+		max-width: 62ch;
+		line-height: var(--leading-relaxed);
+	}
+
+	@media (min-width: 48rem) {
+		.story {
+			flex-direction: row;
+			align-items: flex-start;
+		}
+	}
+
+	.eras {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		padding-top: var(--space-12);
+		border-top: 1px solid var(--border-default);
+	}
+
+	.eras h2 {
+		font-size: var(--text-sm);
+		line-height: 1.2;
+		color: var(--color-accent);
+	}
+
+	.grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+		gap: var(--space-4);
+	}
+
+	.range {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--text-muted);
+	}
+
+	[data-active] .range {
+		color: var(--color-accent);
+	}
+
+	.era h3 {
+		font-size: var(--text-xl);
+		text-transform: uppercase;
+	}
+
+	.onward {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-3) var(--space-6);
+		padding-top: var(--space-8);
+		border-top: 1px solid var(--border-default);
+		color: var(--text-muted);
+	}
+</style>

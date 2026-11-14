@@ -1,54 +1,230 @@
 ---
-import { basics } from "@cv";
-import About from "@/components/sections/About.astro";
-import Education from "@/components/sections/Education.astro";
-import Experience from "@/components/sections/Experience.astro";
-import Hero from "@/components/sections/Hero.astro";
-import Interests from "@/components/sections/Interests.astro";
-import Languages from "@/components/sections/Languages.astro";
-import Projects from "@/components/sections/Projects.astro";
-import References from "@/components/sections/References.astro";
-import Skills from "@/components/sections/Skills.astro";
-import Volunteer from "@/components/sections/Volunteer.astro";
-import ThemeSwitch from "@/components/ThemeSwitch.astro";
-import Layout from "@/layouts/Layout.astro";
+import { getCollection } from "astro:content";
+import { basics, projects, work } from "@cv";
+import Badge from "@/components/Badge.astro";
+import SeverityBadge from "@/components/SeverityBadge.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { formatDate, getPublished } from "@/lib/content";
+import { websiteSchema } from "@/lib/structured-data";
+import { countMeta } from "@/meta";
 
-const { name, label } = basics;
+// The landing page, after the DS's "Night Shift — direction" Brand card, which
+// is also the DS's one reference for this page (there is no separate homepage
+// template): a declassified headline with the role line and two actions on the
+// left, and a log of entry points on the right, each a thin id over a black
+// title. The rows are the real routes, and every badge is real data: a count,
+// a date, or, for the latest post, its own CVSS severity when it states a
+// vector. The tags are the CV's own headline. The page is a router: everything
+// is meant to be left.
+const { name, label, summary = "", location } = basics;
+
+const currentRole = work[0];
+if (!currentRole) throw new Error("cv.json: expected at least one work entry");
+
+const posts = await getPublished("blog");
+const [latestPost] = posts;
+const uses = await getCollection("uses");
+
+// The lede is the summary's first sentence, as in the page description.
+const lede = summary.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? summary;
+const tags = label.split("|").map((tag) => tag.trim());
+
+// Blog leads when it has content, like the Brand card's first row; otherwise
+// it is absent everywhere (see SiteLayout). Uses is gated the same way.
+const entries = [
+	...(latestPost
+		? [
+				{
+					href: `/blog/${latestPost.id}`,
+					id: "/blog",
+					title: latestPost.data.title,
+					meta: formatDate(latestPost.data.date),
+					cvss: latestPost.data.cvss,
+				},
+			]
+		: []),
+	{ href: "/cv", id: "/cv", title: "The résumé", meta: countMeta(work.length) },
+	{ href: "/projects", id: "/projects", title: "The sandbox", meta: countMeta(projects.length) },
+	{ href: "/about", id: "/about", title: "whoami", meta: undefined },
+	...(uses.length > 0
+		? [{ href: "/uses", id: "/uses", title: "The setup", meta: countMeta(uses.length, "item") }]
+		: []),
+];
+
+// Primary action follows the Brand card: the writing first when it exists.
+const actions = latestPost
+	? [
+			{ href: "/blog", label: "Read the writeups", variant: "primary" },
+			{ href: "/cv", label: "Curriculum vitae", variant: "secondary" },
+		]
+	: [
+			{ href: "/cv", label: "Curriculum vitae", variant: "primary" },
+			{ href: "/about", label: "whoami", variant: "secondary" },
+		];
 ---
 
-<Layout title={`${name} - ${label}`}>
-	<main
-		class="relative grid max-w-7xl gap-12 p-8 max-sm:py-16 md:grid-cols-6 md:p-16 md:max-xl:pt-28 xl:gap-24 print:block print:max-w-none print:p-0"
-	>
-		<div class="absolute top-8 right-8 max-sm:top-16 md:top-16 md:right-16 print:hidden">
-			<ThemeSwitch />
+<SiteLayout title={`${name} - ${label}`} schema={websiteSchema} gap="md" wide>
+	<div class="brand">
+		<div class="hero" data-reveal="scan" data-i="1">
+			<p class="role label" data-reveal data-i="2">
+				{name} · {currentRole.position} · {location.city}
+			</p>
+			<h1>
+				<span data-reveal="declassify" data-i="3">Breaking</span><br />
+				<span class="thin" data-reveal="declassify" data-i="5">things</span>{" "}
+				<span class="signal" data-reveal="declassify" data-i="6">safely.</span>
+			</h1>
+			<p class="lede" data-reveal data-i="8">{lede}</p>
+			<div class="actions" data-reveal data-i="9">
+				{
+					actions.map((action) => (
+						<a href={action.href} data-scope="button" data-part="root" data-size="lg" data-variant={action.variant}>
+							{action.label}
+						</a>
+					))
+				}
+			</div>
 		</div>
-		<div class="space-y-6 md:col-span-2 print:space-y-3">
-			<Hero />
-			<About />
-			<Skills className="print:hidden" />
-			<Languages className="print:hidden" />
-			<Interests className="print:hidden" />
-		</div>
-		<div class="space-y-12 md:col-span-4 print:mt-3 print:flex print:flex-col print:gap-3 print:space-y-0">
-			<Experience className="print:order-1" />
-			<Volunteer className="print:order-2" />
-			<Projects className="print:hidden" />
-			<Education className="print:order-3" />
-			<Languages className="hidden print:flex print:order-4" />
-			<Skills variant="print" className="print:order-5" />
-			<References className="print:order-6" />
-		</div>
-	</main>
-</Layout>
+
+		<nav class="log" aria-label="Start here">
+			{
+				entries.map((entry, index) => (
+					<a href={entry.href} class="entry" data-reveal data-i={String(10 + index)}>
+						<span class="id">{entry.id}</span>
+						{"cvss" in entry && entry.cvss ? (
+							<SeverityBadge cvss={entry.cvss} details={false} />
+						) : (
+							entry.meta && <Badge>{entry.meta}</Badge>
+						)}
+						<span class="title">{entry.title}</span>
+					</a>
+				))
+			}
+			<ul class="tags" aria-label="Focus" data-reveal data-i={String(10 + entries.length)}>
+				{
+					tags.map((tag, index) => (
+						<li>
+							<Badge tone={index === 0 ? "accent" : "default"}>{tag}</Badge>
+						</li>
+					))
+				}
+			</ul>
+		</nav>
+	</div>
+</SiteLayout>
 
 <style>
-	@page {
-		size: A4;
-		margin: 12mm;
+	/*
+	 * One column on phones and tablets, the Brand card's 1.5fr / 1fr split from
+	 * 60rem, bottom-aligned so the headline and the log end on the same line.
+	 * No viewport-height floor: the Brand card fills a bare 100vh frame, but here
+	 * the nav and footer already share the screen, and the floor only added empty
+	 * space above the role line.
+	 */
+	.brand {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--space-12);
 	}
-	main {
-		margin: auto;
-		width: 100%;
+
+	@media (min-width: 60rem) {
+		.brand {
+			grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+			gap: var(--space-12) 56px;
+			align-items: end;
+		}
+	}
+
+	.role {
+		margin-bottom: var(--space-5);
+		text-wrap: balance;
+		color: var(--text-muted);
+	}
+
+	h1 {
+		font-size: var(--text-display);
+		text-transform: uppercase;
+	}
+
+	h1 span {
+		display: inline-block;
+	}
+
+	.thin {
+		font-weight: var(--weight-hair);
+	}
+
+	.signal {
+		color: var(--color-accent);
+	}
+
+	.lede {
+		max-width: 46ch;
+		margin: 28px 0 32px;
+		font-size: var(--text-lg);
+		line-height: 1.55;
+		color: var(--text-muted);
+	}
+
+	.actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-4);
+	}
+
+	.log {
+		display: flex;
+		flex-direction: column;
+	}
+
+	.entry {
+		display: grid;
+		grid-template-columns: minmax(0, 1fr) auto;
+		align-items: center;
+		gap: 6px var(--space-4);
+		padding-block: 18px;
+		border-top: 1px solid var(--border-raised);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	/* The route, as a label: heavy and tracked so it holds up at this size,
+	   muted and a step down so the title stays the line you read. Paths keep
+	   their case. */
+	.id {
+		font-family: var(--font-label);
+		font-weight: var(--weight-label);
+		letter-spacing: var(--tracking-label);
+		font-size: var(--text-base);
+		line-height: 1;
+		color: var(--text-muted);
+	}
+
+	.title {
+		grid-column: 1 / -1;
+		font-family: var(--font-display);
+		font-weight: var(--weight-black);
+		font-size: var(--text-2xl);
+		line-height: 1;
+		text-transform: uppercase;
+		transition: color var(--motion-hover);
+	}
+
+	.entry:hover {
+		color: var(--text-body);
+	}
+
+	.entry:hover .title {
+		color: var(--color-accent);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 18px 0 0;
+		border-top: 1px solid var(--border-raised);
+		list-style: none;
 	}
 </style>

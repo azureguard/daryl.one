@@ -1,0 +1,138 @@
+/* "Night Shift" — one dominant field, one sharp accent.
+   Accent = sodium-vapour amber (the colour of a SOC at 3am, a security light on a perimeter).
+   Dark (pine-black): amber is the loud signal.
+   Light ("Day shift"): a cool, faintly green-grey neutral so photos, alerts and severity
+   tags carry the colour — the atmosphere (grid + glow) supplies the character.
+   Source: Claude Design project "Daryl Wong Design System", tokens/colors.css (values verbatim).
+   One deviation: the DS writes the --pattern-* tiles as inline `data:` SVG URIs, which
+   `default-src 'self'` in public/_headers forbids (there is no img-src). They live in
+   ../atmosphere/ as files with the same markup, and Vite fingerprints them. */
+:root {
+	color-scheme: light;
+	--color-text-base: #0b1a13;
+	--color-text-muted: #4a5e53;
+	--color-text-inverted: #ffab2e;
+	--color-fill: #eef2ef;
+	--color-card: #f8faf8;
+	--color-edge: #cfd9d3;
+	--color-accent: #8a3a00;
+	--color-signal: #ffab2e; /* raw sodium — fills, bars, markers (not text on light) */
+	--color-button-accent: #0b2219;
+	--color-button-accent-hover: #173a2b;
+	--color-button-muted: #e3e9e5;
+	--color-surface-raised: #ffffff;
+	--color-edge-raised: #9aaba1;
+	--color-focus-ring: #8a3a00;
+	--severity-info: #1d5f8a;
+	--severity-info-surface: #dcebf4;
+	--severity-info-text: #0e3a57;
+	--severity-low: #1e7a4c;
+	--severity-low-surface: #d8efe2;
+	--severity-low-text: #0b4a2b;
+	--severity-medium: #a86d00;
+	--severity-medium-surface: #f8ecc9;
+	--severity-medium-text: #5a3a00;
+	--severity-high: #c2510f;
+	--severity-high-surface: #fbe0cf;
+	--severity-high-text: #7a2e05;
+	--severity-critical: #c0142e;
+	--severity-critical-surface: #fad6da;
+	--severity-critical-text: #7a0b1b;
+	--color-success: var(--severity-low);
+	--color-success-surface: var(--severity-low-surface);
+	--color-success-text: var(--severity-low-text);
+	--color-warning: var(--severity-medium);
+	--color-warning-surface: var(--severity-medium-surface);
+	--color-warning-text: var(--severity-medium-text);
+	--color-danger: var(--severity-critical);
+	--color-danger-surface: var(--severity-critical-surface);
+	--color-danger-text: var(--severity-critical-text);
+	--grid-line: rgb(11 26 19 / 0.035);
+	--grid-line-major: rgb(11 26 19 / 0.07);
+	--glow: rgb(255 171 46 / 0.2);
+	--vignette: rgb(11 26 19 / 0.05);
+	--pattern-hex: url("../atmosphere/hex-light.svg");
+	--pattern-circuit-tr: url("../atmosphere/circuit-tr-light.svg");
+	--pattern-circuit-bl: url("../atmosphere/circuit-bl-light.svg");
+	--surface-page: var(--color-fill);
+	--surface-card: var(--color-card);
+	--surface-muted: var(--color-button-muted);
+	--surface-raised: var(--color-surface-raised);
+	--border-default: var(--color-edge);
+	--border-raised: var(--color-edge-raised);
+	--text-body: var(--color-text-base);
+	--text-muted: var(--color-text-muted);
+	--text-on-accent: var(--color-text-inverted);
+	--link-color: var(--color-accent);
+	--link-hover: var(--color-text-base);
+	--status-success: var(--color-success);
+	--status-success-surface: var(--color-success-surface);
+	--status-success-text: var(--color-success-text);
+	--status-warning: var(--color-warning);
+	--status-warning-surface: var(--color-warning-surface);
+	--status-warning-text: var(--color-warning-text);
+	--status-danger: var(--color-danger);
+	--status-danger-surface: var(--color-danger-surface);
+	--status-danger-text: var(--color-danger-text);
+	--focus-ring-color: var(--color-focus-ring);
+}
+.dark {
+	color-scheme: dark;
+	--color-text-base: #d6ede1;
+	--color-text-muted: #86a898;
+	--color-text-inverted: #140b00;
+	--color-fill: #06110c;
+	--color-card: #0a1912;
+	--color-edge: #1b3528;
+	--color-accent: #ffab2e;
+	--color-signal: #ffab2e;
+	--color-button-accent: #ffab2e;
+	--color-button-accent-hover: #ffc466;
+	--color-button-muted: #0f2219;
+	--color-surface-raised: #0f2419;
+	--color-edge-raised: #2c5641;
+	--color-focus-ring: #ffab2e;
+	--severity-info: #5fb0e0;
+	--severity-info-surface: #0c1f2b;
+	--severity-info-text: #9ccdea;
+	--severity-low: #3ee0a0;
+	--severity-low-surface: #0b261a;
+	--severity-low-text: #7eecc0;
+	--severity-medium: #e8c23a;
+	--severity-medium-surface: #262009;
+	--severity-medium-text: #f0d670;
+	--severity-high: #ff7a3d;
+	--severity-high-surface: #2c140a;
+	--severity-high-text: #ffa57a;
+	--severity-critical: #ff4d6a;
+	--severity-critical-surface: #2e0c14;
+	--severity-critical-text: #ff93a6;
+	--grid-line: rgb(214 237 225 / 0.035);
+	--grid-line-major: rgb(214 237 225 / 0.07);
+	--glow: rgb(255 171 46 / 0.16);
+	--vignette: rgb(0 0 0 / 0.55);
+	--pattern-hex: url("../atmosphere/hex-dark.svg");
+	--pattern-circuit-tr: url("../atmosphere/circuit-tr-dark.svg");
+	--pattern-circuit-bl: url("../atmosphere/circuit-bl-dark.svg");
+	--surface-page: var(--color-fill);
+	--surface-card: var(--color-card);
+	--surface-muted: var(--color-button-muted);
+	--surface-raised: var(--color-surface-raised);
+	--border-default: var(--color-edge);
+	--border-raised: var(--color-edge-raised);
+	--text-body: var(--color-text-base);
+	--text-muted: var(--color-text-muted);
+	--text-on-accent: var(--color-text-inverted);
+	--link-color: var(--color-accent);
+	--link-hover: var(--color-button-accent-hover);
+	--status-success: var(--color-success);
+	--status-success-surface: var(--color-success-surface);
+	--status-success-text: var(--color-success-text);
+	--status-warning: var(--color-warning);
+	--status-warning-surface: var(--color-warning-surface);
+	--status-warning-text: var(--color-warning-text);
+	--status-danger: var(--color-danger);
+	--status-danger-surface: var(--color-danger-surface);
+	--status-danger-text: var(--color-danger-text);
+	--focus-ring-color: var(--color-focus-ring);
+}

@@ -1,0 +1,101 @@
+---
+import { basics } from "@cv";
+import type { InferGetStaticPropsType } from "astro";
+import PageHeader from "@/components/PageHeader.astro";
+import PostTags from "@/components/PostTags.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { formatDate, getPublished, readTime } from "@/lib/content";
+
+// The blog index at /blog. It is a dynamic route only so it can opt out of
+// the build: with nothing published it yields no path, /blog is never written,
+// and a request for it falls through to the on-demand 404 rather than an empty
+// log. SiteLayout and the homepage drop their links on the same condition.
+export async function getStaticPaths() {
+	const posts = await getPublished("blog");
+	return posts.length > 0 ? [{ params: { blog: "blog" }, props: { posts } }] : [];
+}
+
+const { posts } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+
+const lede = "Notes on cloud security, detection engineering, and reviewable systems. A running log, newest first.";
+---
+
+<SiteLayout title={`Blog - ${basics.name}`} description={lede} gap="sm">
+	<PageHeader eyebrow="Blog" title="Audit trail">
+		<p>{lede}</p>
+	</PageHeader>
+
+	<ol class="posts">
+		{
+			posts.map((post) => (
+				<li>
+					<a href={`/blog/${post.id}`}>
+						<span class="meta label">
+							<time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+							<span aria-hidden="true">·</span>
+							<span>{readTime(post.body ?? "")}</span>
+						</span>
+						<h2>{post.data.title}</h2>
+						<p>{post.data.description}</p>
+					</a>
+					<PostTags cvss={post.data.cvss} tags={post.data.tags} />
+				</li>
+			))
+		}
+	</ol>
+</SiteLayout>
+
+<style>
+	.posts {
+		display: flex;
+		flex-direction: column;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.posts > li {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-3);
+		padding-block: var(--space-8);
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	.posts > li:first-child {
+		padding-top: 0;
+	}
+
+	.posts > li:last-child {
+		border-bottom: 0;
+	}
+
+	a {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	.meta {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		color: var(--text-muted);
+	}
+
+	h2 {
+		font-size: var(--text-3xl);
+		text-transform: uppercase;
+		transition: color var(--motion-hover);
+	}
+
+	a:hover h2 {
+		color: var(--color-accent);
+	}
+
+	a p {
+		color: var(--text-muted);
+	}
+</style>

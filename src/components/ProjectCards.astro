@@ -1,0 +1,138 @@
+---
+import { projects } from "@cv";
+import { Icon } from "astro-icon/components";
+import type { Project } from "../cv";
+import { getPublished } from "../lib/content";
+import Badge from "./Badge.astro";
+
+// The cv.json projects as cards, shared by the CV's Projects section and the
+// /projects page. A project with a published case study links to it. The
+// heading level follows the page: h3 under the CV's section h2, h2 directly
+// under the /projects h1.
+interface Props {
+	headingLevel?: 2 | 3 | undefined;
+}
+
+const { headingLevel = 3 } = Astro.props;
+const Heading = headingLevel === 2 ? "h2" : "h3";
+const items: Array<Project> = projects;
+const caseStudies = new Map((await getPublished("projects")).map((entry) => [entry.data.project, entry.id]));
+---
+
+<div class="cards">
+	{
+		items.map(({ url, description, highlights, keywords, name }) => {
+			const caseStudy = name ? caseStudies.get(name) : undefined;
+			return (
+				<article class="card" data-scope="card" data-part="root">
+					<Heading>
+						{url ? (
+							<a href={url} title={`View ${name}`} target="_blank" rel="noopener noreferrer">
+								{name}
+								<Icon name="charm:link-external" aria-hidden="true" />
+							</a>
+						) : (
+							name
+						)}
+					</Heading>
+					{description && <p class="description">{description}</p>}
+					{highlights && highlights.length > 0 && (
+						<ul class="highlights">
+							{highlights.map((highlight) => (
+								<li>{highlight}</li>
+							))}
+						</ul>
+					)}
+					{keywords && keywords.length > 0 && (
+						<ul class="tags" aria-label="Keywords">
+							{keywords.map((keyword) => (
+								<li>
+									<Badge>{keyword}</Badge>
+								</li>
+							))}
+						</ul>
+					)}
+					{caseStudy && (
+						<a
+							href={`/projects/${caseStudy}`}
+							class="case-study"
+							data-scope="button"
+							data-part="root"
+							data-variant="ghost"
+							data-size="sm"
+						>
+							Case study &rarr;
+						</a>
+					)}
+				</article>
+			);
+		})
+	}
+</div>
+
+<style>
+	.cards {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-4);
+	}
+
+	.card {
+		gap: var(--space-3);
+	}
+
+	.card:hover {
+		box-shadow: inset 0 0 0 1px var(--border-raised);
+	}
+
+	.card :is(h2, h3) {
+		font-size: var(--text-xl);
+		text-transform: uppercase;
+	}
+
+	.card :is(h2, h3) a {
+		display: inline-flex;
+		align-items: center;
+		gap: var(--space-2);
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	.card :is(h2, h3) a:hover {
+		color: var(--color-accent);
+	}
+
+	.card :is(h2, h3) :global(svg) {
+		width: 0.7em;
+		height: 0.7em;
+		color: var(--color-accent);
+	}
+
+	.description {
+		font-size: var(--text-sm);
+	}
+
+	.highlights {
+		margin: 0;
+		padding-left: 1.1em;
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.highlights li::marker {
+		color: var(--color-accent);
+	}
+
+	.case-study {
+		align-self: flex-start;
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: var(--space-1) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+</style>

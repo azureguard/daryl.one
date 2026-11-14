@@ -1,0 +1,81 @@
+/* Button recipe (Park UI-style). Target: native <button>/<a> with
+   data-scope="button" data-part="root" data-variant data-size data-tone.
+   Signature: chamfered top-left corner via gradient (keeps outline focus ring intact — no clip-path). */
+[data-scope="button"][data-part="root"] {
+	--btn-bg: var(--color-button-accent);
+	--btn-fg: var(--text-on-accent);
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: 0.6em;
+	font-family: var(--font-label);
+	font-weight: var(--weight-heavy);
+	text-transform: uppercase;
+	letter-spacing: var(--tracking-label);
+	line-height: 1;
+	text-decoration: none;
+	border: 0;
+	cursor: pointer;
+	color: var(--btn-fg);
+	background: linear-gradient(135deg, transparent var(--chamfer), var(--btn-bg) var(--chamfer));
+	padding: 0.85em 1.5em 0.8em;
+	font-size: var(--text-base);
+	transition:
+		color var(--motion-hover),
+		background-color var(--motion-hover),
+		transform var(--duration-instant) var(--ease-standard);
+}
+[data-scope="button"][data-variant="primary"]:hover {
+	background: linear-gradient(135deg, transparent var(--chamfer), var(--color-button-accent-hover) var(--chamfer));
+}
+[data-scope="button"][data-part="root"]:active {
+	transform: translateY(1px);
+}
+[data-scope="button"][data-size="sm"] {
+	font-size: var(--text-sm);
+	padding: 0.7em 1.15em 0.65em;
+	--chamfer: var(--chamfer-sm);
+}
+[data-scope="button"][data-size="lg"] {
+	font-size: var(--text-xl);
+	padding: 0.8em 1.6em 0.75em;
+	--chamfer: 14px;
+}
+/* secondary: hairline box + solid sodium corner-mark */
+[data-scope="button"][data-variant="secondary"] {
+	--btn-fg: var(--text-body);
+	background:
+		linear-gradient(135deg, var(--color-signal) var(--chamfer-sm), transparent var(--chamfer-sm)), var(--surface-card);
+	box-shadow: inset 0 0 0 1px var(--border-raised);
+}
+[data-scope="button"][data-variant="secondary"]:hover {
+	box-shadow: inset 0 0 0 1px var(--text-body);
+}
+/* ghost: bare label, thick underline grows on hover */
+[data-scope="button"][data-variant="ghost"] {
+	--btn-fg: var(--color-accent);
+	background: none;
+	padding-inline: 0.1em;
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 0.35em;
+}
+[data-scope="button"][data-variant="ghost"]:hover {
+	text-decoration-thickness: 4px;
+}
+[data-scope="button"][data-tone="danger"] {
+	--btn-fg: var(--status-danger-text);
+}
+[data-scope="button"][data-tone="danger"][data-variant="secondary"] {
+	box-shadow: inset 0 0 0 1px var(--status-danger);
+	background:
+		linear-gradient(135deg, var(--status-danger) var(--chamfer-sm), transparent var(--chamfer-sm)),
+		var(--status-danger-surface);
+}
+[data-scope="button"][data-part="root"]:is(:disabled, [aria-disabled="true"]) {
+	cursor: not-allowed;
+	--btn-fg: var(--text-muted);
+	background: var(--pattern-hatch);
+	background-blend-mode: normal;
+	opacity: 0.35;
+}

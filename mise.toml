@@ -4,7 +4,7 @@ NODE_ENV = "{{ env.NODE_ENV | default(value='development') }}"
 
 [tools]
 node = "lts"
-aube = "1.26.0"
+aube = "2.4.0"
 
 [settings]
 experimental = true

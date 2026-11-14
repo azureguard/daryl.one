@@ -1,5 +1,5 @@
 {
-	"$schema": "./node_modules/@jsonresume/schema/schema.json",
+	"$schema": "https://raw.githubusercontent.com/jsonresume/jsonresume.org/refs/heads/master/packages/schema/schema.json",
 	"basics": {
 		"name": "Daryl Wong",
 		"label": "Security Architecture | GRC | DevSecOps | AppSec | AWS",
@@ -38,6 +38,7 @@
 			"highlights": [
 				"Responsible for security architecture, governance, risk management, and incident response across a cloud-native IoT platform serving millions of connected devices on AWS",
 				"Own the automated vulnerability gate that blocks deployments on high/critical findings across all engineering teams, with final authority on disputed results",
+				"Provide architectural guidance to engineering teams from a security perspective, continuing the technical leadership of the previous role",
 				"Building MCP-integrated agentic tooling to bring business context, design intent, and implementation together at the point of security review"
 			]
 		},
@@ -175,11 +176,7 @@
 		},
 		{
 			"name": "Identity & Access Management",
-			"keywords": [
-				"Cognito",
-				"Entra ID",
-				"OAuth"
-			]
+			"keywords": ["Cognito", "Entra ID", "OAuth"]
 		},
 		{
 			"name": "Cloud Architecture",
@@ -195,12 +192,7 @@
 		},
 		{
 			"name": "CI/CD & Delivery",
-			"keywords": [
-				"Azure DevOps",
-				"Docker",
-				"Git",
-				"GitHub Actions"
-			]
+			"keywords": ["Azure DevOps", "Docker", "Git", "GitHub Actions"]
 		},
 		{
 			"name": "Backend Development",
@@ -215,12 +207,7 @@
 		},
 		{
 			"name": "Frontend Development",
-			"keywords": [
-				"React",
-				"Next.js",
-				"HTML",
-				"CSS"
-			]
+			"keywords": ["React", "Next.js", "HTML", "CSS"]
 		},
 		{
 			"name": "Data Engineering & MLOps",

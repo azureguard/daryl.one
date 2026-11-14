@@ -1,23 +1,63 @@
 ---
 import { languages } from "@cv";
 import type { Language } from "../../cv";
+import { countMeta } from "../../meta";
 import Section from "../Section.astro";
 
 const items: Array<Language> = languages;
-const meta = `${items.length} record${items.length === 1 ? "" : "s"}`;
 ---
 
 {
 	items.length > 0 && (
-		<Section className={Astro.props.className} title="Languages" meta={meta}>
-			<ul class="flex flex-col gap-1.5 font-mono text-xs print:flex-row print:flex-wrap print:gap-x-4 print:text-[10px]">
+		<Section title="Languages" eyebrow="Fluency" meta={countMeta(items.length)}>
+			<ul class="languages">
 				{items.map(({ language, fluency }) => (
-					<li class="flex items-baseline gap-x-3">
-						<span class="text-skin-base">{language}</span>
-						<span class="text-skin-muted">{fluency}</span>
+					<li>
+						<span>{language}</span>
+						<span class="fluency">{fluency}</span>
 					</li>
 				))}
 			</ul>
 		</Section>
 	)
 }
+
+<style>
+	.languages {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	li {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-3);
+	}
+
+	/* The fluency is content ("Native speaker"), not a UI label, so it stays in
+	   sentence case rather than the condensed-caps label treatment. */
+	.fluency {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	@media print {
+		.languages {
+			flex-direction: row;
+			flex-wrap: wrap;
+			gap: var(--space-1) var(--space-4);
+		}
+
+		li {
+			font-size: var(--text-xs);
+		}
+
+		.fluency {
+			font-size: var(--text-xs);
+		}
+	}
+</style>

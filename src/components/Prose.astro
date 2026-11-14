@@ -1,0 +1,97 @@
+---
+// Editorial wrapper for rendered Markdown (blog post bodies). Astro renders
+// Markdown to plain HTML before it reaches here, so the styling is descendant
+// rules on that output. It owns no width; the page does.
+---
+
+<div class="prose"><slot /></div>
+
+<style>
+	.prose {
+		max-width: 68ch;
+		font-size: var(--text-base);
+		line-height: var(--leading-relaxed);
+	}
+
+	.prose > :global(* + *) {
+		margin-top: 1.25em;
+	}
+
+	.prose :global(:is(h2, h3, h4)) {
+		margin-top: 2em;
+		text-transform: uppercase;
+	}
+
+	.prose :global(h2) {
+		font-size: var(--text-2xl);
+	}
+
+	.prose :global(h3) {
+		font-size: var(--text-xl);
+	}
+
+	.prose :global(:is(ul, ol)) {
+		padding-left: 1.25em;
+	}
+
+	.prose :global(li + li) {
+		margin-top: 0.4em;
+	}
+
+	/* The external-link glyph astro.config.ts appends to off-site links. */
+	.prose :global(.external-link-icon) {
+		display: inline-block;
+		width: 0.7em;
+		height: 0.7em;
+		margin-left: 0.25em;
+		vertical-align: baseline;
+		color: var(--color-accent);
+	}
+
+	.prose :global(li::marker) {
+		color: var(--color-accent);
+	}
+
+	.prose :global(blockquote) {
+		padding-left: var(--space-4);
+		border-left: 4px solid var(--color-signal);
+		color: var(--text-muted);
+	}
+
+	/*
+	 * Inline code wraps mid-token; code blocks scroll. `anywhere`, not
+	 * `break-word`: only `anywhere` also shrinks the element's min-content
+	 * contribution, so one long identifier cannot force an ancestor wider than
+	 * the viewport and make the whole document scroll sideways.
+	 */
+	.prose :global(:not(pre) > code) {
+		overflow-wrap: anywhere;
+		padding: 0.1em 0.35em;
+		background: var(--surface-muted);
+		box-shadow: inset 0 0 0 1px var(--border-default);
+		font-size: 0.9em;
+	}
+
+	.prose :global(pre) {
+		overflow-x: auto;
+		padding: var(--space-4);
+		background: var(--surface-card);
+		box-shadow: inset 0 0 0 1px var(--border-default);
+		font-size: var(--text-sm);
+		line-height: var(--leading-normal);
+	}
+
+	.prose :global(pre code) {
+		overflow-wrap: normal;
+	}
+
+	.prose :global(hr) {
+		border: 0;
+		border-top: 1px solid var(--border-default);
+	}
+
+	.prose :global(img) {
+		max-width: 100%;
+		height: auto;
+	}
+</style>

@@ -1,0 +1,45 @@
+/* Popover — Ark UI Popover anatomy: trigger / positioner / content / arrow / arrow-tip /
+   title. Opens on click or tap (unlike a tooltip, which is hover and focus only, and so
+   unreachable on touch). Ark/Zag positions the positioner and arrow through CSSOM custom
+   properties; styles apply unchanged to @ark-ui/<framework> Popover. Surface language
+   follows the select menu: raised surface, a real hairline border, the lg shadow, square
+   corners. */
+[data-scope="popover"][data-part="positioner"] {
+	position: absolute;
+	z-index: 70;
+}
+[data-scope="popover"][data-part="content"] {
+	--arrow-size: 10px;
+	--arrow-background: var(--surface-raised);
+	max-width: min(22rem, calc(100vw - 32px));
+	padding: var(--space-3) var(--space-4);
+	background: var(--surface-raised);
+	border: 1px solid var(--border-raised);
+	box-shadow: var(--shadow-lg);
+	color: var(--text-body);
+	font-family: var(--font-sans);
+	font-size: var(--text-sm);
+	line-height: 1.4;
+	text-align: left;
+	text-transform: none;
+	letter-spacing: normal;
+	font-weight: var(--weight-body);
+	outline: none;
+}
+[data-scope="popover"][data-part="content"][data-state="open"] {
+	animation: dw-popover-in var(--duration-fast) var(--ease-entrance) both;
+}
+[data-scope="popover"][data-part="arrow-tip"] {
+	border-top: 1px solid var(--border-raised);
+	border-left: 1px solid var(--border-raised);
+}
+@keyframes dw-popover-in {
+	from {
+		opacity: 0;
+		transform: translateY(-4px);
+	}
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}

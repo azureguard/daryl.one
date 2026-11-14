@@ -2,14 +2,20 @@
 import { skills } from "@cv";
 import { Icon } from "astro-icon/components";
 import Icons from "../../icons";
+import { countMeta } from "../../meta";
+import Badge from "../Badge.astro";
 import Section from "../Section.astro";
 
-const { className, variant } = Astro.props;
+// Renders twice on /cv: the screen variant (icon + chips) and a print variant,
+// a compact plain-text run. That run is the artifact an ATS parses: visible
+// text, deliberately not hidden keyword-stuffing.
+interface Props {
+	variant?: "screen" | "print";
+}
 
-const meta = `${skills.length} record${skills.length === 1 ? "" : "s"}`;
+const { variant = "screen" } = Astro.props;
+const meta = countMeta(skills.length);
 
-// Compact machine-readable run for the print résumé — the artifact an ATS
-// actually parses. Visible plain text, deliberately not hidden keyword-stuffing.
 const printSkills = skills
 	.map(({ name, keywords = [] }) => (keywords.length > 0 ? `${name} (${keywords.join(", ")})` : name))
 	.join(" · ");
@@ -17,27 +23,73 @@ const printSkills = skills
 
 {
 	variant === "print" ? (
-		<div class:list={["hidden print:block", className]}>
-			<Section title="Skills" meta={meta}>
-				<p class="font-mono text-[10px] leading-relaxed">{printSkills}</p>
+		<div data-print="only">
+			<Section title="Skills" eyebrow="Toolbox" meta={meta}>
+				<p class="run">{printSkills}</p>
 			</Section>
 		</div>
 	) : (
-		<Section className={className} title="Skills" meta={meta}>
-			<ul class="flex flex-col gap-2.5 font-mono text-xs">
-				{
-					skills.map(({ name, keywords = [] }) => {
-						return (
-							<li class="flex flex-wrap items-center gap-x-2 gap-y-1">
-								<span class="flex items-center gap-1.5 rounded-sm border border-skin-edge px-2 py-1 text-skin-base [&>svg]:size-3.5 [&>svg]:text-skin-hue">
-									{name && Icons[name] && <Icon aria-hidden="true" name={Icons[name]} />} <span>{name}</span>
-								</span>
-								{keywords.length > 0 && <span class="leading-relaxed text-skin-muted">{keywords.join(" · ")}</span>}
-							</li>
-						);
-					})
-				}
+		<Section title="Skills" eyebrow="Toolbox" meta={meta} screenOnly>
+			<ul class="domains">
+				{skills.map(({ name, keywords = [] }) => (
+					<li>
+						<h3 class="label">
+							{name && Icons[name] && <Icon name={Icons[name]} aria-hidden="true" />}
+							<span>{name}</span>
+						</h3>
+						{keywords.length > 0 && (
+							<ul class="tags" aria-label={`${name} keywords`}>
+								{keywords.map((keyword) => (
+									<li>
+										<Badge>{keyword}</Badge>
+									</li>
+								))}
+							</ul>
+						)}
+					</li>
+				))}
 			</ul>
 		</Section>
 	)
 }
+
+<style>
+	.domains {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	h3 {
+		display: flex;
+		align-items: center;
+		gap: var(--space-2);
+		margin-bottom: var(--space-3);
+		font-size: var(--text-base);
+	}
+
+	h3 :global(svg) {
+		width: 1.1em;
+		height: 1.1em;
+		color: var(--color-accent);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	@media print {
+		.run {
+			font-size: 10px;
+			line-height: var(--leading-relaxed);
+		}
+	}
+</style>

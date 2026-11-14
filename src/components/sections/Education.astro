@@ -1,84 +1,194 @@
 ---
 import { certificates, education } from "@cv";
 import { Icon } from "astro-icon/components";
-import Icons from "../../icons";
+import { countMeta } from "../../meta";
+import Badge from "../Badge.astro";
 import Section from "../Section.astro";
 
 const years = education
 	.flatMap(({ startDate, endDate }) => [startDate, endDate])
 	.map((date) => Number.parseInt(date ?? "", 10))
 	.filter(Number.isFinite);
-const recordCount = education.length + (certificates?.length ?? 0);
-const meta = `${Math.min(...years)} — ${Math.max(...years)} · ${recordCount} record${recordCount === 1 ? "" : "s"}`;
+const meta = `${Math.min(...years)} — ${Math.max(...years)} · ${countMeta(education.length + (certificates?.length ?? 0))}`;
+
+// Dates sit right-aligned on the institution row, in normal flow, on screen and
+// paper alike, so ATS parsers reading extracted text in DOM order keep each
+// date next to its institution. Education is a two-item list and does not earn
+// the Experience rail. The icons are screen-only decoration.
 ---
 
-<Section className={Astro.props.className} title="Education" meta={meta}>
-	<ul class="space-y-4 py-3 print:space-y-0 print:py-1">
+<Section title="Education" eyebrow="Credentials" meta={meta}>
+	<ul class="entries">
 		{
-			education.map(({ institution, startDate, endDate, area, url }) => {
-				const startYear = new Date(startDate).getFullYear();
-				const endYear =
-					endDate != null ? new Date(endDate).getFullYear() : "Present";
-				const years = `${startYear} - ${endYear}`;
-
-				return (
-					<li class="flex items-baseline gap-2">
-						<Icon aria-hidden="true" name={Icons.Graduate} size="18" />
-						<div class="relative w-full items-baseline justify-between gap-2">
-							<h3 class="mr-6 items-baseline gap-x-2 gap-y-0.5 font-medium">
-								<a
-									target="_blank"
-									rel="noopener noreferrer"
-									class="group flex items-center gap-1.5 decoration-dotted underline-offset-[5px] hover:text-skin-hue hover:underline"
-									href={url}
-								>
+			education.map(({ institution, startDate, endDate, area, studyType, url, courses }) => (
+				<li>
+					<Icon name="charm:graduate-cap" class="glyph" aria-hidden="true" data-print="hidden" />
+					<div class="entry">
+						<div class="row">
+							<h3>
+								<a href={url} target="_blank" rel="noopener noreferrer">
 									{institution}
 								</a>
 							</h3>
-							<div class="text-sm text-skin-muted">{area}</div>
-							<time class="top-0 right-0 font-mono text-xs text-skin-muted md:absolute md:block">
-								{years}
-							</time>
+							<p class="date label">
+								<time datetime={String(startDate)}>{new Date(startDate).getFullYear()}</time>
+								<span aria-hidden="true">&nbsp;&ndash;&nbsp;</span>
+								{endDate != null ? (
+									<time datetime={String(endDate)}>{new Date(endDate).getFullYear()}</time>
+								) : (
+									<span>Present</span>
+								)}
+							</p>
 						</div>
-					</li>
-				);
-			})
+						<p class="detail">
+							{studyType} in {area}
+						</p>
+						{courses && courses.length > 0 && (
+							<ul class="tags" aria-label={`${institution} coursework`}>
+								{courses.map((course) => (
+									<li>
+										<Badge>{course}</Badge>
+									</li>
+								))}
+							</ul>
+						)}
+					</div>
+				</li>
+			))
 		}
 	</ul>
 
 	{
 		certificates && certificates.length > 0 && (
 			<>
-				<h4 class="mt-2 font-mono text-sm font-normal tracking-widest lowercase print:mt-1">
-					Certificates
-				</h4>
-				<ul class="space-y-4 py-3 print:space-y-0 print:py-1">
-					{certificates.map(({ name, date, issuer, url }) => {
-						const certificateYear = new Date(date).getFullYear();
-						return (
-							<li class="flex items-baseline gap-1">
-								<Icon aria-hidden="true" name={Icons.Certificate} size="18" />
-								<div class="relative w-full items-baseline justify-between gap-2">
-									<h3 class="mr-6 items-baseline gap-x-2 gap-y-0.5 font-medium">
-										<a
-											class="group flex items-center gap-1.5 text-skin-base decoration-dotted underline-offset-[5px] hover:text-skin-hue hover:underline"
-											href={url}
-											target="_blank"
-											rel="noopener noreferrer"
-										>
+				<h4 class="subhead label">Certificates</h4>
+				<ul class="entries">
+					{certificates.map(({ name, date, issuer, url }) => (
+						<li>
+							<Icon name="charm:certificate" class="glyph" aria-hidden="true" data-print="hidden" />
+							<div class="entry">
+								<div class="row">
+									<h3>
+										<a href={url} target="_blank" rel="noopener noreferrer">
 											{name}
 										</a>
 									</h3>
-									<div class="text-sm text-skin-muted">{issuer}</div>
-									<time class="top-0 right-0 font-mono text-xs text-skin-muted md:absolute md:block">
-										{certificateYear}
+									<time datetime={String(date)} class="date label">
+										{new Date(date).getFullYear()}
 									</time>
 								</div>
-							</li>
-						);
-					})}
+								<p class="detail">{issuer}</p>
+							</div>
+						</li>
+					))}
 				</ul>
 			</>
 		)
 	}
 </Section>
+
+<style>
+	.entries {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-5);
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.entries > li {
+		display: flex;
+		align-items: baseline;
+		gap: var(--space-3);
+	}
+
+	.entries :global(.glyph) {
+		flex-shrink: 0;
+		width: 1.2em;
+		height: 1.2em;
+		color: var(--color-accent);
+		transform: translateY(0.2em);
+	}
+
+	.entry {
+		flex: 1;
+		min-width: 0;
+	}
+
+	.row {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: baseline;
+		justify-content: space-between;
+		gap: var(--space-1) var(--space-3);
+	}
+
+	h3 {
+		font-size: var(--text-xl);
+	}
+
+	h3 a {
+		color: var(--text-body);
+		text-decoration: none;
+	}
+
+	h3 a:hover {
+		color: var(--color-accent);
+	}
+
+	.date {
+		color: var(--text-muted);
+		white-space: nowrap;
+	}
+
+	.detail {
+		font-size: var(--text-sm);
+		color: var(--text-muted);
+	}
+
+	.tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		margin: var(--space-3) 0 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.subhead {
+		padding-top: var(--space-4);
+		border-top: 1px solid var(--border-default);
+		color: var(--text-muted);
+	}
+
+	@media print {
+		.entries {
+			gap: var(--space-1);
+		}
+
+		.entries > li {
+			gap: 0;
+		}
+
+		h3 {
+			font-size: var(--text-sm);
+		}
+
+		.date,
+		.detail {
+			font-size: var(--text-xs);
+		}
+
+		.tags {
+			margin-top: var(--space-1);
+			gap: var(--space-1) var(--space-3);
+		}
+
+		.subhead {
+			padding-top: var(--space-1);
+			border-top: 0;
+			font-size: var(--text-xs);
+		}
+	}
+</style>

@@ -1,0 +1,38 @@
+---
+import { basics } from "@cv";
+import About from "@/components/sections/About.astro";
+import Education from "@/components/sections/Education.astro";
+import Experience from "@/components/sections/Experience.astro";
+import Hero from "@/components/sections/Hero.astro";
+import Interests from "@/components/sections/Interests.astro";
+import Languages from "@/components/sections/Languages.astro";
+import Projects from "@/components/sections/Projects.astro";
+import References from "@/components/sections/References.astro";
+import Skills from "@/components/sections/Skills.astro";
+import Volunteer from "@/components/sections/Volunteer.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { personSchema } from "@/lib/structured-data";
+
+const { name } = basics;
+---
+
+<SiteLayout title={`CV - ${name}`} schema={personSchema}>
+	<Hero />
+	<About />
+	<Experience />
+	<Volunteer />
+	<Projects />
+	<Education />
+	<Languages />
+	<Skills />
+	<Skills variant="print" />
+	<Interests />
+	<References />
+</SiteLayout>
+
+<style is:global>
+	@page {
+		size: A4;
+		margin: 12mm;
+	}
+</style>

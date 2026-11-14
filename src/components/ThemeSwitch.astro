@@ -1,100 +1,281 @@
 ---
 import { Icon } from "astro-icon/components";
-import Icons from "../icons";
+
+// Theme select (Follow the Sun / Night Shift / Day Shift, i.e. system / dark /
+// light): Ark UI Select anatomy styled by recipes/select.css, with behaviour
+// from Zag's select machine (keyboard navigation, typeahead, dismiss on
+// outside click). A visually hidden "Theme" label names the combobox.
+//
+// Two placements, one component: in the nav (icon-only in a narrow nav, see
+// the recipe), and `floating`, a fixed bottom-right dock that appears once the
+// nav scrolls out of view; `backToTop` joins an ↑ tile that scrolls to the top
+// and hands focus back to the nav. The hidden dock is `inert`.
+//
+// The initial theme is applied by src/scripts/theme-init.js before paint;
+// the server renders the "system" state and the script syncs it on mount.
+// Labels live once, in OPTIONS; the script reads them back from the menu items.
+interface Props {
+	/** "outline" = hairline box (default); "ghost" = bare, for the nav bar. */
+	variant?: "outline" | "ghost";
+	/** Icon-only: "auto" at a ≤560px nav container, "always", or "never". */
+	compact?: "auto" | "always" | "never";
+	/** Fixed bottom-right tile shown once the element matching `watch` leaves view. */
+	floating?: boolean;
+	/** Selector for the element whose exit from view reveals the floating tile. */
+	watch?: string;
+	/** Floating only: a joined back-to-top tile. */
+	backToTop?: boolean;
+}
+
+const { variant = "outline", compact = "auto", floating = false, watch, backToTop = false } = Astro.props;
+
+// One instance per placement, so the placement makes the ids unique.
+const id = floating ? "theme-dock" : "theme-nav";
+
+const OPTIONS = [
+	{ value: "system", label: "Follow the Sun", icon: "lucide:sun-moon" },
+	{ value: "dark", label: "Night Shift", icon: "lucide:moon" },
+	{ value: "light", label: "Day Shift", icon: "lucide:sun" },
+];
 ---
 
-<div class="inline-flex items-center print:hidden">
-	<div class="group/theme flex items-center gap-2">
-		<label
-			for="themeSwitch"
-			class="flex items-center gap-1 text-sm leading-6 font-medium text-skin-base transition-transform ease-in-out group-hover/theme:rotate-45"
+<div
+	data-theme-switch={id}
+	data-watch={watch}
+	data-scope="select"
+	data-part="root"
+	data-state="closed"
+	data-compact={floating ? "always" : compact}
+	data-floating={floating ? "" : undefined}
+	inert={floating}
+	data-print="hidden"
+>
+	<span id={`${id}-label`} class="sr-only" data-scope="select" data-part="label">Theme</span>
+	<div data-scope="select" data-part="control">
+		{
+			floating && backToTop && (
+				<button
+					type="button"
+					data-scope="select"
+					data-part="back-to-top"
+					data-back-to-top
+					aria-label="Back to top"
+					title="Back to top"
+				>
+					<svg viewBox="0 0 16 16" width="16" height="16" fill="none" aria-hidden="true">
+						<path d="M8 13.5V3M3 7.5l5-5 5 5" stroke="currentColor" stroke-width="1.75" stroke-linecap="square" />
+					</svg>
+				</button>
+			)
+		}
+		<button
+			type="button"
+			data-scope="select"
+			data-part="trigger"
+			data-state="closed"
+			data-variant={variant}
 		>
-			<Icon aria-hidden="true" name={Icons.ThemeSwitch} size="24" /><span
-				class="sr-only">Theme</span
-			></label
-		>
-		<select
-			id="themeSwitch"
-			name="themeSwitch"
-			class="block w-full rounded-sm border-0 bg-skin-fill py-1.5 pr-10 pl-3 font-mono text-xs text-skin-base ring-1 ring-skin-edge ring-inset focus:ring-2 focus:ring-skin-hue sm:leading-6"
-		>
-			<option value="system" selected>System</option>
-			<option value="dark">Dark</option>
-			<option value="light">Light</option>
-		</select>
+			<span data-scope="select" data-part="value-icon">
+				{
+					OPTIONS.map(({ value, icon }) => (
+						<span data-theme-icon={value} hidden={value !== "system"}>
+							<Icon name={icon} />
+						</span>
+					))
+				}
+			</span>
+			<span data-scope="select" data-part="reveal">
+				<span data-scope="select" data-part="value-text">{OPTIONS[0]?.label}</span>
+				<svg data-scope="select" data-part="indicator" data-state="closed" viewBox="0 0 10 10" fill="none" aria-hidden="true">
+					<path
+						d={floating ? "M1 6.5l4-4 4 4" : "M1 3.5l4 4 4-4"}
+						stroke="currentColor"
+						stroke-width="1.5"
+						stroke-linecap="square"
+					/>
+				</svg>
+			</span>
+		</button>
+	</div>
+	<div data-scope="select" data-part="positioner">
+		<ul data-scope="select" data-part="content" data-state="closed" tabindex="-1" hidden>
+			{
+				OPTIONS.map(({ value, label, icon }) => (
+					<li data-scope="select" data-part="item" data-value={value} data-state={value === "system" ? "checked" : "unchecked"}>
+						<Icon name={icon} />
+						<span data-scope="select" data-part="item-text">
+							{label}
+						</span>
+						<span
+							data-scope="select"
+							data-part="item-indicator"
+							data-state={value === "system" ? "checked" : "unchecked"}
+						/>
+					</li>
+				))
+			}
+		</ul>
 	</div>
 </div>
 
 <style>
-	:global(.dark) {
-		color-scheme: dark;
+	[data-part="item"] :global(svg) {
+		width: 18px;
+		height: 18px;
+	}
+
+	[data-part="value-icon"] :global(svg) {
+		width: 16px;
+		height: 16px;
+	}
+
+	[data-floating] [data-part="value-icon"] :global(svg) {
+		width: 18px;
+		height: 18px;
+	}
+
+	[data-theme-icon] {
+		display: inline-flex;
+	}
+
+	/* An author `display` beats the UA's [hidden] rule, so restate it. */
+	[data-theme-icon][hidden] {
+		display: none;
 	}
 </style>
 
 <script>
-	type Theme = "light" | "dark" | "system";
+	import * as select from "@zag-js/select";
+	import { normalizeProps, VanillaMachine } from "@zag-js/vanilla";
+	import { onEachPage, run } from "@/scripts/zag";
 
-	const mediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
-	const getSystemTheme = () => (mediaQuery.matches ? "dark" : "light");
+	type Theme = "system" | "dark" | "light";
 
-	const updateDocumentClass = (theme: "light" | "dark") => {
+	const collection = select.collection({ items: ["system", "dark", "light"] });
+	const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
+
+	const readStoredTheme = (): Theme => {
+		// Storage access throws where it is blocked: the choice then lasts the page.
+		try {
+			const stored = localStorage.getItem("theme");
+			return stored === "dark" || stored === "light" ? stored : "system";
+		} catch {
+			return "system";
+		}
+	};
+
+	const applyTheme = (value: Theme) => {
+		const resolved = value === "system" ? (mediaQuery.matches ? "dark" : "light") : value;
 		document.documentElement.classList.remove("light", "dark");
-		document.documentElement.classList.add(theme);
+		document.documentElement.classList.add(resolved);
+		try {
+			if (value === "system") localStorage.removeItem("theme");
+			else localStorage.setItem("theme", value);
+		} catch {}
 	};
 
-	const resolveTheme = (value: Theme): "light" | "dark" => {
-		return value === "system" ? getSystemTheme() : value;
+	// The nav and floating instances are separate machines; a pick in one is
+	// pushed to the others so both always show the same value.
+	const setters = new Set<(value: Theme) => void>();
+	const syncOthers = (value: Theme) => {
+		for (const set of setters) set(value);
 	};
 
-	const updateTheme = (value: Theme) => {
-		const theme = resolveTheme(value);
-		updateDocumentClass(theme);
+	onEachPage("[data-theme-switch]", (root) => {
+		const trigger = root.querySelector<HTMLElement>('[data-part="trigger"]');
+		const content = root.querySelector<HTMLElement>('[data-part="content"]');
+		const items = [...root.querySelectorAll<HTMLElement>('[data-part="item"]')];
+		const labels = new Map(
+			items.map((item) => [item.dataset.value, item.querySelector('[data-part="item-text"]')?.textContent?.trim() ?? ""]),
+		);
+		const icons = [...root.querySelectorAll<HTMLElement>("[data-theme-icon]")];
+		const id = root.dataset.themeSwitch ?? "theme";
 
-		if (value === "system") {
-			localStorage.removeItem("theme");
-		} else {
-			localStorage.setItem("theme", value);
-		}
-	};
+		const machine = new VanillaMachine(select.machine, {
+			id,
+			ids: { label: `${id}-label` },
+			collection,
+			defaultValue: [readStoredTheme()],
+			deselectable: false,
+			onValueChange: ({ value }) => {
+				const theme = (value[0] ?? "system") as Theme;
+				applyTheme(theme);
+				syncOthers(theme);
+			},
+		});
+		const api = () => select.connect(machine.service, normalizeProps);
+		const set = (value: Theme) => {
+			if (api().value[0] !== value) api().setValue([value]);
+		};
+		setters.add(set);
 
-	const initTheme = () => {
-		const savedTheme = localStorage.getItem("theme");
-		const select = document.querySelector<HTMLSelectElement>("#themeSwitch");
-		if (!select) return;
-
-		if (savedTheme) {
-			select.value = savedTheme;
-		}
-	};
-
-	const initThemeSwitcher = () => {
-		const select = document.querySelector<HTMLSelectElement>("#themeSwitch");
-		if (!select) return;
-
-		// Initialize theme from localStorage or system preference
-		const savedTheme = localStorage.getItem("theme") as Theme | null;
-		if (savedTheme) {
-			select.value = savedTheme;
-		}
-		updateTheme(select.value as Theme);
-
-		select.addEventListener("change", (event) => {
-			const target = event.target as HTMLSelectElement;
-			updateTheme(target.value as Theme);
+		// The positioner is deliberately not bound: the recipe positions it
+		// (below the nav trigger, above the floating one) in CSS.
+		const stop = run(machine, select.connect, (api) => {
+			const value = (api.value[0] ?? "system") as Theme;
+			const state = api.open ? "open" : "closed";
+			return [
+				[root, { ...api.getRootProps(), "data-state": state }],
+				[root.querySelector('[data-part="control"]'), api.getControlProps()],
+				[trigger, api.getTriggerProps()],
+				[root.querySelector('[data-part="indicator"]'), api.getIndicatorProps()],
+				[root.querySelector('[data-part="value-text"]'), { ...api.getValueTextProps(), children: labels.get(value) }],
+				[content, api.getContentProps()],
+				...items.map((item): [Element, Record<string, unknown>] => [
+					item,
+					api.getItemProps({ item: item.dataset.value ?? "" }),
+				]),
+				...items.map((item): [Element | null, Record<string, unknown>] => [
+					item.querySelector('[data-part="item-indicator"]'),
+					{ "data-state": item.dataset.value === value ? "checked" : "unchecked" },
+				]),
+				...icons.map((icon): [Element, Record<string, unknown>] => [icon, { hidden: icon.dataset.themeIcon !== value }]),
+			];
 		});
 
-		mediaQuery.addEventListener("change", () => {
-			if (select.value === "system") {
-				updateTheme("system");
-			}
-		});
-	};
+		const cleanups = [
+			stop,
+			() => setters.delete(set),
+			watchNav(root, () => api().setOpen(false)),
+		];
+		return () => {
+			for (const cleanup of cleanups) cleanup();
+		};
+	});
 
-	if (document.readyState === "complete") {
-		initTheme();
-		initThemeSwitcher();
-	} else {
-		document.addEventListener("DOMContentLoaded", initTheme);
-		window.addEventListener("load", initThemeSwitcher);
+	// Floating only: show the dock once the watched element (the nav) is out of
+	// view; while hidden it is inert, out of the tab order and accessibility tree.
+	function watchNav(root: HTMLElement, close: () => void): () => void {
+		const watched = root.dataset.watch ? document.querySelector(root.dataset.watch) : null;
+		if (!root.hasAttribute("data-floating") || !watched) return () => {};
+
+		const backToTop = root.querySelector<HTMLElement>("[data-back-to-top]");
+		const setVisible = (visible: boolean) => {
+			root.toggleAttribute("data-visible", visible);
+			root.inert = !visible;
+			if (!visible) close();
+		};
+
+		const observer = new IntersectionObserver(([entry]) => setVisible(!entry?.isIntersecting), { threshold: 0 });
+		observer.observe(watched);
+
+		// The dock hides once the nav is back in view, so focus moves to the nav
+		// rather than being stranded on a hidden button.
+		const toTop = () => {
+			const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+			window.scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+			watched.querySelector<HTMLElement>("a[href]")?.focus({ preventScroll: true });
+		};
+		backToTop?.addEventListener("click", toTop);
+
+		return () => {
+			observer.disconnect();
+			backToTop?.removeEventListener("click", toTop);
+		};
 	}
+
+	// A live OS appearance change repaints while in "system" mode.
+	mediaQuery.addEventListener("change", () => {
+		if (readStoredTheme() === "system") applyTheme("system");
+	});
 </script>

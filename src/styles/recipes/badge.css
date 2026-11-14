@@ -1,0 +1,142 @@
+/* Badge / tag — chamfered label chip. data-scope="badge" data-tone. Also used by SeverityBadge (data-severity). */
+[data-scope="badge"] {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	font-family: var(--font-label);
+	font-weight: var(--weight-label);
+	letter-spacing: var(--tracking-label);
+	text-transform: uppercase;
+	font-size: var(--text-sm);
+	line-height: 1;
+	padding: 0.4em 0.7em 0.35em 0.9em;
+	color: var(--text-body);
+	background: linear-gradient(
+		135deg,
+		transparent var(--chamfer-sm),
+		var(--badge-bg, var(--surface-muted)) var(--chamfer-sm)
+	);
+	white-space: nowrap;
+}
+[data-scope="badge"][data-tone="accent"] {
+	--badge-bg: var(--color-button-accent);
+	color: var(--text-on-accent);
+}
+[data-scope="badge"][data-tone="outline"],
+[data-scope="badge"][data-tone="default"] {
+	background: none;
+	box-shadow: inset 0 0 0 1px var(--border-raised);
+	padding-left: 0.7em;
+}
+[data-scope="badge"][data-tone="success"] {
+	--badge-bg: var(--status-success-surface);
+	color: var(--status-success-text);
+}
+[data-scope="badge"][data-tone="warning"] {
+	--badge-bg: var(--status-warning-surface);
+	color: var(--status-warning-text);
+}
+[data-scope="badge"][data-tone="danger"] {
+	--badge-bg: var(--status-danger-surface);
+	color: var(--status-danger-text);
+}
+[data-scope="badge"][data-severity] {
+	--badge-bg: var(--sev-surface);
+	color: var(--sev-text);
+}
+[data-scope="badge"] [data-part="marker"] {
+	width: 8px;
+	height: 8px;
+	background: var(--sev-solid);
+	flex-shrink: 0;
+}
+/* The score is a figure, not a label: a medium weight a touch larger than the
+   level, so it reads clearly without outweighing it (a hairline was too thin
+   to read at chip size). The one weight outside the display face's extremes. */
+[data-scope="badge"] [data-part="score"] {
+	font-weight: var(--weight-strong);
+	font-size: 1.1em;
+	letter-spacing: 0;
+}
+[data-severity="info"] {
+	--sev-solid: var(--severity-info);
+	--sev-surface: var(--severity-info-surface);
+	--sev-text: var(--severity-info-text);
+}
+[data-severity="low"] {
+	--sev-solid: var(--severity-low);
+	--sev-surface: var(--severity-low-surface);
+	--sev-text: var(--severity-low-text);
+}
+[data-severity="medium"] {
+	--sev-solid: var(--severity-medium);
+	--sev-surface: var(--severity-medium-surface);
+	--sev-text: var(--severity-medium-text);
+}
+[data-severity="high"] {
+	--sev-solid: var(--severity-high);
+	--sev-surface: var(--severity-high-surface);
+	--sev-text: var(--severity-high-text);
+}
+[data-severity="critical"] {
+	--sev-solid: var(--severity-critical);
+	--sev-surface: var(--severity-critical-surface);
+	--sev-text: var(--severity-critical-text);
+}
+/* High and critical markers flash like a warning beacon: the marker holds steady, then
+   bursts a glow in its own severity colour. Critical double-flashes on a 1.7s cycle; high
+   single-flashes on 2.9s. The cycles share no beat, so badges of the two tiers never fall
+   into step. Every cycle starts and ends at rest (no glow), which is the frame printing
+   holds. Reduced motion freezes both at rest.
+   The glow is a fixed box-shadow on ::after and only its opacity animates, so the loop runs
+   on the compositor. Animating the marker's box-shadow repainted every frame, forever. */
+:is([data-severity="critical"], [data-severity="high"]) [data-part="marker"] {
+	position: relative;
+}
+:is([data-severity="critical"], [data-severity="high"]) [data-part="marker"]::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	opacity: 0;
+	pointer-events: none;
+}
+[data-severity="critical"] [data-part="marker"]::after {
+	box-shadow:
+		0 0 0 2px var(--sev-solid),
+		0 0 12px 3px var(--sev-solid);
+	animation: dw-flash-critical 1.7s linear infinite;
+}
+[data-severity="high"] [data-part="marker"]::after {
+	box-shadow:
+		0 0 0 2px var(--sev-solid),
+		0 0 10px 2px var(--sev-solid);
+	animation: dw-flash-high 2.9s linear infinite;
+}
+@keyframes dw-flash-critical {
+	0%,
+	54%,
+	60%,
+	64%,
+	70%,
+	100% {
+		opacity: 0;
+	}
+	56%,
+	58%,
+	66%,
+	68% {
+		opacity: 1;
+	}
+}
+@keyframes dw-flash-high {
+	0%,
+	62%,
+	70%,
+	100% {
+		opacity: 0;
+	}
+	64%,
+	67% {
+		opacity: 1;
+	}
+}

@@ -1,0 +1,68 @@
+---
+import { render } from "astro:content";
+import { basics } from "@cv";
+import type { InferGetStaticPropsType } from "astro";
+import PageHeader from "@/components/PageHeader.astro";
+import PostNav from "@/components/PostNav.astro";
+import PostTags from "@/components/PostTags.astro";
+import Prose from "@/components/Prose.astro";
+import SiteLayout from "@/layouts/SiteLayout.astro";
+import { formatDate, getAdjacentPosts, getPublished, readTime } from "@/lib/content";
+import { ogImageFor } from "@/lib/og";
+import { articleSchema } from "@/lib/structured-data";
+import { pagePath } from "@/lib/url";
+
+// Prerendered, one page per published post; `slug` is the entry's `.id`.
+// Drafts are never built, so an unknown slug or a draft falls through to the
+// on-demand 404.
+export async function getStaticPaths() {
+	return (await getPublished("blog")).map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props as InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { Content } = await render(entry);
+const schema = articleSchema(
+	"BlogPosting",
+	entry.data,
+	new URL(pagePath(Astro.url), Astro.site),
+	await ogImageFor(pagePath(Astro.url), Astro.site),
+);
+const adjacent = await getAdjacentPosts(entry.id);
+---
+
+<SiteLayout title={`${entry.data.title} - ${basics.name}`} description={entry.data.description}
+	article={{ published: entry.data.date, modified: entry.data.updated, tags: entry.data.tags }}
+	schema={schema}
+	gap="sm"
+>
+	<a href="/blog" class="back label">&larr; Back to blog</a>
+	<PageHeader title={entry.data.title}>
+		<Fragment slot="eyebrow">
+			<time datetime={entry.data.date.toISOString()}>{formatDate(entry.data.date)}</time>
+			{
+				entry.data.updated && (
+					<>
+						<span aria-hidden="true">·</span>
+						<span>updated {formatDate(entry.data.updated)}</span>
+					</>
+				)
+			}
+			<span aria-hidden="true">·</span>
+			<span>{readTime(entry.body ?? "")}</span>
+		</Fragment>
+		<p>{entry.data.description}</p>
+		<PostTags slot="after" cvss={entry.data.cvss} tags={entry.data.tags} data-reveal="" data-i="4" />
+	</PageHeader>
+	<Prose>
+		<Content />
+	</Prose>
+	<PostNav previous={adjacent.previous} next={adjacent.next} />
+</SiteLayout>
+
+<style>
+	.back {
+		align-self: flex-start;
+		text-decoration: none;
+	}
+</style>

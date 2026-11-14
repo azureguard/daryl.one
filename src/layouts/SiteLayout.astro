@@ -1,0 +1,143 @@
+---
+import { getCollection } from "astro:content";
+import type { Thing, WithContext } from "schema-dts";
+import Footer from "@/components/Footer.astro";
+import SiteNav from "@/components/SiteNav.astro";
+import ThemeSwitch from "@/components/ThemeSwitch.astro";
+import { getPublished } from "@/lib/content";
+import { pagePath } from "@/lib/url";
+import Layout from "./Layout.astro";
+
+interface Props {
+	title: string;
+	/** Passed to Layout's meta description; defaults to the CV summary. */
+	description?: string | undefined;
+	/** Passed to Layout: marks a post or case study as an Open Graph article. */
+	article?: { published: Date; modified?: Date | undefined; tags?: Array<string> | undefined } | undefined;
+	/** Passed to Layout: the page's schema.org JSON-LD. */
+	schema?: WithContext<Thing> | undefined;
+	/** Vertical rhythm between the page's top-level blocks. */
+	gap?: "sm" | "md" | "lg" | undefined;
+	/**
+	 * A wider measure for compositions that need two columns (the landing
+	 * page). Only <main> widens: the nav and footer keep the 760px measure on
+	 * every page, so nothing shifts when navigating away from the landing page.
+	 */
+	wide?: boolean | undefined;
+}
+
+const { title, description, article, schema, gap = "lg", wide = false } = Astro.props;
+
+// Nav order follows the DS. Blog appears only once a post is published and
+// Uses only once it has an entry (see Content gating in CLAUDE.md).
+const hasPosts = (await getPublished("blog")).length > 0;
+const hasUses = (await getCollection("uses")).length > 0;
+const links = [
+	{ label: "CV", href: "/cv" },
+	{ label: "Projects", href: "/projects" },
+	...(hasPosts ? [{ label: "Blog", href: "/blog" }] : []),
+	{ label: "About", href: "/about" },
+	...(hasUses ? [{ label: "Uses", href: "/uses" }] : []),
+];
+
+// Skip link (WCAG 2.4.1). <main> needs no tabindex: following a fragment link
+// moves the sequential-focus start point to the target, so the next Tab
+// continues inside it.
+//
+// <main> owns the site measure so every page shares one column.
+---
+
+<Layout title={title} description={description} article={article} schema={schema}>
+	<a href="#main-content" class="skip label" data-print="hidden">Skip to main content</a>
+	<SiteNav links={links} active={pagePath(Astro.url)} />
+	<main id="main-content" data-gap={gap} data-wide={wide ? "" : undefined}>
+		<slot />
+	</main>
+	<Footer />
+	<ThemeSwitch floating watch="#site-nav" backToTop />
+</Layout>
+
+<style>
+	.skip {
+		position: absolute;
+		top: var(--space-2);
+		left: var(--space-2);
+		z-index: 50;
+		padding: var(--space-2) var(--space-3);
+		background: var(--surface-card);
+		box-shadow: inset 0 0 0 1px var(--border-raised);
+		color: var(--text-body);
+		text-decoration: none;
+		transform: translateY(-200%);
+	}
+
+	.skip:focus {
+		transform: none;
+	}
+
+	/* Short pages keep the footer at the bottom of the screen: <main> takes the
+	   leftover height. */
+	@media screen {
+		:global(body) {
+			display: flex;
+			flex-direction: column;
+		}
+
+		main {
+			flex: 1 0 auto;
+			width: 100%;
+		}
+	}
+
+	main {
+		display: flex;
+		flex-direction: column;
+		max-width: 760px;
+		margin-inline: auto;
+		padding: var(--space-16) var(--space-6) var(--space-20);
+	}
+
+	/* A one-screen composition is centred in whatever height is left between
+	   the nav and the footer. */
+	main[data-wide] {
+		max-width: 1200px;
+		justify-content: center;
+	}
+
+	main[data-gap="sm"] {
+		gap: var(--space-8);
+	}
+
+	main[data-gap="md"] {
+		gap: var(--space-12);
+	}
+
+	main[data-gap="lg"] {
+		gap: var(--space-16);
+	}
+
+	@media (min-width: 48rem) {
+		main {
+			padding-block: var(--space-24);
+		}
+
+		/* The reading measure's generous padding is for long pages; a one-screen
+		   composition sits closer to the nav and footer. */
+		main[data-wide] {
+			padding-block: var(--space-12);
+		}
+	}
+
+	/* The screen measure gives way to the full page: the @page margins in
+	   cv.astro are the only inset on paper. */
+	@media print {
+		main {
+			max-width: none;
+			padding: 0;
+		}
+
+		main[data-gap] {
+			gap: var(--space-3);
+		}
+	}
+</style>

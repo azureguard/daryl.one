@@ -1,180 +1,116 @@
 ---
+import { ClientRouter, fade } from "astro:transitions";
 import { basics } from "@cv";
+import { SEO } from "astro-seo";
+import { Schema } from "astro-seo-schema";
+import type { Thing, WithContext } from "schema-dts";
+import { getPublished } from "@/lib/content";
+import { ogImageFor } from "@/lib/og";
+import { pagePath } from "@/lib/url";
+import themeInit from "@/scripts/theme-init.js?raw";
 import "../styles/global.css";
 
 interface Props {
 	title: string;
+	/** The page's own summary (a post's or case study's frontmatter). Defaults to the CV summary. */
+	description?: string | undefined;
+	/** Marks the page as an Open Graph article (posts, case studies). */
+	article?: { published: Date; modified?: Date | undefined; tags?: Array<string> | undefined } | undefined;
+	/** schema.org JSON-LD for the page (src/lib/structured-data.ts). */
+	schema?: WithContext<Thing> | undefined;
 }
 
-const { title } = Astro.props;
-const canonicalUrl = new URL(Astro.url.pathname, Astro.site);
-const url = canonicalUrl.href;
+const { title, article, schema } = Astro.props;
+const path = pagePath(Astro.url);
+const url = new URL(path, Astro.site);
 
+// Search engines truncate descriptions around 155-160 characters, so a page
+// without its own uses the summary's first sentence, and either is clamped at a
+// word boundary as a safety net.
 const { summary = "" } = basics;
+const source = Astro.props.description ?? summary.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? summary;
+const description = source.length <= 160 ? source : `${source.slice(0, 157).replace(/\s+\S*$/, "")}…`;
 
-// Search engines truncate descriptions around 155-160 characters, so use the
-// summary's first sentence, clamped at a word boundary as a safety net.
-const firstSentence = summary.match(/^.*?[.!?](?=\s|$)/)?.[0] ?? summary;
-const description = firstSentence.length <= 160 ? firstSentence : `${firstSentence.slice(0, 157).replace(/\s+\S*$/, "")}…`;
+// Open Graph article tags for posts and case studies. Keys are only set when
+// there is a value (astro-seo's types reject explicit undefined here).
+const openGraphArticle = article && {
+	publishedTime: article.published.toISOString(),
+	authors: [basics.name],
+	...(article.modified && { modifiedTime: article.modified.toISOString() }),
+	...(article.tags && { tags: article.tags }),
+};
+
+// The page's preview image from /og/[...route].ts: a post's or case study's
+// own, otherwise the shared site card.
+const image = await ogImageFor(path, Astro.site);
+
+// The feed is advertised only while the blog exists (see SiteLayout).
+const hasPosts = (await getPublished("blog")).length > 0;
+
+// <ClientRouter /> lives in this shared <head> so every route is client-routed.
+// The crossfade is pinned to `--duration-base` so page transitions read as part
+// of the same motion scale as hovers. Astro disables it under reduced motion.
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" transition:animate={fade({ duration: "var(--duration-base)" })}>
 	<head>
 		<meta charset="UTF-8" />
-		<title>{title}</title>
-		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<SEO
+			title={title}
+			description={description}
+			canonical={url}
+			openGraph={{
+				basic: { title, type: article ? "article" : "website", image: image.href, url },
+				optional: { description, siteName: basics.name, locale: "en_GB" },
+				image: { width: 1200, height: 630, alt: title },
+				...(openGraphArticle && { article: openGraphArticle }),
+			}}
+			twitter={{ card: "summary_large_image", title, description, image, imageAlt: title }}
+			extend={{
+				link: [
+					{ rel: "icon", type: "image/svg+xml", href: "/favicon.svg" },
+					...(hasPosts ? [{ rel: "alternate", type: "application/rss+xml", title: `${basics.name} - Blog`, href: "/rss.xml" }] : []),
+				],
+			}}
+		/>
+		{schema && <Schema item={schema} />}
+		<meta name="color-scheme" content="light dark" />
+		<meta name="theme-color" content="#eef2ef" media="(prefers-color-scheme: light)" />
+		<meta name="theme-color" content="#06110c" media="(prefers-color-scheme: dark)" />
+		<ClientRouter />
 
-		<meta property="og:url" content={url} />
-		<meta property="og:type" content="website" />
-		<meta property="og:title" content={title} />
-		<meta property="og:description" content={description} />
-		<meta property="og:image" content="" />
-
-		<meta name="twitter:card" content="summary_large_image" />
-		<meta property="twitter:domain" content={url.split("//")[1] ?? ""} />
-		<meta property="twitter:url" content={url} />
-		<meta name="twitter:title" content={title} />
-		<meta name="twitter:description" content={description} />
-		<meta name="twitter:image" content="" />
-
-		<link rel="canonical" href={url} />
+		<script is:inline set:html={themeInit} />
 	</head>
-	<body class="relative bg-skin-fill text-skin-base antialiased">
+	<body>
 		<slot />
-		<style is:global>
-			@reference "../styles/global.css";
+		<script>
+			// Firefox prints a running CSS animation at its current frame and
+			// ignores the print sheet's `animation: none` for it, so printing
+			// within a second of a page load put every mid-reveal element on paper
+			// blank. Jumping each finite animation to its end state before the
+			// print snapshot is what both engines honour. Looping ones (the
+			// severity flash) have no end state, so they are rewound to their
+			// first frame, at rest, and held there until printing is done.
+			const held = new Set<Animation>();
 
-			/*
-			 * These are base/reset rules. They must live in `@layer base` so they
-			 * stay below Tailwind's `@layer utilities`; otherwise (being unlayered)
-			 * they would override utilities in v4 — e.g. `ul { list-style: none }`
-			 * beating `list-disc`, or `a { text-decoration: none }` beating
-			 * `hover:underline`.
-			 */
-			@layer base {
-				body,
-				figure {
-					margin: 0;
-					padding: 0;
+			window.addEventListener("beforeprint", () => {
+				for (const animation of document.getAnimations()) {
+					if (animation.effect?.getComputedTiming().iterations === Number.POSITIVE_INFINITY) {
+						animation.pause();
+						animation.currentTime = 0;
+						held.add(animation);
+					} else {
+						animation.finish();
+					}
 				}
+			});
 
-				body {
-					font-family: var(--font-sans);
-				}
-
-				a {
-					text-decoration: none;
-				}
-
-				ul {
-					list-style: none;
-					margin: 0;
-					padding: 0;
-				}
-
-				*,
-				*::before,
-				*::after {
-					box-sizing: border-box;
-				}
-
-				h1,
-				h2,
-				h3,
-				h4 {
-					@apply font-semibold tracking-tight text-skin-base;
-					margin: 0;
-				}
-
-				p {
-					@apply text-sm text-skin-muted;
-					line-height: 1.5;
-					text-wrap: pretty;
-				}
-
-			}
-
-			/*
-			 * Print overrides. These live OUTSIDE `@layer base` on purpose:
-			 * unlayered CSS beats every layer, and these rules must win over
-			 * both the unlayered theme tokens in global.css and Tailwind's
-			 * utilities (e.g. `display: flex` on a <summary>). They are scoped
-			 * to `@media print`, so screen rendering is untouched.
-			 */
-			@media print {
-				/*
-				 * Black-on-white: collapse the light AND dark palettes to plain
-				 * ink. `html:root` / `:root.dark` out-specifies the `:root` /
-				 * `.dark` token blocks in global.css.
-				 */
-				html:root,
-				:root.dark {
-					color-scheme: light;
-					--color-fill: #fff;
-					--color-text-base: #000;
-					--color-text-muted: #3f463f;
-					--color-text-inverted: #fff;
-					--color-edge: #d0d0d0;
-					--color-accent: #000;
-					--color-button-accent: #000;
-					--color-button-accent-hover: #000;
-					--color-button-muted: #fff;
-				}
-
-				/*
-				 * <details> must print expanded: closed ones hide their content
-				 * via `content-visibility: hidden` on ::details-content, so
-				 * force it visible and hide the show-more/show-less toggle.
-				 * (A beforeprint fallback in Experience.astro covers browsers
-				 * without ::details-content support.)
-				 */
-				details > summary {
-					display: none;
-				}
-
-				details::details-content {
-					content-visibility: visible;
-					display: block;
-				}
-
-				/* Compact body copy on paper (the base `p` rule sets text-sm). */
-				p {
-					font-size: 0.75rem;
-					line-height: 1.45;
-				}
-
-				/*
-				 * Pagination: keep entries (bullets, education/skill items,
-				 * cards) intact across page breaks. Long Experience roles
-				 * (the <li>s containing a <details>) may flow across pages —
-				 * gluing a 400px role block would leave big gaps — but
-				 * headings never separate from their content.
-				 */
-				article,
-				li {
-					break-inside: avoid;
-				}
-
-				li:has(details) {
-					break-inside: auto;
-				}
-
-				h1,
-				h2,
-				h3,
-				h4,
-				header {
-					break-inside: avoid;
-					break-after: avoid;
-				}
-
-				astro-dev-toolbar {
-					display: none;
-				}
-			}
-		</style>
+			window.addEventListener("afterprint", () => {
+				for (const animation of held) animation.play();
+				held.clear();
+			});
+		</script>
 	</body>
 </html>

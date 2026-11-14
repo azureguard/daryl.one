@@ -1,0 +1,59 @@
+---
+import { basics } from "@cv";
+import CopyEmail from "@/components/CopyEmail.astro";
+
+// Site-wide footer: the one place in the IA the GitHub/LinkedIn/Email links
+// live, so SiteLayout renders it on every route — a reader landing on a blog
+// post from search still has a route to contact. Links come from cv.json.
+const { email, name, profiles } = basics;
+const year = new Date().getFullYear();
+---
+
+<footer data-print="hidden">
+	<div class="inner">
+		<p class="label">© {year} {name}</p>
+		<nav aria-label="Elsewhere" class="label">
+			<CopyEmail email={email} label="Email" withIcon={false} />
+			{
+				profiles.map(({ network, url }) => (
+					<a href={url} target="_blank" rel="noreferrer">
+						{network}
+					</a>
+				))
+			}
+		</nav>
+	</div>
+</footer>
+
+<style>
+	footer {
+		border-top: 1px solid var(--border-default);
+	}
+
+	.inner {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--space-4) var(--space-6);
+		max-width: 760px;
+		margin-inline: auto;
+		padding: var(--space-6);
+		color: var(--text-muted);
+	}
+
+	nav {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2) var(--space-6);
+	}
+
+	a {
+		color: inherit;
+		text-decoration: none;
+	}
+
+	a:hover {
+		color: var(--color-accent);
+	}
+</style>

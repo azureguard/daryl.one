@@ -1,0 +1,111 @@
+/*
+ * The global print sheet (the CV is the only page designed for paper).
+ * Unlayered, so it beats every layer outright. It must not reach into a
+ * component's internals: both are unlayered, so source order would decide, and
+ * that differs between `astro build` and `astro dev`. A component's own print
+ * rules live in its scoped <style>, after its screen rules.
+ */
+@media print {
+	/*
+	 * Black on white whatever the screen theme, the accent collapsed to ink,
+	 * and Plex Sans for the display face (reasons in the decisions log).
+	 * This beats `.dark` because that block is layered.
+	 */
+	:root {
+		color-scheme: light;
+		--font-display: var(--font-sans);
+		--color-text-base: #000;
+		--color-text-muted: #3f463f;
+		--color-text-inverted: #000;
+		--color-fill: #fff;
+		--color-card: #fff;
+		--color-surface-raised: #fff;
+		--color-edge: #d0d0d0;
+		--color-edge-raised: #d0d0d0;
+		--color-accent: #000;
+		--color-signal: #000;
+		--color-button-accent: #fff;
+		--color-button-muted: #fff;
+		scrollbar-gutter: auto;
+	}
+
+	/*
+	 * No atmosphere and no gradients: with "print backgrounds" on, Firefox
+	 * paints each chamfered surface as a solid block. Gradients live only in
+	 * the layers, so this needs no `!important`.
+	 */
+	body {
+		background: none;
+	}
+
+	*,
+	*::before,
+	*::after {
+		background-image: none;
+	}
+
+	/*
+	 * The page-load reveal must never reach paper mid-flight. Chromium honours
+	 * this; Firefox keeps a running animation's current frame regardless, which
+	 * the beforeprint handler in Layout.astro covers.
+	 */
+	[data-reveal] {
+		animation: none;
+		opacity: 1;
+		transform: none;
+		clip-path: none;
+	}
+
+	[data-reveal]::before,
+	[data-reveal]::after {
+		display: none;
+	}
+
+	/* A chip is plain text on paper: no hairline, no inset. */
+	[data-scope="badge"] {
+		box-shadow: none;
+		padding: 0;
+		color: var(--text-body);
+		font-size: var(--text-xs);
+	}
+
+	/*
+	 * Keep small entries intact across page breaks; long Experience roles (with
+	 * a collapsible) may flow, since gluing them leaves big gaps. Headings stay
+	 * with their content.
+	 */
+	article,
+	li {
+		break-inside: avoid;
+	}
+
+	li:has([data-scope="collapsible"]) {
+		break-inside: auto;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	header {
+		break-inside: avoid;
+		break-after: avoid;
+	}
+
+	astro-dev-toolbar {
+		display: none;
+	}
+
+	/* Print visibility must win over any display a component sets. */
+	[data-print="hidden"] {
+		/* biome-ignore lint/complexity/noImportantStyles: print visibility must beat any component display rule */
+		display: none !important;
+	}
+}
+
+@media screen {
+	[data-print="only"] {
+		/* biome-ignore lint/complexity/noImportantStyles: see above */
+		display: none !important;
+	}
+}

@@ -1,61 +1,121 @@
-@import "tailwindcss";
+/*
+ * The site's one stylesheet entry.
+ *
+ * Cascade layers decide precedence, not specificity or source order:
+ *   tokens  → the DS token files (values, element defaults, motion)
+ *   base    → document rules and the shared `.label` / `.sr-only` classes
+ *   recipes → the DS recipes, keyed on Ark anatomy attributes
+ * Component <style> blocks and print.css are unlayered, so they beat every
+ * layer without a specificity contest. `astro build` and `astro dev` order
+ * stylesheets differently, and layers make that irrelevant.
+ *
+ * tokens/ and recipes/ are copies of the Claude Design project "Daryl Wong
+ * Design System" (Night Shift). Keep their values verbatim so a re-sync is a
+ * diff, not a rewrite; each file's header notes any deviation. There is no
+ * utility engine.
+ */
+@layer tokens, base, recipes;
 
-/* Self-hosted IBM Plex (fontsource) — no external font requests. */
+/* Self-hosted through fontsource. The DS loads the same families from the
+   Google Fonts CDN, which `style-src 'self'` in public/_headers forbids. */
+@import "@fontsource-variable/big-shoulders-display";
 @import "@fontsource-variable/ibm-plex-sans";
+@import "@fontsource-variable/ibm-plex-sans/wght-italic.css";
 @import "@fontsource/ibm-plex-mono/400.css";
 @import "@fontsource/ibm-plex-mono/500.css";
 
-/* Class-based dark mode (toggled via the `.dark` class on <html>). */
-@custom-variant dark (&:where(.dark, .dark *));
+@import "./tokens/colors.css" layer(tokens);
+@import "./tokens/typography.css" layer(tokens);
+@import "./tokens/spacing.css" layer(tokens);
+@import "./tokens/radius-shadow.css" layer(tokens);
+@import "./tokens/atmosphere.css" layer(tokens);
+@import "./tokens/motion.css" layer(tokens);
+@import "./tokens/interaction.css" layer(tokens);
+@import "./tokens/base.css" layer(base);
 
-@theme {
-	--font-sans: "IBM Plex Sans Variable", ui-sans-serif, system-ui, sans-serif;
-	--font-mono: "IBM Plex Mono", ui-monospace, sfmono-regular, menlo, monospace;
-}
+@import "./recipes/button.css" layer(recipes);
+@import "./recipes/badge.css" layer(recipes);
+@import "./recipes/card.css" layer(recipes);
+@import "./recipes/select.css" layer(recipes);
+@import "./recipes/site-nav.css" layer(recipes);
+@import "./recipes/popover.css" layer(recipes);
 
-/*
- * Skin tokens — expose the semantic theme variables below as Tailwind color
- * utilities (text-skin-*, bg-skin-*, ring-skin-*, …). `inline` keeps the
- * `var()` reference in the generated CSS so switching the `.dark` class
- * re-resolves the colors at runtime.
- */
-@theme inline {
-	--color-skin-base: var(--color-text-base);
-	--color-skin-muted: var(--color-text-muted);
-	--color-skin-edge: var(--color-edge);
-	--color-skin-inverted: var(--color-text-inverted);
-	--color-skin-fill: var(--color-fill);
-	--color-skin-hue: var(--color-accent);
-	--color-skin-hues: var(--color-accent);
-	--color-skin-button-accent: var(--color-button-accent);
-	--color-skin-button-accent-hover: var(--color-button-accent-hover);
-	--color-skin-button-muted: var(--color-button-muted);
-}
+@import "./print.css";
 
-/* Light theme (default) — deep pine on green-tinted paper. */
-:root {
-	color-scheme: light;
-	--color-text-base: #1f2621;
-	--color-text-muted: #5a675e;
-	--color-text-inverted: #f3f7f1;
-	--color-fill: #f6f8f3;
-	--color-edge: #d7e0d2;
-	--color-accent: #2e6e46;
-	--color-button-accent: #2e6e46;
-	--color-button-accent-hover: #24573a;
-	--color-button-muted: #e7eee1;
-}
+@layer base {
+	*,
+	*::before,
+	*::after {
+		box-sizing: border-box;
+	}
 
-/* Dark theme — desaturated jade on near-black green. */
-.dark {
-	color-scheme: dark;
-	--color-text-base: #e3e9e3;
-	--color-text-muted: #8fa095;
-	--color-text-inverted: #0d120f;
-	--color-fill: #0d120f;
-	--color-edge: #2a362e;
-	--color-accent: #7cc99a;
-	--color-button-accent: #2f6b4c;
-	--color-button-accent-hover: #3b8560;
-	--color-button-muted: #1a231d;
+	html {
+		/*
+		 * Always reserve the scrollbar gutter. Without it, short routes have no
+		 * scrollbar and long ones do, so the 15px difference shifts every
+		 * centred container between routes, which client-side navigation makes
+		 * visible.
+		 */
+		scrollbar-gutter: stable;
+	}
+
+	body {
+		margin: 0;
+		min-height: 100vh;
+	}
+
+	h1,
+	h2,
+	h3,
+	h4,
+	p,
+	figure,
+	blockquote {
+		margin: 0;
+	}
+
+	p {
+		text-wrap: pretty;
+	}
+
+	/* Visually hidden, still announced. */
+	.sr-only {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		padding: 0;
+		margin: -1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		border: 0;
+	}
+
+	/*
+	 * The label recipe: condensed display caps, for dates, tags, nav, eyebrows
+	 * and captions. The DS spells it out on every element; one class keeps the
+	 * five declarations from drifting apart.
+	 */
+	.label {
+		font-family: var(--font-label);
+		font-weight: var(--weight-label);
+		letter-spacing: var(--tracking-label);
+		text-transform: uppercase;
+		font-size: var(--text-sm);
+		line-height: 1.2;
+	}
+
+	/*
+	 * Syntax highlighting. Shiki emits both palettes as custom properties
+	 * (astro.config.ts sets defaultColor: false), and the active theme picks one.
+	 */
+	.astro-code,
+	.astro-code span {
+		color: var(--shiki-light);
+	}
+
+	.dark .astro-code,
+	.dark .astro-code span {
+		color: var(--shiki-dark);
+	}
 }

@@ -1,22 +1,87 @@
 ---
-const { className, title, meta } = Astro.props;
+// Section wrapper: an h2 with an optional eyebrow classifier and meta line.
+//
+// The eyebrow labels the *kind* of section ("Audit log" over Experience), never
+// restates the heading. It is aria-hidden because the h2 carries the section's
+// accessible name, and print-hidden so the wordplay never reaches a printed CV.
+// `meta` alone can stand as a group's only label (the /uses categories).
+//
+// h2, not h3: this is the top-level heading under the page h1. Entries inside
+// a section are h3.
+interface Props {
+	title?: string | undefined;
+	eyebrow?: string | undefined;
+	meta?: string | undefined;
+	/** Hides the whole section on paper (the screen variant of a print pair). */
+	screenOnly?: boolean | undefined;
+}
+
+const { title, eyebrow, meta, screenOnly = false } = Astro.props;
 ---
 
-<section class:list={["flex flex-col gap-4 print:gap-0", className]}>
+<section data-print={screenOnly ? "hidden" : undefined}>
 	{
 		title && (
-			<header class="flex flex-col print:pb-0">
-				{/* Real heading: hidden on screen but kept for the a11y outline; visible again in print. */}
-				<h3 class="sr-only text-2xl font-semibold tracking-tight print:not-sr-only print:text-lg">{title}</h3>
-				<p
-					aria-hidden="true"
-					class="flex flex-wrap items-baseline gap-x-2 font-mono text-sm select-none print:hidden"
-				>
-					<span class="tracking-widest text-skin-base">{title.toLowerCase()}</span>
-					{meta && <span class="text-xs text-skin-muted">· {meta}</span>}
-				</p>
+			<header>
+				{(eyebrow || meta) && (
+					<p aria-hidden="true" class="eyebrow label" data-print="hidden">
+						{eyebrow && <span>{eyebrow}</span>}
+						{meta && <span class="meta">{eyebrow ? `· ${meta}` : meta}</span>}
+					</p>
+				)}
+				<h2>{title}</h2>
 			</header>
 		)
 	}
 	<slot />
 </section>
+
+<style>
+	section {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-6);
+	}
+
+	header {
+		display: flex;
+		flex-direction: column;
+		gap: var(--space-2);
+		padding-bottom: var(--space-4);
+		border-bottom: 1px solid var(--border-default);
+	}
+
+	.eyebrow {
+		display: flex;
+		flex-wrap: wrap;
+		gap: var(--space-2);
+		color: var(--color-accent);
+		user-select: none;
+	}
+
+	.meta {
+		color: var(--text-muted);
+	}
+
+	h2 {
+		font-size: var(--text-3xl);
+		text-transform: uppercase;
+	}
+
+	@media print {
+		section {
+			gap: var(--space-1);
+		}
+
+		header {
+			padding-bottom: 0;
+			border-bottom: 0;
+		}
+
+		h2 {
+			font-size: var(--text-lg);
+			line-height: var(--leading-tight);
+			text-transform: none;
+		}
+	}
+</style>
