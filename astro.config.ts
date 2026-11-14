@@ -11,7 +11,6 @@ import { unified } from "@astrojs/markdown-remark";
 import sitemap from "@astrojs/sitemap";
 
 import icon from "astro-icon";
-import robotsTxt from "astro-robots-txt";
 import charm from "@iconify-json/charm/icons.json" with { type: "json" };
 import rehypeExternalLinks from "rehype-external-links";
 
@@ -107,7 +106,6 @@ export default defineConfig({
 			},
 		}),
 		sitemap(),
-		robotsTxt(),
 		themeInitHash,
 	],
 	// Every page is prerendered to a static asset, served from Cloudflare's cache

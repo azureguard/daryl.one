@@ -41,7 +41,7 @@ isn't: read the entry before "fixing" it. How to work with the code is in
   request, can't cover style attributes, and break ClientRouter navigation)
   and Astro's own CSP (it supports neither ClientRouter nor Shiki).
 - **SEO through libraries** (astro-seo, astro-seo-schema, astro-og-canvas,
-  @astrojs/rss, @astrojs/sitemap, astro-robots-txt). Fixed pages share one
+  @astrojs/rss, @astrojs/sitemap). Fixed pages share one
   preview card built from `cv.json`, rather than a registry that restates each
   page's copy.
 - **The head theme script is inline, allowed by its CSP hash.** As a bundled
@@ -141,9 +141,6 @@ isn't: read the entry before "fixing" it. How to work with the code is in
 
 ## Known gaps
 
-- **`aube audit` keeps one finding**: zod 3 under `astro-robots-txt`, which
-  has no release on zod 4. It only validates the integration's own options at
-  build, so it is accepted over an override.
 - **lefthook is held at `~2.1`**: 2.2.2 fails aube's trust policy (no
   provenance where 2.0.11 had it). Lift the tilde once a release carries it.
 

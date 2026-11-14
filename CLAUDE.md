@@ -111,7 +111,8 @@ IBM Plex Sans for prose, Plex Mono for code only).
 - **SEO**: libraries, not hand-built tags. astro-seo (head), astro-seo-schema
   (JSON-LD: WebSite on `/`, Person on `/cv`, BlogPosting/Article), astro-og-canvas
   (a site card from `cv.json` shared by fixed pages, one per post and case
-  study), @astrojs/sitemap, astro-robots-txt, @astrojs/rss. Pages keep their
+  study), @astrojs/sitemap, @astrojs/rss. `robots.txt` is a static file in
+  `public/` (it names the sitemap; crawler policy is Cloudflare's). Pages keep their
   own titles and ledes.
 - **External Markdown links** get `target="_blank"`, `rel="noopener
   noreferrer"` and the aria-hidden `charm:link-external` glyph via
