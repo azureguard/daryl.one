@@ -13,7 +13,7 @@
 	"devEngines": {
 		"runtime": {
 			"name": "node",
-			"version": "^24.21.0"
+			"version": "^26.13.0"
 		}
 	},
 	"scripts": {
@@ -32,9 +32,9 @@
 		"postinstall": "lefthook install && node scripts/generate-cv-types.js"
 	},
 	"dependencies": {
-		"@astrojs/check": "0.9.10",
-		"@astrojs/cloudflare": "14.3.3",
-		"@astrojs/markdown-remark": "^7.3.1",
+		"@astrojs/check": "0.9.12",
+		"@astrojs/cloudflare": "14.4.7",
+		"@astrojs/markdown-remark": "^7.3.8",
 		"@astrojs/rss": "^4.0.19",
 		"@astrojs/sitemap": "3.7.4",
 		"@fontsource-variable/big-shoulders-display": "^5.3.0",
@@ -51,7 +51,7 @@
 		"@zag-js/select": "^1.44.0",
 		"@zag-js/vanilla": "^1.44.0",
 		"ae-cvss-calculator": "^1.0.13",
-		"astro": "7.3.5",
+		"astro": "7.4.11",
 		"astro-icon": "^1.2.0",
 		"astro-og-canvas": "^0.13.2",
 		"astro-robots-txt": "^1.0.0",
@@ -65,7 +65,7 @@
 	"devDependencies": {
 		"@biomejs/biome": "2.5.14",
 		"json-schema-to-typescript": "^16.0.0",
-		"lefthook": "^2.1.14",
-		"wrangler": "^4.141.0"
+		"lefthook": "~2.1.14",
+		"wrangler": "^4.161.0"
 	}
 }

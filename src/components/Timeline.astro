@@ -1,6 +1,6 @@
 ---
 import { Icon } from "astro-icon/components";
-import type { ISODate } from "../cv";
+import type { ISODate, Location } from "../cv";
 import Badge from "./Badge.astro";
 
 // Experience as an audit log: dates in the left gutter like log timestamps, a
@@ -30,7 +30,8 @@ export interface TimelineEntry {
 	endDate?: ISODate | undefined;
 	summary?: string | undefined;
 	highlights?: Array<string> | undefined;
-	location?: string | undefined;
+	/** JSON Resume allows a plain string or a structured location; the city stands for the latter. */
+	location?: string | Location | undefined;
 }
 
 interface Props {
@@ -44,7 +45,8 @@ const { id, entries } = Astro.props;
 
 <ul class="timeline">
 	{
-		entries.map(({ name, startDate, endDate, position, summary, highlights, url, location }, index) => {
+		entries.map(({ name, startDate, endDate, position, summary, highlights, url, location: place }, index) => {
+			const location = typeof place === "string" ? place : place?.city;
 			const isCurrent = !endDate;
 			const scope = `${id}-${index}`;
 			const state = isCurrent ? "open" : "closed";
