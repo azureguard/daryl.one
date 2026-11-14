@@ -14,20 +14,35 @@ export interface OgPage {
 
 /** Every preview image, keyed by its path under /og/ (without `.png`). */
 export async function ogPages(): Promise<Record<string, OgPage>> {
-	const [posts, caseStudies] = await Promise.all([getPublished("blog"), getPublished("projects")]);
+	const [posts, caseStudies] = await Promise.all([
+		getPublished("blog"),
+		getPublished("projects"),
+	]);
 	return {
 		site: { heading: basics.name, description: basics.label },
 		...Object.fromEntries(
-			posts.map(({ id, data }) => [`blog/${id}`, { heading: data.title, description: data.description }]),
+			posts.map(({ id, data }) => [
+				`blog/${id}`,
+				{ heading: data.title, description: data.description },
+			]),
 		),
 		...Object.fromEntries(
-			caseStudies.map(({ id, data }) => [`projects/${id}`, { heading: data.title, description: data.description }]),
+			caseStudies.map(({ id, data }) => [
+				`projects/${id}`,
+				{ heading: data.title, description: data.description },
+			]),
 		),
 	};
 }
 
 /** The image for a page: its own when it has one, otherwise the site card. */
-export async function ogImageFor(pathname: string, site: URL | undefined): Promise<URL> {
+export async function ogImageFor(
+	pathname: string,
+	site: URL | undefined,
+): Promise<URL> {
 	const key = pathname.replace(/^\/|\/$/g, "");
-	return new URL(`/og/${key in (await ogPages()) ? key : "site"}.png`, site);
+	return new URL(
+		`/og/${Object.hasOwn(await ogPages(), key) ? key : "site"}.png`,
+		site,
+	);
 }

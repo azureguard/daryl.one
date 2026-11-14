@@ -155,16 +155,23 @@ const OPTIONS = [
 	const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
 
 	const readStoredTheme = (): Theme => {
-		const stored = localStorage.getItem("theme");
-		return stored === "dark" || stored === "light" ? stored : "system";
+		// Storage access throws where it is blocked: the choice then lasts the page.
+		try {
+			const stored = localStorage.getItem("theme");
+			return stored === "dark" || stored === "light" ? stored : "system";
+		} catch {
+			return "system";
+		}
 	};
 
 	const applyTheme = (value: Theme) => {
 		const resolved = value === "system" ? (mediaQuery.matches ? "dark" : "light") : value;
 		document.documentElement.classList.remove("light", "dark");
 		document.documentElement.classList.add(resolved);
-		if (value === "system") localStorage.removeItem("theme");
-		else localStorage.setItem("theme", value);
+		try {
+			if (value === "system") localStorage.removeItem("theme");
+			else localStorage.setItem("theme", value);
+		} catch {}
 	};
 
 	// The nav and floating instances are separate machines; a pick in one is

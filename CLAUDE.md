@@ -137,6 +137,9 @@ IBM Plex Sans for prose, Plex Mono for code only).
 - Other branches: `wrangler versions upload … --assets ./dist/client`, a
   per-commit preview URL. `versions upload` ignores config-declared assets, so
   the `--assets` flag is required or previews 404.
+- The repository enforces a workflow lockfile: after changing any `uses:`, run
+  `gh actions-lock` and commit `.github/workflows/actions.lock`, or the run
+  fails at startup.
 - Cloudflare steps need `CLOUDFLARE_API_TOKEN` / `CLOUDFLARE_ACCOUNT_ID`. The
   `daryl.one` domain is attached to the Worker by hand in the dashboard.
 - **CI builds without any `src/content`** (untracked: blog, case studies,
@@ -146,8 +149,11 @@ IBM Plex Sans for prose, Plex Mono for code only).
 ## Code style
 
 Biome, 120-char lines (it reformats the DS CSS copies; values stay verbatim).
-Tabs (spaces in YAML/TOML/Markdown). No dependency `overrides`: bump transitive
-deps with `aube update <pkg> --depth Infinity` / `aube dedupe`.
+Tabs (spaces in YAML/TOML/Markdown). No dependency `overrides`. To bump
+transitive deps (`aube audit`), re-resolve the lockfile: `rm aube-lock.yaml &&
+aube install --resolution-mode highest --no-frozen-lockfile` (`aube update`
+only refreshes direct deps). Node follows mise's `lts`; `devEngines` in
+`package.json` must admit it, or CI's install fails.
 
 ## Gotchas
 
@@ -164,7 +170,8 @@ These have bitten before.
   except for one hash: the head's `src/scripts/theme-init.js`, inlined because a
   bundled `<script>` is a deferred module that runs after first paint (a theme
   flash, and every colour transition firing). A build hook in `astro.config.ts`
-  adds its hash to the built `_headers`. `style-src` allows `'unsafe-inline'`
+  adds its hash to the built `_headers`. `_headers` never applies to a Worker
+  response, so `404.astro` sets the same `/*` block on itself. `style-src` allows `'unsafe-inline'`
   for the ClientRouter transition and Shiki (reasons in the decisions log). Our
   own code still writes no inline style attributes: reveal order is `data-i`,
   not `style="--i"`.

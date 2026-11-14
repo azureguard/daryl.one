@@ -141,6 +141,12 @@ isn't: read the entry before "fixing" it. How to work with the code is in
 
 ## Known gaps
 
+- **`aube audit` keeps one finding**: zod 3 under `astro-robots-txt`, which
+  has no release on zod 4. It only validates the integration's own options at
+  build, so it is accepted over an override.
+- **lefthook is held at `~2.1`**: 2.2.2 fails aube's trust policy (no
+  provenance where 2.0.11 had it). Lift the tilde once a release carries it.
+
 - **Volunteer, Interests and References never render**: `cv.json` has no data
   for them. The components are wired.
 - **The 2018–2019 Ensign internship is left out** of About's three-era

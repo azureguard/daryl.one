@@ -7,7 +7,7 @@
 	X-Frame-Options: DENY
 	X-Content-Type-Options: nosniff
 
-https://:project.workers.dev/*
+https://:version.:subdomain.workers.dev/*
 	X-Robots-Tag: noindex
 
 /_astro/*

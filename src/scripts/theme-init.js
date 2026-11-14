@@ -12,9 +12,14 @@
 // listener sits on `document`, which persists.
 {
 	const resolveTheme = () => {
-		const stored = localStorage.getItem("theme");
-		if (stored === "dark" || stored === "light") return stored;
-		return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+		// Storage access throws where it is blocked; fall back to the system theme.
+		try {
+			const stored = localStorage.getItem("theme");
+			if (stored === "dark" || stored === "light") return stored;
+		} catch {}
+		return matchMedia("(prefers-color-scheme: dark)").matches
+			? "dark"
+			: "light";
 	};
 
 	const applyTheme = (target) => {

@@ -3,6 +3,8 @@ import { basics } from "@cv";
 import LogBlock from "@/components/LogBlock.astro";
 import SiteLayout from "@/layouts/SiteLayout.astro";
 import { getPublished } from "@/lib/content";
+import themeInit from "@/scripts/theme-init.js?raw";
+import headersFile from "../../public/_headers?raw";
 
 // The one page rendered on demand: every other route is a prerendered asset,
 // so a request that matches none reaches the Worker, which renders this with
@@ -10,6 +12,22 @@ import { getPublished } from "@/lib/content";
 export const prerender = false;
 
 Astro.response.status = 404;
+
+// `_headers` applies to static assets only, so the Worker's one response would
+// go out with no CSP or framing protection. It takes the same `/*` block, with
+// the theme script's hash the build adds for the prerendered pages, and is
+// kept out of indexes.
+const [, siteHeaders = ""] = headersFile.match(/^\/\*\n((?:[ \t]+\S.*\n?)+)/m) ?? [];
+const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(themeInit));
+const themeInitHash = btoa(String.fromCharCode(...new Uint8Array(digest)));
+for (const line of siteHeaders.trim().split("\n")) {
+	const [name = "", ...value] = line.trim().split(": ");
+	Astro.response.headers.set(
+		name,
+		value.join(": ").replace("script-src 'self';", `script-src 'self' 'sha256-${themeInitHash}';`),
+	);
+}
+Astro.response.headers.set("X-Robots-Tag", "noindex");
 
 // The request as a DS LogBlock. `originPathname` survives a rewrite, where
 // `Astro.url` would already read "/404"; Astro adds a trailing slash, which the
